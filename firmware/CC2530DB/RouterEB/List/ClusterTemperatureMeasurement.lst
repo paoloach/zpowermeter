@@ -1,0 +1,1010 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:26:26 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\clusters\ClusterTemperatureMeasurement.c #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\clusters\ClusterTemperatureMeasurement.c #
+#                           -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D  #
+#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
+#                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
+#                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
+#                          --require_prototypes                               #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ClusterTemperatureMeasur #
+#                          ement.lst                                          #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\ClusterTemperatureMeasure #
+#                          ment.r51                                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.c
+      1          /**************************************************************************************************
+      2          
+      3           DESCRIPTION:
+      4            Temperature Measurement Cluster
+      5          
+      6           CREATED: 12/11/2014, by Paolo Achdjian
+      7          
+      8           FILE: ClusterTemperatureMeasurement.c
+      9          
+     10          RESOURCES:
+     11           P1.2 Generaio I/O
+     12           T3
+     13          
+     14          ***************************************************************************************************/
+     15          #include "ioCC2530.h"
+
+   \                                 In  segment SFR_AN, at 0x8d
+   \   unsigned char volatile __sfr P1IEN
+   \                     P1IEN:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0x90
+   \   union <unnamed> volatile __sfr _A_P1
+   \                     _A_P1:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xb8
+   \   union <unnamed> volatile __sfr _A_IEN1
+   \                     _A_IEN1:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xc0
+   \   union <unnamed> volatile __sfr _A_IRCON
+   \                     _A_IRCON:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xca
+   \   unsigned char volatile __sfr T3CNT
+   \                     T3CNT:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xcb
+   \   unsigned char volatile __sfr T3CTL
+   \                     T3CTL:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xcc
+   \   unsigned char volatile __sfr T3CCTL0
+   \                     T3CCTL0:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xce
+   \   unsigned char volatile __sfr T3CCTL1
+   \                     T3CCTL1:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xd8
+   \   union <unnamed> volatile __sfr _A_TIMIF
+   \                     _A_TIMIF:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xf4
+   \   unsigned char volatile __sfr P1SEL
+   \                     P1SEL:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xfd
+   \   unsigned char volatile __sfr P0DIR
+   \                     P0DIR:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xfe
+   \   unsigned char volatile __sfr P1DIR
+   \                     P1DIR:
+   \   000000                DS 1
+     16          #include "hal_mcu.h"
+     17          #include "ZDApp.h"
+     18          #include "hal_led.h"
+     19          #include "ClusterTemperatureMeasurement.h"
+     20          #include "OSAL_PwrMgr.h"
+     21          
+     22          
+     23          __sfr __no_init volatile union {
+     24          	struct {
+     25          		unsigned char T3_mode: 2;
+     26          		unsigned char T3_clear: 1;
+     27          		unsigned char T3_OVFIM: 1;
+     28          		unsigned char T3_start: 1;
+     29          		unsigned char T3_div: 3;
+     30          	};
+
+   \                                 In  segment SFR_AN, at 0xcb
+     31          } @ 0xCB;
+   \                     _A_T3_mode:
+   \   000000                DS 1
+     32          
+     33          __sfr __no_init volatile union {
+     34          	struct {
+     35          		unsigned char T3CCTL0_cap: 2;
+     36          		unsigned char T3CCTL0_mode: 1;
+     37          		unsigned char T3CCTL0_cmp: 3;
+     38          		unsigned char T3CCTL0_im: 1;
+     39          	};
+     40          } @ 0xCC;
+     41          
+     42          __sfr __no_init volatile union {
+     43          	struct {
+     44          		unsigned char RFIE: 1;
+     45          		unsigned char P2IE: 1;
+     46          		unsigned char UTX0IE: 1;
+     47          		unsigned char UTX11E: 1;
+     48          		unsigned char P11E: 1;
+     49          		unsigned char WDTIE: 1;
+     50          	};
+     51          } @ 0x9A
+     52          
+     53          
+     54          #define WAIT_FOR_480us 	T3_start=0;		T3CC0=240;T3_clear=1; T3_start=1;
+     55          #define WAIT_FOR_2us T3_start=0;		T3CC0=8; T3_clear=1;T3_start=1;
+     56          #define WAIT_FOR_1us T3_start=0;		T3CC0=4; T3_clear=1;T3_start=1;
+     57          #define WAIT_FOR_12us T3_start=0;		T3CC0=48; T3_clear=1;T3_start=1;
+     58          #define WAIT_FOR_47us T3_start=0;	T3_clear=1;	T3CC0=188; T3_start=1;
+     59          #define WAIT_FOR_58us T3_start=0;	T3_clear=1;	T3CC0=232; T3_start=1;
+     60          #define WAIT_FOR_60us T3_start=0;	T3_clear=1;	T3CC0=240; T3_start=1;
+     61          #define WAIT_FOR_1ms T3_start=0;	T3_clear=1;	T3CC0=250; T3_start=1;
+     62          //#define WAIT_FOR_600us st(T3CTL &=0xE0;T3CTL |= 0x04;T3CC1=150;T3CTL &= 0xFB;)
+     63          #define WAIT_FOR_300us st(T3CTL &=0xE0; T3CTL |= 0x04;T3CC1=75;T3CTL &= 0xFB;)
+     64          #define WAIT_FOR_4us st(T3CTL &=0xE0; T3CTL |= 0x04;T3CC1=1;T3CTL &= 0xFB;)
+     65          #define WAIT_FOR_8us st(T3CTL &=0xE0; T3CTL |= 0x04;T3CC1=2;T3CTL &= 0xFB;)
+     66          #define WAIT_FOR_16us st(T3CTL &=0xE0; T3CTL |= 0x04;T3CC1=4;T3CTL &= 0xFB;)
+     67          
+     68          #define ENABLE_P1EN st( IEN2 |= 0x10;)
+     69          #define DISABLE_P1EN st(IEN2 &= 0xEF;);
+     70          #define ENABLE_P1_2_INT  st(IEN2 |= 0x10; P1IEN |= 0x04;)
+     71          #define DISABLE_P1_2_INT  st(P1IEN &= 0xFB;)
+     72          #define P1_2_RISING_INT st(PICTL &= 0xFD;)
+     73          #define P1_2_FALLING_INT st(PICTL |= 0x02;)
+     74          
+     75          #define STOP_T3 st(T3CNT &= 0xEF;);
+     76          #define START_T3 st(T3CNT |= 0x10;);
+     77          #define P1_LOW st(P1DIR  |= 0x04;);
+     78          #define P1_HIGH st(P1DIR &= 0xFB;);
+     79          
+     80          #define ENABLE_T3_CH0_INT  T3CCTL0_im = 1;
+     81          #define DISABLE_T3_CH0_INT T3CCTL0_im=0;
+     82          #define RESET_TM3   st(T3CNT=0;)
+     83          #define RESET_T3CH0_INT st(T3CH0IF=0;)
+     84          #define RESET_P1_2_INT st(P1IF=0; P1IFG =0;);
+     85          
+     86          
+     87          
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     88          int16 temperatureValue=0;
+   \                     temperatureValue:
+   \   000000                DS 2
+   \   000002                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     89          int16 tempTemperatureValue;
+   \                     tempTemperatureValue:
+   \   000000                DS 2
+   \   000002                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     90          int16 decTemperatureValue;
+   \                     decTemperatureValue:
+   \   000000                DS 2
+   \   000002                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     91          int16 minTemperatureValue=-10;
+   \                     minTemperatureValue:
+   \   000000                DS 2
+   \   000002                REQUIRE `?<Initializer for minTemperatureValue>`
+   \   000002                REQUIRE __INIT_XDATA_I
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     92          int16 maxTemperatureValue=80;
+   \                     maxTemperatureValue:
+   \   000000                DS 2
+   \   000002                REQUIRE `?<Initializer for maxTemperatureValue>`
+   \   000002                REQUIRE __INIT_XDATA_I
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     93          uint16 toleranceTemperature=10;
+   \                     toleranceTemperature:
+   \   000000                DS 2
+   \   000002                REQUIRE `?<Initializer for toleranceTemperature>`
+   \   000002                REQUIRE __INIT_XDATA_I
+     94          
+     95          
+     96          static void write(unsigned char byte);
+     97          static uint8  read(void);
+     98          static void readSyncronus(void);
+     99          static uint8 reset(void);
+    100          static void finalizeReadTemp(void);
+    101          
+    102          
+    103          extern byte temperatureSensorTaskID;
+    104          extern devStates_t devState;
+    105          
+    106          #define TIME_READ_ms 10*1000
+    107          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    108          void clusterTemperatureMeasurementeInit(void) {
+   \                     clusterTemperatureMeasurementeInit:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+    109          	P1SEL &=0xFB;
+   \   000004   12....       LCALL   ?Subroutine2 & 0xFFFF
+    110          	P1DIR &= 0xFB;
+    111          	P1_2 = 0;
+    112          	
+    113          //	T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
+    114          //	T3CCTL0 = 0x4; // compare mode
+    115          //	T3CCTL1 = 0;
+    116          //	P0DIR=0xFF;
+    117          //	P0=0;
+    118          	readTemperature();
+   \                     ??CrossCallReturnLabel_2:
+   \   000007                ; Setup parameters for call to function readTemperature
+   \   000007   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature
+    119          	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+   \   00000A                ; Setup parameters for call to function osal_start_timerEx
+   \   00000A                REQUIRE ?Subroutine0
+   \   00000A                REQUIRE P1SEL
+   \   00000A                REQUIRE P1DIR
+   \   00000A                REQUIRE _A_P1
+   \   00000A                ; // Fall through to label ?Subroutine0
+    120          }
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000   90....       MOV     DPTR,#__Constant_2710
+   \   000003   12....       LCALL   ?PUSH_XSTACK8_X_FOUR
+   \   000006   7A04         MOV     R2,#0x4
+   \   000008   7B00         MOV     R3,#0x0
+   \   00000A   90....       MOV     DPTR,#temperatureSensorTaskID
+   \   00000D   E0           MOVX    A,@DPTR
+   \   00000E   F9           MOV     R1,A
+   \   00000F   12....       LCALL   ??osal_start_timerEx?relay; Banked call to: osal_start_timerEx
+   \   000012   7404         MOV     A,#0x4
+   \   000014   12....       LCALL   ?DEALLOC_XSTACK8
+   \   000017                REQUIRE ??Subroutine3_0
+   \   000017                ; // Fall through to label ??Subroutine3_0
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ??Subroutine3_0:
+   \   000000   D083         POP     DPH
+   \   000002   D082         POP     DPL
+   \   000004   02....       LJMP    ?BRET
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine2:
+   \   000000   53F4FB       ANL     0xf4,#0xfb
+   \   000003   53FEFB       ANL     0xfe,#0xfb
+   \   000006   C292         CLR     0x90.2
+   \   000008   22           RET
+    121          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    122          uint16 readTemperatureLoop(uint16 events) {
+   \                     readTemperatureLoop:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000   74F4         MOV     A,#-0xc
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 12
+   \   000005                ; Auto size: 0
+   \   000005   EA           MOV     A,R2
+   \   000006   FE           MOV     R6,A
+   \   000007   EB           MOV     A,R3
+   \   000008   FF           MOV     R7,A
+    123          	if (events & READ_TEMP_EVT){
+   \   000009   EE           MOV     A,R6
+   \   00000A   5404         ANL     A,#0x4
+   \   00000C   6009         JZ      ??readTemperatureLoop_0
+    124          		readTemperature();
+   \   00000E                ; Setup parameters for call to function readTemperature
+   \   00000E   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature
+    125          		return ( events ^ READ_TEMP_EVT );
+   \   000011   EE           MOV     A,R6
+   \   000012   6404         XRL     A,#0x4
+   \   000014   02....       LJMP    ??readTemperatureLoop_1 & 0xFFFF
+    126          	};
+    127          	if (events & END_READ_TEMP_EVT){
+   \                     ??readTemperatureLoop_0:
+   \   000017   EE           MOV     A,R6
+   \   000018   5408         ANL     A,#0x8
+   \   00001A   7003         JNZ     $+5
+   \   00001C   02....       LJMP    ??readTemperatureLoop_2 & 0xFFFF
+    128          		finalizeReadTemp();
+   \   00001F                ; Setup parameters for call to function reset
+   \   00001F   12....       LCALL   ??reset?relay        ; Banked call to: reset
+   \   000022                ; Setup parameters for call to function write
+   \   000022   79CC         MOV     R1,#-0x34
+   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write
+   \   000027                ; Setup parameters for call to function write
+   \   000027   79BE         MOV     R1,#-0x42
+   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write
+   \   00002C                ; Setup parameters for call to function read
+   \   00002C   12....       LCALL   ??read?relay         ; Banked call to: read
+   \   00002F   E9           MOV     A,R1
+   \   000030   F5..         MOV     ?V0,A
+   \   000032                ; Setup parameters for call to function read
+   \   000032   12....       LCALL   ??read?relay         ; Banked call to: read
+   \   000035   E5..         MOV     A,?V0
+   \   000037   90....       MOV     DPTR,#tempTemperatureValue
+   \   00003A   F0           MOVX    @DPTR,A
+   \   00003B   A3           INC     DPTR
+   \   00003C   E9           MOV     A,R1
+   \   00003D   F0           MOVX    @DPTR,A
+   \   00003E   90....       MOV     DPTR,#tempTemperatureValue
+   \   000041   E0           MOVX    A,@DPTR
+   \   000042   540F         ANL     A,#0xf
+   \   000044   75F064       MOV     B,#0x64
+   \   000047   A4           MUL     AB
+   \   000048   90....       MOV     DPTR,#decTemperatureValue
+   \   00004B   F0           MOVX    @DPTR,A
+   \   00004C   A3           INC     DPTR
+   \   00004D   E5F0         MOV     A,B
+   \   00004F   F0           MOVX    @DPTR,A
+   \   000050   90....       MOV     DPTR,#tempTemperatureValue + 1
+   \   000053   E0           MOVX    A,@DPTR
+   \   000054   F5..         MOV     ?V1,A
+   \   000056   7404         MOV     A,#0x4
+   \   000058   78..         MOV     R0,#?V0
+   \   00005A   12....       LCALL   ?SS_SHR
+   \   00005D   E5..         MOV     A,?V0
+   \   00005F   75F064       MOV     B,#0x64
+   \   000062   A4           MUL     AB
+   \   000063   F5..         MOV     ?V0,A
+   \   000065   A8F0         MOV     R0,B
+   \   000067   75F064       MOV     B,#0x64
+   \   00006A   E5..         MOV     A,?V1
+   \   00006C   A4           MUL     AB
+   \   00006D   28           ADD     A,R0
+   \   00006E   F5..         MOV     ?V1,A
+   \   000070   90....       MOV     DPTR,#decTemperatureValue
+   \   000073   E0           MOVX    A,@DPTR
+   \   000074   F5..         MOV     ?V2,A
+   \   000076   A3           INC     DPTR
+   \   000077   E0           MOVX    A,@DPTR
+   \   000078   F5..         MOV     ?V3,A
+   \   00007A   7404         MOV     A,#0x4
+   \   00007C   78..         MOV     R0,#?V2
+   \   00007E   12....       LCALL   ?SS_SHR
+   \   000081   E5..         MOV     A,?V0
+   \   000083   25..         ADD     A,?V2
+   \   000085   F8           MOV     R0,A
+   \   000086   E5..         MOV     A,?V1
+   \   000088   35..         ADDC    A,?V3
+   \   00008A   F9           MOV     R1,A
+   \   00008B   90....       MOV     DPTR,#temperatureValue
+   \   00008E   E8           MOV     A,R0
+   \   00008F   F0           MOVX    @DPTR,A
+   \   000090   A3           INC     DPTR
+   \   000091   E9           MOV     A,R1
+   \   000092   F0           MOVX    @DPTR,A
+   \   000093                ; Setup parameters for call to function osal_pwrmgr_task_state
+   \   000093   7A00         MOV     R2,#0x0
+   \   000095   90....       MOV     DPTR,#temperatureSensorTaskID
+   \   000098   E0           MOVX    A,@DPTR
+   \   000099   F9           MOV     R1,A
+   \   00009A   12....       LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
+    129          		return ( events ^ END_READ_TEMP_EVT );
+   \   00009D   EE           MOV     A,R6
+   \   00009E   6408         XRL     A,#0x8
+   \                     ??readTemperatureLoop_1:
+   \   0000A0   FA           MOV     R2,A
+   \   0000A1   EF           MOV     A,R7
+   \   0000A2   FB           MOV     R3,A
+    130          	}
+    131          	return events;
+   \                     ??readTemperatureLoop_2:
+   \   0000A3   7F04         MOV     R7,#0x4
+   \   0000A5   02....       LJMP    ?BANKED_LEAVE_XDATA
+    132          }
+    133          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    134          void readTemperature(void) {
+   \                     readTemperature:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+    135          	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+   \   000004                ; Setup parameters for call to function osal_pwrmgr_task_state
+   \   000004   7A01         MOV     R2,#0x1
+   \   000006   90....       MOV     DPTR,#temperatureSensorTaskID
+   \   000009   E0           MOVX    A,@DPTR
+   \   00000A   F9           MOV     R1,A
+   \   00000B   12....       LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
+    136          #if 1
+    137          	readSyncronus();
+   \   00000E                ; Setup parameters for call to function readSyncronus
+   \   00000E   12....       LCALL   ??readSyncronus?relay; Banked call to: readSyncronus
+    138          //	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+    139          #else
+    140          	readAsyncronus();
+    141          #endif
+    142          	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+   \   000011                ; Setup parameters for call to function osal_start_timerEx
+   \   000011   02....       LJMP    ?Subroutine0 & 0xFFFF
+    143          }
+    144          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    145          void readSyncronus(void) {
+   \                     readSyncronus:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+    146          
+    147          	P1SEL &=0xFB;
+   \   000004   12....       LCALL   ?Subroutine2 & 0xFFFF
+    148          	P1DIR &= 0xFB;
+    149          	P1_2 = 0;
+    150          	
+    151          	T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
+   \                     ??CrossCallReturnLabel_3:
+   \   000007   75CBA4       MOV     0xcb,#-0x5c
+    152          	T3CCTL0 = 0x4; // compare mode
+   \   00000A   75CC04       MOV     0xcc,#0x4
+    153          	T3CCTL1 = 0;
+   \   00000D   75CE00       MOV     0xce,#0x0
+    154          	P0DIR=0xFF;
+   \   000010   75FDFF       MOV     0xfd,#-0x1
+    155          		
+    156          	DISABLE_P1_2_INT;
+   \   000013   538DFB       ANL     0x8d,#0xfb
+    157          	T3IF=0;
+   \   000016   C2C3         CLR     0xc0.3
+    158          	T3CH0IF=0;
+   \   000018   C2D9         CLR     0xd8.1
+    159          	st(T3IE=0;);
+   \   00001A   C2BB         CLR     0xb8.3
+    160          	if (reset()==0)
+   \   00001C                ; Setup parameters for call to function reset
+   \   00001C   12....       LCALL   ??reset?relay        ; Banked call to: reset
+   \   00001F   E9           MOV     A,R1
+   \   000020   6021         JZ      ??readSyncronus_0
+    161          		return;
+    162          	
+    163          	write(0xCC);
+   \   000022                ; Setup parameters for call to function write
+   \   000022   79CC         MOV     R1,#-0x34
+   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write
+    164          	write(0x44);
+   \   000027                ; Setup parameters for call to function write
+   \   000027   7944         MOV     R1,#0x44
+   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write
+    165          	
+    166          	osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 750 );
+   \   00002C                ; Setup parameters for call to function osal_start_timerEx
+   \   00002C   90....       MOV     DPTR,#__Constant_2ee
+   \   00002F   12....       LCALL   ?PUSH_XSTACK8_X_FOUR
+   \   000032   7A08         MOV     R2,#0x8
+   \   000034   7B00         MOV     R3,#0x0
+   \   000036   90....       MOV     DPTR,#temperatureSensorTaskID
+   \   000039   E0           MOVX    A,@DPTR
+   \   00003A   F9           MOV     R1,A
+   \   00003B   12....       LCALL   ??osal_start_timerEx?relay; Banked call to: osal_start_timerEx
+   \   00003E   7404         MOV     A,#0x4
+   \   000040   12....       LCALL   ?DEALLOC_XSTACK8
+    167          	
+    168          	/*
+    169          	T3_div=7;
+    170          	for(uint16 i=0; i < 750; i++){
+    171          		T3_clear=1;
+    172          		while(T3CNT < 250);
+    173          		
+    174          	}
+    175          	finalizeReadTemp();
+    176          	*/
+    177          }
+   \                     ??readSyncronus_0:
+   \   000043   02....       LJMP    ??Subroutine3_0 & 0xFFFF
+   \   000046                REQUIRE P1SEL
+   \   000046                REQUIRE P1DIR
+   \   000046                REQUIRE _A_P1
+   \   000046                REQUIRE T3CTL
+   \   000046                REQUIRE T3CCTL0
+   \   000046                REQUIRE T3CCTL1
+   \   000046                REQUIRE P0DIR
+   \   000046                REQUIRE P1IEN
+   \   000046                REQUIRE _A_IRCON
+   \   000046                REQUIRE _A_TIMIF
+   \   000046                REQUIRE _A_IEN1
+    178          
+    179          void finalizeReadTemp(void){
+    180          	uint8 low;
+    181          	uint8 heigh;
+    182          	reset();
+    183          	write(0xCC);
+    184          	write(0xBE);
+    185          	low = read();
+    186          	heigh = read();
+    187          	
+    188          	tempTemperatureValue = BUILD_UINT16(low,heigh);
+    189          	temperatureValue = (tempTemperatureValue >> 4)*100;
+    190          	decTemperatureValue = (tempTemperatureValue & 0x0F)*100;
+    191          	
+    192          	temperatureValue += decTemperatureValue >> 4;
+    193          	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+    194          }
+    195          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    196          uint8 reset() {
+   \                     reset:
+   \   000000                ; Saved register size: 0
+   \   000000                ; Auto size: 0
+    197          	P1_LOW;
+   \   000000   43FE04       ORL     0xfe,#0x4
+    198          	T3_div=6;
+   \   000003   E5CB         MOV     A,0xcb
+   \   000005   541F         ANL     A,#0x1f
+   \   000007   44C0         ORL     A,#0xc0
+   \   000009   F5CB         MOV     0xcb,A
+    199          	T3_clear=1;
+   \   00000B   43CB04       ORL     0xcb,#0x4
+    200          	T3_start=1;
+   \   00000E   43CB10       ORL     0xcb,#0x10
+    201          	while(T3CNT < 244);
+   \                     ??reset_0:
+   \   000011   E5CA         MOV     A,0xca
+   \   000013   C3           CLR     C
+   \   000014   94F4         SUBB    A,#-0xc
+   \   000016   40F9         JC      ??reset_0
+    202          	P1_HIGH;
+   \   000018   53FEFB       ANL     0xfe,#0xfb
+    203          	T3_clear=1;
+   \   00001B   43CB04       ORL     0xcb,#0x4
+    204          	while(T3CNT < 30);
+   \                     ??reset_1:
+   \   00001E   E5CA         MOV     A,0xca
+   \   000020   C3           CLR     C
+   \   000021   941E         SUBB    A,#0x1e
+   \   000023   40F9         JC      ??reset_1
+    205          	T3_clear=1;
+   \   000025   43CB04       ORL     0xcb,#0x4
+    206          	while(T3CNT < 240  && P1_2 == 1);
+   \                     ??reset_2:
+   \   000028   E5CA         MOV     A,0xca
+   \   00002A   C3           CLR     C
+   \   00002B   94F0         SUBB    A,#-0x10
+   \   00002D   5004         JNC     ??reset_3
+   \   00002F   A292         MOV     C,0x90.2
+   \   000031   40F5         JC      ??reset_2
+    207          	
+    208          	if (P1_2 == 1){
+   \                     ??reset_3:
+   \   000033   A292         MOV     C,0x90.2
+   \   000035   5004         JNC     ??reset_4
+    209          		return 0;
+   \   000037   7900         MOV     R1,#0x0
+   \   000039   8006         SJMP    ??reset_5
+    210          	}
+    211          	while(P1_2==0);
+   \                     ??reset_4:
+   \   00003B   A292         MOV     C,0x90.2
+   \   00003D   50FC         JNC     ??reset_4
+    212          	return 1;
+   \   00003F   7901         MOV     R1,#0x1
+   \                     ??reset_5:
+   \   000041   02....       LJMP    ?BRET
+   \   000044                REQUIRE P1DIR
+   \   000044                REQUIRE _A_T3_mode
+   \   000044                REQUIRE T3CNT
+   \   000044                REQUIRE _A_P1
+    213          }
+    214          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    215          void write(unsigned char byte){
+   \                     `write`:
+   \   000000                ; Saved register size: 0
+   \   000000                ; Auto size: 0
+    216          	uint8 bit=8;
+   \   000000   7808         MOV     R0,#0x8
+    217          	T3_start = 0;
+   \   000002   12....       LCALL   ?Subroutine1 & 0xFFFF
+    218          	T3_div=5;
+    219          	T3_start=1;
+    220          	T3_clear=1;
+    221          	while(T3CNT < 2);
+   \                     ??CrossCallReturnLabel_0:
+   \   000005   E5CA         MOV     A,0xca
+   \   000007   C3           CLR     C
+   \   000008   9402         SUBB    A,#0x2
+   \   00000A   40F9         JC      ??CrossCallReturnLabel_0
+    222          
+    223          	while(bit > 0){
+    224          		P1_LOW;
+   \                     ??write_0:
+   \   00000C   43FE04       ORL     0xfe,#0x4
+    225          		T3_clear=1;
+   \   00000F   43CB04       ORL     0xcb,#0x4
+    226          		if (byte & 0x1){
+   \   000012   E9           MOV     A,R1
+   \   000013   A2E0         MOV     C,0xE0 /* A   */.0
+   \   000015   5009         JNC     ??write_1
+    227          			while(T3CNT < 10);
+   \                     ??write_2:
+   \   000017   E5CA         MOV     A,0xca
+   \   000019   C3           CLR     C
+   \   00001A   940A         SUBB    A,#0xa
+   \   00001C   5009         JNC     ??write_3
+   \   00001E   80F7         SJMP    ??write_2
+    228          		} else {
+    229          			while(T3CNT < 60);
+   \                     ??write_1:
+   \   000020   E5CA         MOV     A,0xca
+   \   000022   C3           CLR     C
+   \   000023   943C         SUBB    A,#0x3c
+   \   000025   40F9         JC      ??write_1
+    230          		}
+    231          		
+    232          		P1_HIGH;
+   \                     ??write_3:
+   \   000027   53FEFB       ANL     0xfe,#0xfb
+    233          		while(T3CNT < 62);
+   \                     ??write_4:
+   \   00002A   E5CA         MOV     A,0xca
+   \   00002C   C3           CLR     C
+   \   00002D   943E         SUBB    A,#0x3e
+   \   00002F   40F9         JC      ??write_4
+    234          		byte = byte >> 1;
+   \   000031   E9           MOV     A,R1
+   \   000032   C3           CLR     C
+   \   000033   13           RRC     A
+   \   000034   F9           MOV     R1,A
+    235          		bit--;
+    236          	}
+   \   000035   18           DEC     R0
+   \   000036   E8           MOV     A,R0
+   \   000037   70D3         JNZ     ??write_0
+    237          	
+    238          }
+   \   000039   02....       LJMP    ?BRET
+   \   00003C                REQUIRE _A_T3_mode
+   \   00003C                REQUIRE T3CNT
+   \   00003C                REQUIRE P1DIR
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine1:
+   \   000000   53CBEF       ANL     0xcb,#0xef
+   \   000003   E5CB         MOV     A,0xcb
+   \   000005   541F         ANL     A,#0x1f
+   \   000007   44A0         ORL     A,#0xa0
+   \   000009   F5CB         MOV     0xcb,A
+   \   00000B   43CB10       ORL     0xcb,#0x10
+   \   00000E   43CB04       ORL     0xcb,#0x4
+   \   000011   22           RET
+    239          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    240          uint8  read(void) {
+   \                     `read`:
+   \   000000                ; Saved register size: 0
+   \   000000                ; Auto size: 0
+    241          	uint8 bit=8;
+   \   000000   7808         MOV     R0,#0x8
+    242          	uint8 result=0;
+   \   000002   7900         MOV     R1,#0x0
+    243          	
+    244          	T3_start = 0;
+   \   000004   12....       LCALL   ?Subroutine1 & 0xFFFF
+    245          	T3_div=5;
+    246          	T3_start=1;
+    247          	
+    248          	T3_clear=1;
+    249          	while(T3CNT < 2);
+   \                     ??CrossCallReturnLabel_1:
+   \   000007   E5CA         MOV     A,0xca
+   \   000009   C3           CLR     C
+   \   00000A   9402         SUBB    A,#0x2
+   \   00000C   40F9         JC      ??CrossCallReturnLabel_1
+    250          	while(bit > 0){
+    251          		P1_LOW;
+   \                     ??read_0:
+   \   00000E   43FE04       ORL     0xfe,#0x4
+    252          		T3_clear=1;
+   \   000011   43CB04       ORL     0xcb,#0x4
+    253          		while(T3CNT < 2);
+   \                     ??read_1:
+   \   000014   E5CA         MOV     A,0xca
+   \   000016   C3           CLR     C
+   \   000017   9402         SUBB    A,#0x2
+   \   000019   40F9         JC      ??read_1
+    254          		P1_HIGH;
+   \   00001B   53FEFB       ANL     0xfe,#0xfb
+    255          		T3_clear=1;
+   \   00001E   43CB04       ORL     0xcb,#0x4
+    256          		while(T3CNT < 10);
+   \                     ??read_2:
+   \   000021   E5CA         MOV     A,0xca
+   \   000023   C3           CLR     C
+   \   000024   940A         SUBB    A,#0xa
+   \   000026   40F9         JC      ??read_2
+    257          		result >>= 1;
+   \   000028   E9           MOV     A,R1
+   \   000029   C3           CLR     C
+   \   00002A   13           RRC     A
+   \   00002B   F9           MOV     R1,A
+    258          		if (P1_2){
+   \   00002C   A292         MOV     C,0x90.2
+   \   00002E   5003         JNC     ??read_3
+    259          			result |= 0x80;
+   \   000030   D2E7         SETB    0xE0 /* A   */.7
+   \   000032   F9           MOV     R1,A
+    260          		}
+    261          		T3_clear=1;
+   \                     ??read_3:
+   \   000033   43CB04       ORL     0xcb,#0x4
+    262          		while(T3CNT < 30);
+   \                     ??read_4:
+   \   000036   E5CA         MOV     A,0xca
+   \   000038   C3           CLR     C
+   \   000039   941E         SUBB    A,#0x1e
+   \   00003B   40F9         JC      ??read_4
+    263          		bit--;
+    264          	}
+   \   00003D   18           DEC     R0
+   \   00003E   E8           MOV     A,R0
+   \   00003F   70CD         JNZ     ??read_0
+    265          	return result;
+   \   000041   02....       LJMP    ?BRET
+   \   000044                REQUIRE _A_T3_mode
+   \   000044                REQUIRE T3CNT
+   \   000044                REQUIRE P1DIR
+   \   000044                REQUIRE _A_P1
+    266          }
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for minTemperatureValue>`:
+   \   000000   F6FF         DW -10
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for maxTemperatureValue>`:
+   \   000000   5000         DW 80
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for toleranceTemperature>`:
+   \   000000   0A00         DW 10
+
+   \                                 In  segment XDATA_ROM_C, align 1
+   \                     __Constant_2710:
+   \   000000   10270000     DD 10000
+
+   \                                 In  segment XDATA_ROM_C, align 1
+   \                     __Constant_2ee:
+   \   000000   EE020000     DD 750
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??clusterTemperatureMeasurementeInit?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    clusterTemperatureMeasurementeInit
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??readTemperatureLoop?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    readTemperatureLoop
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??readTemperature?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    readTemperature
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??readSyncronus?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    readSyncronus
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??reset?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    reset
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??write?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `write`
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??read?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `read`
+    267          
+    268          
+    269          
+
+   Maximum stack usage in bytes:
+
+   ISTACK XSTACK Function
+   ------ ------ --------
+      2      4   clusterTemperatureMeasurementeInit
+        2      4   -> osal_start_timerEx
+        2      0   -> readTemperature
+      0     12   read
+      2      4   readSyncronus
+        2      4   -> osal_start_timerEx
+        2      0   -> reset
+        2      0   -> write
+      2     16   readTemperature
+        2      0   -> osal_pwrmgr_task_state
+        2      4   -> osal_start_timerEx
+        2      0   -> readSyncronus
+      0     12   readTemperatureLoop
+        0     12   -> osal_pwrmgr_task_state
+        0     12   -> read
+        0     12   -> readTemperature
+        0     12   -> reset
+        0     12   -> write
+      0     12   reset
+      0     12   write
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Initializer for maxTemperatureValue>
+       2  ?<Initializer for minTemperatureValue>
+       2  ?<Initializer for toleranceTemperature>
+       7  ??Subroutine3_0
+       6  ??clusterTemperatureMeasurementeInit?relay
+       6  ??read?relay
+       6  ??readSyncronus?relay
+       6  ??readTemperature?relay
+       6  ??readTemperatureLoop?relay
+       6  ??reset?relay
+       6  ??write?relay
+      23  ?Subroutine0
+      18  ?Subroutine1
+       9  ?Subroutine2
+       1  P0DIR
+       1  P1DIR
+       1  P1IEN
+       1  P1SEL
+       1  T3CCTL0
+       1  T3CCTL1
+       1  T3CNT
+       1  T3CTL
+       1  _A_IEN1
+       1  _A_IRCON
+       1  _A_P1
+       1  _A_T3_mode
+       1  _A_TIMIF
+       4  __Constant_2710
+       4  __Constant_2ee
+      10  clusterTemperatureMeasurementeInit
+       2  decTemperatureValue
+       2  maxTemperatureValue
+       2  minTemperatureValue
+      68  read
+      70  readSyncronus
+      20  readTemperature
+     168  readTemperatureLoop
+      68  reset
+       2  tempTemperatureValue
+       2  temperatureValue
+       2  toleranceTemperature
+      60  write
+
+ 
+ 521 bytes in segment BANKED_CODE
+  42 bytes in segment BANK_RELAYS
+  13 bytes in segment SFR_AN
+   6 bytes in segment XDATA_I
+   6 bytes in segment XDATA_ID
+   8 bytes in segment XDATA_ROM_C
+   6 bytes in segment XDATA_Z
+ 
+ 569 bytes of CODE  memory
+   0 bytes of CONST memory (+  8 bytes shared)
+   0 bytes of DATA  memory (+ 13 bytes shared)
+  12 bytes of XDATA memory
+
+Errors: none
+Warnings: none

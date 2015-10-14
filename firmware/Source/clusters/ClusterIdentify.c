@@ -17,19 +17,20 @@
 
 uint16 identifyTime=0;
 
-extern byte temperatureSensorTaskID;
+static byte mainAppTaskId;
 
 static uint8  onOff;
 
-void identifyInit(){
+void identifyInit(byte taskId){
 	P0DIR |= 1;
  	P0SEL &= 0xFE;
  	P0_0 = 0;
+	mainAppTaskId = taskId;
 }
 
 uint16 identifyLoop(uint16 events){
 	if (onOff){
-		osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
 		onOff=0;
 		P0_0 = 1;
 	} else {
@@ -38,11 +39,11 @@ uint16 identifyLoop(uint16 events){
     		identifyTime--;
 		}
     	if (identifyTime>0){
-			osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, ON_TIME );
-			osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 			P0_0 = 0;
 		} else{
-			osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
 			P0_0 = 0;
 		}
 	}
@@ -61,13 +62,13 @@ uint16 identifyLoop(uint16 events){
  */
 void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
-		osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 		onOff=1;
 		P0_0 = 1;
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
-		osal_stop_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT );
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
+		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
 	}
 }
 

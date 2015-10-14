@@ -17,7 +17,7 @@ extern uint16 identifyTime;
 
 #define IDENTIFY_ATTRIBUTES  { ZCL_CLUSTER_ID_GEN_IDENTIFY, {  ATTRID_IDENTIFY_TIME,  ZCL_DATATYPE_UINT16, ACCESS_CONTROL_R_W, (void *)&identifyTime, &processIdentifyTimeChange  }  },
 
-void identifyInit(void);
+void identifyInit(byte taskId);
 void processIdentifyTimeChange( void );
 uint16 identifyLoop(uint16 events);
 

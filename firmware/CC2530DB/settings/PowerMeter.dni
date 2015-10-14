@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-159837366
+Checksum=-2095180707
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -18,10 +18,6 @@ MixedMode=1
 Fmt0={W}0:tasksCnt	4	0
 Fmt1={W}0:temperatureValue	3	0
 Fmt2={W}0:ticks	4	0
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -33,6 +29,10 @@ Count=3
 [ChipconEmu]
 Stop timers on halt=0
 Leave target running=1
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
 [Aliases]
 Count=0
 SuppressDialog=0

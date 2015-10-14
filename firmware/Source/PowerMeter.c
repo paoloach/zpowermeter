@@ -1,109 +1,40 @@
 /**************************************************************************************************
-  Filename:       zcl_sampleLight.c
-  Revised:        $Date: 2009-03-18 15:56:27 -0700 (Wed, 18 Mar 2009) $
-  Revision:       $Revision: 19453 $
 
+ DESCRIPTION:
+  --
 
-  Description:    Zigbee Cluster Library - sample device application.
+ CREATED: 14/10/2015, by Paolo Achdjian
 
+ FILE: PowerMeter.c
 
-  Copyright 2006-2009 Texas Instruments Incorporated. All rights reserved.
+***************************************************************************************************/
 
-  IMPORTANT: Your use of this Software is limited to those specific rights
-  granted under the terms of a software license agreement between the user
-  who downloaded the software, his/her employer (which must be your employer)
-  and Texas Instruments Incorporated (the "License").  You may not use this
-  Software unless you agree to abide by the terms of the License. The License
-  limits your use, and you acknowledge, that the Software may not be modified,
-  copied or distributed unless embedded on a Texas Instruments microcontroller
-  or used solely and exclusively in conjunction with a Texas Instruments radio
-  frequency transceiver, which is integrated into your product.  Other than for
-  the foregoing purpose, you may not use, reproduce, copy, prepare derivative
-  works of, modify, distribute, perform, display or sell this Software and/or
-  its documentation for any purpose.
-
-  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
-  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
-  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
-  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
-  NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR OTHER
-  LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
-  INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE
-  OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT
-  OF SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
-  (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
-
-  Should you have any questions regarding your right to use this Software,
-  contact Texas Instruments Incorporated at www.TI.com. 
-**************************************************************************************************/
-
-/*********************************************************************
- * INCLUDES
- */
 #include "ZComDef.h"
 #include "OSAL.h"
 #include "AF.h"
 #include "ZDApp.h"
-#include "DebugTrace.h"
 
 #include "zcl.h"
 #include "zcl_general.h"
 #include "zcl_ha.h"
-
 #include "PowerMeter.h"
-
 #include "onboard.h"
-
 /* HAL */
 #include "hal_lcd.h"
 #include "hal_led.h"
 #include "hal_key.h"
-
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
-#include "clusters/ClusterTemperatureMeasurement.h"
+
+static byte zPowerMeterTaskID;
 
 
-
-/*********************************************************************
- * MACROS
- */
-
-/*********************************************************************
- * CONSTANTS
- */
-/*********************************************************************
- * TYPEDEFS
- */
-
-/*********************************************************************
- * GLOBAL VARIABLES
- */
-byte temperatureSensorTaskID;
-
-/*********************************************************************
- * GLOBAL FUNCTIONS
- */
-
-/*********************************************************************
- * LOCAL VARIABLES
- */
-//static afAddrType_t zclSampleLight_DstAddr;
-
-
-
-/*********************************************************************
- * LOCAL FUNCTIONS
- */
-
-// Functions to process ZCL Foundation incoming Command/Response messages 
-static void zclSampleLight_ProcessIncomingMsg( zclIncomingMsg_t *msg );
-static uint8 zclSampleLight_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg );
-static uint8 zclSampleLight_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg );
-static uint8 zclSampleLight_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
+static void zPowerMeter_ProcessIncomingMsg( zclIncomingMsg_t *msg );
+static uint8 zPowerMeter_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg );
+static uint8 zPowerMeter_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg );
+static uint8 zPowerMeter_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 #ifdef ZCL_DISCOVER
-static uint8 zclSampleLight_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg );
+static uint8 zPowerMeter_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 /*********************************************************************
@@ -119,7 +50,7 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
  * @return      none
  */
 void powerMeter_Init( byte task_id ){
-  temperatureSensorTaskID = task_id;
+  zPowerMeterTaskID = task_id;
 
   // Set destination address to indirect
   //zclSampleLight_DstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
@@ -138,11 +69,10 @@ void powerMeter_Init( byte task_id ){
   	zcl_registerAttrList(ENDPOINT, powerMeterAttrs );
 
   	// Register the Application to receive the unprocessed Foundation command/response messages
-  	zcl_registerForMsg( temperatureSensorTaskID );
+  	zcl_registerForMsg( zPowerMeterTaskID );
   
   	EA=1;
-  	clusterTemperatureMeasurementeInit();
- 	identifyInit();
+ 	identifyInit(zPowerMeterTaskID);
 
 }
 
@@ -160,11 +90,11 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
   
 	  (void)task_id;  // Intentionally unreferenced parameter
 	 if ( events & SYS_EVENT_MSG ){
-		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( temperatureSensorTaskID )) )  {
+		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( zPowerMeterTaskID )) )  {
 			switch ( MSGpkt->hdr.event ) {
 				case ZCL_INCOMING_MSG:
           			// Incoming ZCL Foundation command/response messages
-          			zclSampleLight_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
+          			zPowerMeter_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
           			break;
 		       default:
         		  break;
@@ -180,10 +110,6 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
 		return identifyLoop(events);
 	}
 	
-	if ( events & READ_TEMP_MASK ) {
-		return readTemperatureLoop(events);
-	}
-
  	return 0;
 }
 
@@ -194,7 +120,7 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
  *****************************************************************************/
 
 /*********************************************************************
- * @fn      zclSampleLight_ProcessIncomingMsg
+ * @fn      zPowerMeter_ProcessIncomingMsg
  *
  * @brief   Process ZCL Foundation incoming message
  *
@@ -202,56 +128,54 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
  *
  * @return  none
  */
-static void zclSampleLight_ProcessIncomingMsg( zclIncomingMsg_t *pInMsg)
-{
-  switch ( pInMsg->zclHdr.commandID )
-  {
-    case ZCL_CMD_READ_RSP:
-      zclSampleLight_ProcessInReadRspCmd( pInMsg );
-      break;
-    case ZCL_CMD_WRITE_RSP:
-      zclSampleLight_ProcessInWriteRspCmd( pInMsg );
-      break;
+static void zPowerMeter_ProcessIncomingMsg( zclIncomingMsg_t *pInMsg){
+	switch ( pInMsg->zclHdr.commandID ){
+		case ZCL_CMD_READ_RSP:
+			zPowerMeter_ProcessInReadRspCmd( pInMsg );
+			break;
+		case ZCL_CMD_WRITE_RSP:
+			zPowerMeter_ProcessInWriteRspCmd( pInMsg );
+			break;
 #ifdef ZCL_REPORT
     // See ZCL Test Applicaiton (zcl_testapp.c) for sample code on Attribute Reporting
-    case ZCL_CMD_CONFIG_REPORT:
-      //zclSampleLight_ProcessInConfigReportCmd( pInMsg );
-      break;
+		case ZCL_CMD_CONFIG_REPORT:
+      	//zclSampleLight_ProcessInConfigReportCmd( pInMsg );
+			break;
     
-    case ZCL_CMD_CONFIG_REPORT_RSP:
+		case ZCL_CMD_CONFIG_REPORT_RSP:
       //zclSampleLight_ProcessInConfigReportRspCmd( pInMsg );
-      break;
+			break;
     
-    case ZCL_CMD_READ_REPORT_CFG:
+		case ZCL_CMD_READ_REPORT_CFG:
       //zclSampleLight_ProcessInReadReportCfgCmd( pInMsg );
-      break;
+			break;
     
-    case ZCL_CMD_READ_REPORT_CFG_RSP:
+		case ZCL_CMD_READ_REPORT_CFG_RSP:
       //zclSampleLight_ProcessInReadReportCfgRspCmd( pInMsg );
-      break;
+			break;
     
-    case ZCL_CMD_REPORT:
-      //zclSampleLight_ProcessInReportCmd( pInMsg );
-      break;
+		case ZCL_CMD_REPORT:
+      	//zclSampleLight_ProcessInReportCmd( pInMsg );
+			break;
 #endif   
-    case ZCL_CMD_DEFAULT_RSP:
-      zclSampleLight_ProcessInDefaultRspCmd( pInMsg );
-      break;
+		case ZCL_CMD_DEFAULT_RSP:
+			zPowerMeter_ProcessInDefaultRspCmd( pInMsg );
+			break;
 #ifdef ZCL_DISCOVER     
-    case ZCL_CMD_DISCOVER_RSP:
-      zclSampleLight_ProcessInDiscRspCmd( pInMsg );
-      break;
+		case ZCL_CMD_DISCOVER_RSP:
+			zPowerMeter_ProcessInDiscRspCmd( pInMsg );
+			break;
 #endif  
-    default:
-      break;
-  }
+		default:
+			break;
+	}
   
-  if ( pInMsg->attrCmd )
-    osal_mem_free( pInMsg->attrCmd );
+	if ( pInMsg->attrCmd )
+    	osal_mem_free( pInMsg->attrCmd );
 }
 
 /*********************************************************************
- * @fn      zclSampleLight_ProcessInReadRspCmd
+ * @fn      zPowerMeter_ProcessInReadRspCmd
  *
  * @brief   Process the "Profile" Read Response Command
  *
@@ -259,24 +183,20 @@ static void zclSampleLight_ProcessIncomingMsg( zclIncomingMsg_t *pInMsg)
  *
  * @return  none
  */
-static uint8 zclSampleLight_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg )
-{
-  zclReadRspCmd_t *readRspCmd;
-  uint8 i;
+static uint8 zPowerMeter_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg ){
+	zclReadRspCmd_t *readRspCmd;
+	uint8 i;
 
-  readRspCmd = (zclReadRspCmd_t *)pInMsg->attrCmd;
-  for (i = 0; i < readRspCmd->numAttr; i++)
-  {
-    // Notify the originator of the results of the original read attributes 
-    // attempt and, for each successfull request, the value of the requested 
-    // attribute
-  }
+	readRspCmd = (zclReadRspCmd_t *)pInMsg->attrCmd;
+	for (i = 0; i < readRspCmd->numAttr; i++){
+		// Notify the originator of the results of the original read attributes attempt and, for each successfull request, the value of the requested attribute
+	}
 
-  return TRUE; 
+	return TRUE; 
 }
 
 /*********************************************************************
- * @fn      zclSampleLight_ProcessInWriteRspCmd
+ * @fn      zPowerMeter_ProcessInWriteRspCmd
  *
  * @brief   Process the "Profile" Write Response Command
  *
@@ -284,23 +204,20 @@ static uint8 zclSampleLight_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg )
  *
  * @return  none
  */
-static uint8 zclSampleLight_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg )
-{
-  zclWriteRspCmd_t *writeRspCmd;
-  uint8 i;
+static uint8 zPowerMeter_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg ){
+ 	zclWriteRspCmd_t *writeRspCmd;
+ 	uint8 i;
 
-  writeRspCmd = (zclWriteRspCmd_t *)pInMsg->attrCmd;
-  for (i = 0; i < writeRspCmd->numAttr; i++)
-  {
-    // Notify the device of the results of the its original write attributes
-    // command.
-  }
+ 	writeRspCmd = (zclWriteRspCmd_t *)pInMsg->attrCmd;
+ 	for (i = 0; i < writeRspCmd->numAttr; i++) {
+		// Notify the device of the results of the its original write attributes command.
+ 	}
 
-  return TRUE; 
+ 	return TRUE; 
 }
 
 /*********************************************************************
- * @fn      zclSampleLight_ProcessInDefaultRspCmd
+ * @fn      zPowerMeter_ProcessInDefaultRspCmd
  *
  * @brief   Process the "Profile" Default Response Command
  *
@@ -308,19 +225,18 @@ static uint8 zclSampleLight_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg )
  *
  * @return  none
  */
-static uint8 zclSampleLight_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg )
-{
-  // zclDefaultRspCmd_t *defaultRspCmd = (zclDefaultRspCmd_t *)pInMsg->attrCmd;
+static uint8 zPowerMeter_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg ){
+	// zclDefaultRspCmd_t *defaultRspCmd = (zclDefaultRspCmd_t *)pInMsg->attrCmd;
    
-  // Device is notified of the Default Response command.
-  (void)pInMsg;
+	// Device is notified of the Default Response command.
+  	(void)pInMsg;
   
-  return TRUE; 
+  	return TRUE; 
 }
 
 #ifdef ZCL_DISCOVER
 /*********************************************************************
- * @fn      zclSampleLight_ProcessInDiscRspCmd
+ * @fn      zPowerMeter_ProcessInDiscRspCmd
  *
  * @brief   Process the "Profile" Discover Response Command
  *
@@ -328,18 +244,16 @@ static uint8 zclSampleLight_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg )
  *
  * @return  none
  */
-static uint8 zclSampleLight_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg )
-{
-  zclDiscoverRspCmd_t *discoverRspCmd;
-  uint8 i;
+static uint8 zPowerMeter_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg ){
+	zclDiscoverRspCmd_t *discoverRspCmd;
+ 	uint8 i;
   
-  discoverRspCmd = (zclDiscoverRspCmd_t *)pInMsg->attrCmd;
-  for ( i = 0; i < discoverRspCmd->numAttr; i++ )
-  {
-    // Device is notified of the result of its attribute discovery command.
-  }
+ 	discoverRspCmd = (zclDiscoverRspCmd_t *)pInMsg->attrCmd;
+  	for ( i = 0; i < discoverRspCmd->numAttr; i++ ) {
+		// Device is notified of the result of its attribute discovery command.
+  	}
   
-  return TRUE;
+ 	return TRUE;
 }
 #endif // ZCL_DISCOVER
 

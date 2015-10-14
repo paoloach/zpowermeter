@@ -1,0 +1,383 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:30:06 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\PowerMeter_data.c                        #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\PowerMeter_data.c -D SECURE=0 -D         #
+#                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
+#                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
+#                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
+#                          -D ZCL_READ -D ZCL_WRITE -D ZCL_REPORT -D          #
+#                          FEATURE_SYSTEM_STATS -lC                           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
+#                          --require_prototypes                               #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\PowerMeter_data.lst      #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\PowerMeter_data.r51       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
+      1          /**************************************************************************************************
+      2            Filename:       PowerMeter_data.c
+      3            Autorh: 		 Paolo Achdjia
+      4            Created: 13/10/2015
+      5          **************************************************************************************************/
+      6          
+      7          /*********************************************************************
+      8           * INCLUDES
+      9           */
+     10          #include "ZComDef.h"
+     11          #include "OSAL.h"
+     12          #include "AF.h"
+     13          #include "ZDConfig.h"
+     14          
+     15          #include "zcl.h"
+     16          #include "zcl_general.h"
+     17          #include "zcl_ha.h"
+     18          
+     19          #include "PowerMeter.h"
+     20          #include "clusters/ClusterIdentify.h"
+     21          #include "clusters/ClusterBasic.h"
+     22          #include "clusters/ClusterPower.h"
+     23          #include "clusters/ClusterTemperatureMeasurement.h"
+     24          
+     25          /*********************************************************************
+     26           * CONSTANTS
+     27           */
+     28          
+     29          #define DEVICE_VERSION     0
+     30          #define FLAGS              0
+     31          
+     32          
+     33          /*********************************************************************
+     34           * TYPEDEFS
+     35           */
+     36          
+     37          /*********************************************************************
+     38           * MACROS
+     39           */
+     40          
+     41          /*********************************************************************
+     42           * GLOBAL VARIABLES
+     43           */
+     44          
+     45          
+     46          
+     47          /*********************************************************************
+     48           * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
+     49           */
+
+   \                                 In  segment CODE_C, align 1
+     50          CONST zclAttrRec_t powerMeterAttrs[] = {
+   \                     powerMeterAttrs:
+   \   000000   0000         DW 0
+   \   000002   0300         DW 3
+   \   000004   20           DB 32
+   \   000005   01           DB 1
+   \   000006   ....         DW HWRevision
+   \   000008   0000         DW 0H
+   \   00000A   0000         DW 0
+   \   00000C   0000         DW 0
+   \   00000E   20           DB 32
+   \   00000F   01           DB 1
+   \   000010   ....         DW ZCLVersion
+   \   000012   0000         DW 0H
+   \   000014   0000         DW 0
+   \   000016   0400         DW 4
+   \   000018   42           DB 66
+   \   000019   01           DB 1
+   \   00001A   ....         DW manufacturerName
+   \   00001C   0000         DW 0H
+   \   00001E   0000         DW 0
+   \   000020   0500         DW 5
+   \   000022   42           DB 66
+   \   000023   01           DB 1
+   \   000024   ....         DW modelId
+   \   000026   0000         DW 0H
+   \   000028   0000         DW 0
+   \   00002A   0600         DW 6
+   \   00002C   42           DB 66
+   \   00002D   01           DB 1
+   \   00002E   ....         DW dateCode
+   \   000030   0000         DW 0H
+   \   000032   0000         DW 0
+   \   000034   0700         DW 7
+   \   000036   30           DB 48
+   \   000037   01           DB 1
+   \   000038   ....         DW powerSource
+   \   00003A   0000         DW 0H
+   \   00003C   0000         DW 0
+   \   00003E   1000         DW 16
+   \   000040   42           DB 66
+   \   000041   03           DB 3
+   \   000042   ....         DW locationDescription
+   \   000044   0000         DW 0H
+   \   000046   0000         DW 0
+   \   000048   1100         DW 17
+   \   00004A   30           DB 48
+   \   00004B   03           DB 3
+   \   00004C   ....         DW physicalEnvironment
+   \   00004E   0000         DW 0H
+   \   000050   0000         DW 0
+   \   000052   1200         DW 18
+   \   000054   10           DB 16
+   \   000055   03           DB 3
+   \   000056   ....         DW deviceEnable
+   \   000058   0000         DW 0H
+   \   00005A   0300         DW 3
+   \   00005C   0000         DW 0
+   \   00005E   21           DB 33
+   \   00005F   03           DB 3
+   \   000060   ....         DW identifyTime
+   \   000062   ....         DW ??processIdentifyTimeChange?relay
+   \   000064   0100         DW 1
+   \   000066   0000         DW 0
+   \   000068   21           DB 33
+   \   000069   01           DB 1
+   \   00006A   ....         DW mainVoltage
+   \   00006C   0000         DW 0H
+   \   00006E   0100         DW 1
+   \   000070   2000         DW 32
+   \   000072   20           DB 32
+   \   000073   01           DB 1
+   \   000074   ....         DW batteryVoltage
+   \   000076   0000         DW 0H
+   \   000078   0100         DW 1
+   \   00007A   3500         DW 53
+   \   00007C   18           DB 24
+   \   00007D   01           DB 1
+   \   00007E   ....         DW batteryAlarmMask
+   \   000080   0000         DW 0H
+   \   000082   0204         DW 1026
+   \   000084   0000         DW 0
+   \   000086   29           DB 41
+   \   000087   01           DB 1
+   \   000088   ....         DW temperatureValue
+   \   00008A   0000         DW 0H
+   \   00008C   0204         DW 1026
+   \   00008E   0100         DW 1
+   \   000090   29           DB 41
+   \   000091   01           DB 1
+   \   000092   ....         DW minTemperatureValue
+   \   000094   0000         DW 0H
+   \   000096   0204         DW 1026
+   \   000098   0200         DW 2
+   \   00009A   29           DB 41
+   \   00009B   01           DB 1
+   \   00009C   ....         DW maxTemperatureValue
+   \   00009E   0000         DW 0H
+   \   0000A0   0204         DW 1026
+   \   0000A2   0300         DW 3
+   \   0000A4   21           DB 33
+   \   0000A5   01           DB 1
+   \   0000A6   ....         DW toleranceTemperature
+   \   0000A8   0000         DW 0H
+   \   0000AA   FFFF         DW 65535
+   \   0000AC   0000         DW 0
+   \   0000AE   00           DB 0
+   \   0000AF   00           DB 0
+   \   0000B0   0000         DW 0H
+   \   0000B2   0000         DB 0, 0
+     51          	BASIC_ATTRIBUTE
+     52          	IDENTIFY_ATTRIBUTES
+     53          	POWER_ATTRIBUTES
+     54          	TEMPERATURE_MEASUREMENT_ATTRIBUTES
+     55           	LAST_CLUSTER_ATTRIBUTE
+     56          };
+     57          
+     58          /*********************************************************************
+     59           * SIMPLE DESCRIPTOR
+     60           */
+     61          // This is the Cluster ID List and should be filled with Application
+     62          // specific cluster IDs.
+     63          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     64          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] =
+   \                     powerMeter_InClusterList:
+   \   000000   0000         DW 0
+   \   000002   0300         DW 3
+   \   000004   0100         DW 1
+   \   000006   0204         DW 1026
+     65          {
+     66            ZCL_CLUSTER_ID_GEN_BASIC,
+     67            ZCL_CLUSTER_ID_GEN_IDENTIFY,
+     68            ZCL_CLUSTER_ID_GEN_POWER_CFG,
+     69            ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT
+     70          };
+     71          
+     72          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     73          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] =
+   \                     powerMeter_OutClusterList:
+   \   000000   0000         DW 0
+     74          {
+     75            ZCL_CLUSTER_ID_GEN_BASIC
+     76          };
+     77          
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     78          SimpleDescriptionFormat_t powerMeter_SimpleDesc =
+   \                     powerMeter_SimpleDesc:
+   \   000000                DS 12
+   \   00000C                REQUIRE `?<Initializer for powerMeter_SimpleDesc>`
+   \   00000C                REQUIRE __INIT_XDATA_I
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for powerMeter_SimpleDesc>`:
+   \   000000   0D           DB 13
+   \   000001   0401         DW 260
+   \   000003   0101         DW 257
+   \   000005   00           DB 0
+   \   000006   04           DB 4
+   \   000007   ....         DW powerMeter_InClusterList
+   \   000009   01           DB 1
+   \   00000A   ....         DW powerMeter_OutClusterList
+     79          {
+     80            ENDPOINT,                  //  int Endpoint;
+     81            ZCL_HA_PROFILE_ID,                     //  uint16 AppProfId[2];
+     82            ZCL_HA_DEVICEID_DIMMABLE_LIGHT,        //  uint16 AppDeviceId[2];
+     83            DEVICE_VERSION,            //  int   AppDevVer:4;
+     84            FLAGS,                     //  int   AppFlags:4;
+     85            ZCLSAMPLELIGHT_MAX_INCLUSTERS,         //  byte  AppNumInClusters;
+     86            (cId_t *)powerMeter_InClusterList, //  byte *pAppInClusterList;
+     87            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,        //  byte  AppNumInClusters;
+     88            (cId_t *)powerMeter_OutClusterList //  byte *pAppInClusterList;
+     89          };
+     90          
+     91          /*********************************************************************
+     92           * GLOBAL FUNCTIONS
+     93           */
+     94          
+     95          /*********************************************************************
+     96           * LOCAL FUNCTIONS
+     97           */
+     98          
+     99          /****************************************************************************
+    100          ****************************************************************************/
+    101          
+    102          
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      12  ?<Initializer for powerMeter_SimpleDesc>
+     180  powerMeterAttrs
+       8  powerMeter_InClusterList
+       2  powerMeter_OutClusterList
+      12  powerMeter_SimpleDesc
+
+ 
+ 180 bytes in segment CODE_C
+  12 bytes in segment XDATA_I
+  12 bytes in segment XDATA_ID
+  10 bytes in segment XDATA_ROM_C
+ 
+ 192 bytes of CODE  memory
+  10 bytes of CONST memory
+  12 bytes of XDATA memory
+
+Errors: none
+Warnings: none

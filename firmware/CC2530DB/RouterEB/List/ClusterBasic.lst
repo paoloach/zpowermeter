@@ -1,0 +1,376 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:26:25 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\clusters\ClusterBasic.c                  #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Source\clusters\ClusterBasic.c -D SECURE=0 -D   #
+#                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
+#                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
+#                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
+#                          -D ZCL_READ -D ZCL_WRITE -D ZCL_REPORT -D          #
+#                          FEATURE_SYSTEM_STATS -lC                           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
+#                          --require_prototypes                               #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ClusterBasic.lst         #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\ClusterBasic.r51          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasic.c
+      1          /**************************************************************************************************
+      2            Filename:       ClusterBasic.cpp
+      3          
+      4            Autorh:  Paolo Achdjia
+      5            Created: 13/10/2015
+      6          
+      7          **************************************************************************************************/
+      8          
+      9          #include "ClusterBasic.h"
+     10          
+     11          
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     12          const uint8 HWRevision = 1;
+   \                     HWRevision:
+   \   000000   01           DB 1
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     13          const uint8 ZCLVersion = 1;
+   \                     ZCLVersion:
+   \   000000   01           DB 1
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     14          const uint8 manufacturerName[] = { 20, 'A','c','h','d','j','i','a','n',' ','T','e','s','t',' ',' ',' ',' ',' ',' ',' ' };
+   \                     manufacturerName:
+   \   000000   14           DB 20
+   \   000001   41           DB 65
+   \   000002   63           DB 99
+   \   000003   68           DB 104
+   \   000004   64           DB 100
+   \   000005   6A           DB 106
+   \   000006   69           DB 105
+   \   000007   61           DB 97
+   \   000008   6E           DB 110
+   \   000009   20           DB 32
+   \   00000A   54           DB 84
+   \   00000B   65           DB 101
+   \   00000C   73           DB 115
+   \   00000D   74           DB 116
+   \   00000E   20           DB 32
+   \   00000F   20           DB 32
+   \   000010   20           DB 32
+   \   000011   20           DB 32
+   \   000012   20           DB 32
+   \   000013   20           DB 32
+   \   000014   20           DB 32
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     15          const uint8 modelId[] = { 16,'z', 'P','o','w','e','r','M','e','t','e','r',' ',' ',' ',' ',' ' };
+   \                     modelId:
+   \   000000   10           DB 16
+   \   000001   7A           DB 122
+   \   000002   50           DB 80
+   \   000003   6F           DB 111
+   \   000004   77           DB 119
+   \   000005   65           DB 101
+   \   000006   72           DB 114
+   \   000007   4D           DB 77
+   \   000008   65           DB 101
+   \   000009   74           DB 116
+   \   00000A   65           DB 101
+   \   00000B   72           DB 114
+   \   00000C   20           DB 32
+   \   00000D   20           DB 32
+   \   00000E   20           DB 32
+   \   00000F   20           DB 32
+   \   000010   20           DB 32
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     16          const uint8 dateCode[] = { 16, '2','0','1','5','1','0','1','3',' ',' ',' ',' ',' ',' ',' ',' ' };
+   \                     dateCode:
+   \   000000   10           DB 16
+   \   000001   32           DB 50
+   \   000002   30           DB 48
+   \   000003   31           DB 49
+   \   000004   35           DB 53
+   \   000005   31           DB 49
+   \   000006   30           DB 48
+   \   000007   31           DB 49
+   \   000008   33           DB 51
+   \   000009   20           DB 32
+   \   00000A   20           DB 32
+   \   00000B   20           DB 32
+   \   00000C   20           DB 32
+   \   00000D   20           DB 32
+   \   00000E   20           DB 32
+   \   00000F   20           DB 32
+   \   000010   20           DB 32
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     17          const uint8 powerSource = POWER_SOURCE_DC;
+   \                     powerSource:
+   \   000000   04           DB 4
+     18          
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     19          uint8 locationDescription[17] = { 16, ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ' };
+   \                     locationDescription:
+   \   000000                DS 17
+   \   000011                REQUIRE `?<Initializer for locationDescription>`
+   \   000011                REQUIRE __INIT_XDATA_I
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     20          uint8 physicalEnvironment = 0;
+   \                     physicalEnvironment:
+   \   000000                DS 1
+   \   000001                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+     21          uint8 deviceEnable = DEVICE_ENABLED;
+   \                     deviceEnable:
+   \   000000                DS 1
+   \   000001                REQUIRE `?<Initializer for deviceEnable>`
+   \   000001                REQUIRE __INIT_XDATA_I
+     22          
+     23          
+     24          /*********************************************************************
+     25           * @fn      zclSampleLight_BasicResetCB
+     26           *
+     27           * @brief   Callback from the ZCL General Cluster Library
+     28           *          to set all the Basic Cluster attributes to default values.
+     29           *
+     30           * @param   none
+     31           *
+     32           * @return  none
+     33           */
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     34          void basicResetCB( void ){
+   \                     basicResetCB:
+   \   000000                ; Saved register size: 0
+   \   000000                ; Auto size: 0
+     35            // Reset all attributes to default values
+     36          }
+   \   000000   02....       LJMP    ?BRET
+     37          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     38          ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){
+   \                     processBasicClusterCommands:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     39          	if ( zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
+   \   000004   8A82         MOV     DPL,R2
+   \   000006   8B83         MOV     DPH,R3
+   \   000008   A3           INC     DPTR
+   \   000009   A3           INC     DPTR
+   \   00000A   E0           MOVX    A,@DPTR
+   \   00000B   5408         ANL     A,#0x8
+   \   00000D   7012         JNZ     ??processBasicClusterCommands_0
+     40          		switch(pInMsg->hdr.commandID){
+   \   00000F   8A82         MOV     DPL,R2
+   \   000011   8B83         MOV     DPH,R3
+   \   000013   A3           INC     DPTR
+   \   000014   A3           INC     DPTR
+   \   000015   A3           INC     DPTR
+   \   000016   A3           INC     DPTR
+   \   000017   A3           INC     DPTR
+   \   000018   A3           INC     DPTR
+   \   000019   A3           INC     DPTR
+   \   00001A   E0           MOVX    A,@DPTR
+   \   00001B   6004         JZ      ??processBasicClusterCommands_0
+     41          			case COMMAND_BASIC_RESET_FACT_DEFAULT:
+     42          				basicResetCB();
+     43          				return ZSuccess;
+     44          		default:
+     45                		return ZFailure;   // Error ignore the command
+   \   00001D   7901         MOV     R1,#0x1
+   \   00001F   8002         SJMP    ??processBasicClusterCommands_1
+     46          		}
+     47          	}
+     48          	return ZSuccess;
+   \                     ??processBasicClusterCommands_0:
+   \   000021   7900         MOV     R1,#0x0
+   \                     ??processBasicClusterCommands_1:
+   \   000023   D083         POP     DPH
+   \   000025   D082         POP     DPL
+   \   000027   02....       LJMP    ?BRET
+     49          }
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for locationDescription>`:
+   \   000000   10           DB 16
+   \   000001   20           DB 32
+   \   000002   20           DB 32
+   \   000003   20           DB 32
+   \   000004   20           DB 32
+   \   000005   20           DB 32
+   \   000006   20           DB 32
+   \   000007   20           DB 32
+   \   000008   20           DB 32
+   \   000009   20           DB 32
+   \   00000A   20           DB 32
+   \   00000B   20           DB 32
+   \   00000C   20           DB 32
+   \   00000D   20           DB 32
+   \   00000E   20           DB 32
+   \   00000F   20           DB 32
+   \   000010   20           DB 32
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for deviceEnable>`:
+   \   000000   01           DB 1
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??basicResetCB?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    basicResetCB
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??processBasicClusterCommands?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    processBasicClusterCommands
+
+   Maximum stack usage in bytes:
+
+   ISTACK Function
+   ------ --------
+      0   basicResetCB
+      2   processBasicClusterCommands
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  ?<Initializer for deviceEnable>
+      17  ?<Initializer for locationDescription>
+       6  ??basicResetCB?relay
+       6  ??processBasicClusterCommands?relay
+       1  HWRevision
+       1  ZCLVersion
+       3  basicResetCB
+      17  dateCode
+       1  deviceEnable
+      17  locationDescription
+      21  manufacturerName
+      17  modelId
+       1  physicalEnvironment
+       1  powerSource
+      42  processBasicClusterCommands
+
+ 
+ 45 bytes in segment BANKED_CODE
+ 12 bytes in segment BANK_RELAYS
+ 18 bytes in segment XDATA_I
+ 18 bytes in segment XDATA_ID
+ 58 bytes in segment XDATA_ROM_C
+  1 byte  in segment XDATA_Z
+ 
+ 75 bytes of CODE  memory
+ 58 bytes of CONST memory
+ 19 bytes of XDATA memory
+
+Errors: none
+Warnings: none
