@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:30:06 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:17:23 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -138,7 +138,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
      20          #include "clusters/ClusterIdentify.h"
      21          #include "clusters/ClusterBasic.h"
      22          #include "clusters/ClusterPower.h"
-     23          #include "clusters/ClusterTemperatureMeasurement.h"
+     23          #include "clusters/ClusterOnOff.h"
      24          
      25          /*********************************************************************
      26           * CONSTANTS
@@ -148,26 +148,13 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
      30          #define FLAGS              0
      31          
      32          
-     33          /*********************************************************************
-     34           * TYPEDEFS
-     35           */
-     36          
-     37          /*********************************************************************
-     38           * MACROS
-     39           */
-     40          
-     41          /*********************************************************************
-     42           * GLOBAL VARIABLES
-     43           */
-     44          
-     45          
-     46          
-     47          /*********************************************************************
-     48           * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
-     49           */
+     33          
+     34          /*********************************************************************
+     35           * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
+     36           */
 
    \                                 In  segment CODE_C, align 1
-     50          CONST zclAttrRec_t powerMeterAttrs[] = {
+     37          CONST zclAttrRec_t powerMeterAttrs[] = {
    \                     powerMeterAttrs:
    \   000000   0000         DW 0
    \   000002   0300         DW 3
@@ -247,135 +234,103 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    \   00007D   01           DB 1
    \   00007E   ....         DW batteryAlarmMask
    \   000080   0000         DW 0H
-   \   000082   0204         DW 1026
+   \   000082   0600         DW 6
    \   000084   0000         DW 0
-   \   000086   29           DB 41
+   \   000086   10           DB 16
    \   000087   01           DB 1
-   \   000088   ....         DW temperatureValue
-   \   00008A   0000         DW 0H
-   \   00008C   0204         DW 1026
-   \   00008E   0100         DW 1
-   \   000090   29           DB 41
-   \   000091   01           DB 1
-   \   000092   ....         DW minTemperatureValue
-   \   000094   0000         DW 0H
-   \   000096   0204         DW 1026
-   \   000098   0200         DW 2
-   \   00009A   29           DB 41
-   \   00009B   01           DB 1
-   \   00009C   ....         DW maxTemperatureValue
-   \   00009E   0000         DW 0H
-   \   0000A0   0204         DW 1026
-   \   0000A2   0300         DW 3
-   \   0000A4   21           DB 33
-   \   0000A5   01           DB 1
-   \   0000A6   ....         DW toleranceTemperature
-   \   0000A8   0000         DW 0H
-   \   0000AA   FFFF         DW 65535
-   \   0000AC   0000         DW 0
-   \   0000AE   00           DB 0
-   \   0000AF   00           DB 0
-   \   0000B0   0000         DW 0H
-   \   0000B2   0000         DB 0, 0
-     51          	BASIC_ATTRIBUTE
-     52          	IDENTIFY_ATTRIBUTES
-     53          	POWER_ATTRIBUTES
-     54          	TEMPERATURE_MEASUREMENT_ATTRIBUTES
-     55           	LAST_CLUSTER_ATTRIBUTE
-     56          };
-     57          
-     58          /*********************************************************************
-     59           * SIMPLE DESCRIPTOR
-     60           */
-     61          // This is the Cluster ID List and should be filled with Application
-     62          // specific cluster IDs.
-     63          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
+   \   000088   ....         DW onOffValue
+   \   00008A   ....         DW ??setIOStatus?relay
+   \   00008C   FFFF         DW 65535
+   \   00008E   0000         DW 0
+   \   000090   00           DB 0
+   \   000091   00           DB 0
+   \   000092   0000         DW 0H
+   \   000094   0000         DB 0, 0
+     38          	BASIC_ATTRIBUTE
+     39          	IDENTIFY_ATTRIBUTES
+     40          	POWER_ATTRIBUTES
+     41          	ONOF_ATTRIBUTES
+     42           	LAST_CLUSTER_ATTRIBUTE
+     43          };
+     44          
+     45          /*********************************************************************
+     46           * SIMPLE DESCRIPTOR
+     47           */
+     48          // This is the Cluster ID List and should be filled with Application specific cluster IDs.
+     49          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
 
    \                                 In  segment XDATA_ROM_C, align 1
-     64          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] =
+     50          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] ={
    \                     powerMeter_InClusterList:
    \   000000   0000         DW 0
    \   000002   0300         DW 3
    \   000004   0100         DW 1
-   \   000006   0204         DW 1026
-     65          {
-     66            ZCL_CLUSTER_ID_GEN_BASIC,
-     67            ZCL_CLUSTER_ID_GEN_IDENTIFY,
-     68            ZCL_CLUSTER_ID_GEN_POWER_CFG,
-     69            ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT
-     70          };
-     71          
-     72          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
+   \   000006   0600         DW 6
+     51            ZCL_CLUSTER_ID_GEN_BASIC,
+     52            ZCL_CLUSTER_ID_GEN_IDENTIFY,
+     53            ZCL_CLUSTER_ID_GEN_POWER_CFG,
+     54            ZCL_CLUSTER_ID_GEN_ON_OFF
+     55          };
+     56          
+     57          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
 
    \                                 In  segment XDATA_ROM_C, align 1
-     73          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] =
+     58          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] ={
    \                     powerMeter_OutClusterList:
    \   000000   0000         DW 0
-     74          {
-     75            ZCL_CLUSTER_ID_GEN_BASIC
-     76          };
-     77          
+     59            ZCL_CLUSTER_ID_GEN_BASIC
+     60          };
+     61          
 
    \                                 In  segment XDATA_I, align 1, keep-with-next
-     78          SimpleDescriptionFormat_t powerMeter_SimpleDesc =
-   \                     powerMeter_SimpleDesc:
+     62          SimpleDescriptionFormat_t OnOff_SimpleDesc = {
+   \                     OnOff_SimpleDesc:
    \   000000                DS 12
-   \   00000C                REQUIRE `?<Initializer for powerMeter_SimpleDesc>`
+   \   00000C                REQUIRE `?<Initializer for OnOff_SimpleDesc>`
    \   00000C                REQUIRE __INIT_XDATA_I
 
    \                                 In  segment XDATA_ID, align 1, keep-with-next
-   \                     `?<Initializer for powerMeter_SimpleDesc>`:
+   \                     `?<Initializer for OnOff_SimpleDesc>`:
    \   000000   0D           DB 13
    \   000001   0401         DW 260
-   \   000003   0101         DW 257
+   \   000003   0001         DW 256
    \   000005   00           DB 0
    \   000006   04           DB 4
    \   000007   ....         DW powerMeter_InClusterList
    \   000009   01           DB 1
    \   00000A   ....         DW powerMeter_OutClusterList
-     79          {
-     80            ENDPOINT,                  //  int Endpoint;
-     81            ZCL_HA_PROFILE_ID,                     //  uint16 AppProfId[2];
-     82            ZCL_HA_DEVICEID_DIMMABLE_LIGHT,        //  uint16 AppDeviceId[2];
-     83            DEVICE_VERSION,            //  int   AppDevVer:4;
-     84            FLAGS,                     //  int   AppFlags:4;
-     85            ZCLSAMPLELIGHT_MAX_INCLUSTERS,         //  byte  AppNumInClusters;
-     86            (cId_t *)powerMeter_InClusterList, //  byte *pAppInClusterList;
-     87            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,        //  byte  AppNumInClusters;
-     88            (cId_t *)powerMeter_OutClusterList //  byte *pAppInClusterList;
-     89          };
-     90          
-     91          /*********************************************************************
-     92           * GLOBAL FUNCTIONS
-     93           */
-     94          
-     95          /*********************************************************************
-     96           * LOCAL FUNCTIONS
-     97           */
-     98          
-     99          /****************************************************************************
-    100          ****************************************************************************/
-    101          
-    102          
+     63            ENDPOINT_ONOFF,                  			//  int Endpoint;
+     64            ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
+     65            ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
+     66            DEVICE_VERSION,           			//  int   AppDevVer:4;
+     67            FLAGS,                    			//  int   AppFlags:4;
+     68            ZCLSAMPLELIGHT_MAX_INCLUSTERS,        //  byte  AppNumInClusters;
+     69            (cId_t *)powerMeter_InClusterList, 	//  byte *pAppInClusterList;
+     70            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,       //  byte  AppNumInClusters;
+     71            (cId_t *)powerMeter_OutClusterList 	//  byte *pAppInClusterList;
+     72          };
+     73          
+     74          
+     75          
 
 
    Segment part sizes:
 
    Bytes  Function/Label
    -----  --------------
-      12  ?<Initializer for powerMeter_SimpleDesc>
-     180  powerMeterAttrs
+      12  ?<Initializer for OnOff_SimpleDesc>
+      12  OnOff_SimpleDesc
+     150  powerMeterAttrs
        8  powerMeter_InClusterList
        2  powerMeter_OutClusterList
-      12  powerMeter_SimpleDesc
 
  
- 180 bytes in segment CODE_C
+ 150 bytes in segment CODE_C
   12 bytes in segment XDATA_I
   12 bytes in segment XDATA_ID
   10 bytes in segment XDATA_ROM_C
  
- 192 bytes of CODE  memory
+ 162 bytes of CODE  memory
   10 bytes of CONST memory
   12 bytes of XDATA memory
 

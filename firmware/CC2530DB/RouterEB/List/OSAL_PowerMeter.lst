@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:27:25 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:17:23 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -150,7 +150,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
      32          #endif
      33          
      34          #include "PowerMeter.h"
-     35          #include "CS2530.h"
+     35          #include "CS5463.h"
      36          
      37          /*********************************************************************
      38           * GLOBAL VARIABLES
@@ -170,7 +170,6 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
    \   00000C   ....         DW ??ZDNwkMgr_event_loop?relay
    \   00000E   ....         DW ??zcl_event_loop?relay
    \   000010   ....         DW ??powerMeterEventLoop?relay
-   \   000012   ....         DW ??CS5463_EventLoop?relay
      43            macEventLoop, //0
      44            nwk_event_loop, //1
      45            Hal_ProcessEvent, //2
@@ -183,49 +182,48 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
      52            ZDNwkMgr_event_loop,
      53          #endif
      54            zcl_event_loop,
-     55            powerMeterEventLoop,
-     56            CS5463_EventLoop
-     57          };
-     58          
+     55            powerMeterEventLoop
+     56          };
+     57          
 
    \                                 In  segment XDATA_ROM_C, align 1
-     59          const uint8 tasksCnt = sizeof( tasksArr ) / sizeof( tasksArr[0] );
+     58          const uint8 tasksCnt = sizeof( tasksArr ) / sizeof( tasksArr[0] );
    \                     tasksCnt:
-   \   000000   0A           DB 10
+   \   000000   09           DB 9
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     60          uint16 *tasksEvents;
+     59          uint16 *tasksEvents;
    \                     tasksEvents:
    \   000000                DS 2
    \   000002                REQUIRE __INIT_XDATA_Z
-     61          
-     62          /*********************************************************************
-     63           * FUNCTIONS
-     64           *********************************************************************/
-     65          
-     66          /*********************************************************************
-     67           * @fn      osalInitTasks
-     68           *
-     69           * @brief   This function invokes the initialization function for each task.
-     70           *
-     71           * @param   void
-     72           *
-     73           * @return  none
-     74           */
+     60          
+     61          /*********************************************************************
+     62           * FUNCTIONS
+     63           *********************************************************************/
+     64          
+     65          /*********************************************************************
+     66           * @fn      osalInitTasks
+     67           *
+     68           * @brief   This function invokes the initialization function for each task.
+     69           *
+     70           * @param   void
+     71           *
+     72           * @return  none
+     73           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     75          void osalInitTasks( void )
+     74          void osalInitTasks( void )
    \                     osalInitTasks:
-     76          {
+     75          {
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-     77            uint8 taskID = 0;
-     78          
-     79            tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
+     76            uint8 taskID = 0;
+     77          
+     78            tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
    \   000004                ; Setup parameters for call to function osal_mem_alloc
-   \   000004   7A14         MOV     R2,#0x14
+   \   000004   7A12         MOV     R2,#0x12
    \   000006   7B00         MOV     R3,#0x0
    \   000008   12....       LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
    \   00000B   90....       MOV     DPTR,#tasksEvents
@@ -234,69 +232,68 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
    \   000010   A3           INC     DPTR
    \   000011   EB           MOV     A,R3
    \   000012   F0           MOVX    @DPTR,A
-     80            osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));
+     79            osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));
    \   000013                ; Setup parameters for call to function osal_memset
-   \   000013   7C14         MOV     R4,#0x14
+   \   000013   7C12         MOV     R4,#0x12
    \   000015   7D00         MOV     R5,#0x0
    \   000017   7900         MOV     R1,#0x0
    \   000019   12....       LCALL   ??osal_memset?relay  ; Banked call to: osal_memset
-     81          
-     82            macTaskInit( taskID++ );
+     80          
+     81            macTaskInit( taskID++ );
    \   00001C                ; Setup parameters for call to function macTaskInit
    \   00001C   7900         MOV     R1,#0x0
    \   00001E   12....       LCALL   ??macTaskInit?relay  ; Banked call to: macTaskInit
-     83            nwk_init( taskID++ );
+     82            nwk_init( taskID++ );
    \   000021                ; Setup parameters for call to function nwk_init
    \   000021   7901         MOV     R1,#0x1
    \   000023   12....       LCALL   ??nwk_init?relay     ; Banked call to: nwk_init
-     84            Hal_Init( taskID++ );
+     83            Hal_Init( taskID++ );
    \   000026                ; Setup parameters for call to function Hal_Init
    \   000026   7902         MOV     R1,#0x2
    \   000028   12....       LCALL   ??Hal_Init?relay     ; Banked call to: Hal_Init
-     85            APS_Init( taskID++ );
+     84            APS_Init( taskID++ );
    \   00002B                ; Setup parameters for call to function APS_Init
    \   00002B   7903         MOV     R1,#0x3
    \   00002D   12....       LCALL   ??APS_Init?relay     ; Banked call to: APS_Init
-     86          #if defined ( ZIGBEE_FRAGMENTATION )
-     87            APSF_Init( taskID++ );
+     85          #if defined ( ZIGBEE_FRAGMENTATION )
+     86            APSF_Init( taskID++ );
    \   000030                ; Setup parameters for call to function APSF_Init
    \   000030   7904         MOV     R1,#0x4
    \   000032   12....       LCALL   ??APSF_Init?relay    ; Banked call to: APSF_Init
-     88          #endif
-     89            ZDApp_Init( taskID++ );
+     87          #endif
+     88            ZDApp_Init( taskID++ );
    \   000035                ; Setup parameters for call to function ZDApp_Init
    \   000035   7905         MOV     R1,#0x5
    \   000037   12....       LCALL   ??ZDApp_Init?relay   ; Banked call to: ZDApp_Init
-     90          #if defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )
-     91            ZDNwkMgr_Init( taskID++ );
+     89          #if defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )
+     90            ZDNwkMgr_Init( taskID++ );
    \   00003A                ; Setup parameters for call to function ZDNwkMgr_Init
    \   00003A   7906         MOV     R1,#0x6
    \   00003C   12....       LCALL   ??ZDNwkMgr_Init?relay; Banked call to: ZDNwkMgr_Init
-     92          #endif
-     93            zcl_Init( taskID++ );
+     91          #endif
+     92            zcl_Init( taskID++ );
    \   00003F                ; Setup parameters for call to function zcl_Init
    \   00003F   7907         MOV     R1,#0x7
    \   000041   12....       LCALL   ??zcl_Init?relay     ; Banked call to: zcl_Init
-     94            powerMeter_Init( taskID++ );
+     93            powerMeter_Init( taskID++ );
    \   000044                ; Setup parameters for call to function powerMeter_Init
    \   000044   7908         MOV     R1,#0x8
    \   000046   12....       LCALL   ??powerMeter_Init?relay; Banked call to: powerMeter_Init
-     95            CS5463_Init(taskID++);
+     94            CS5463_Init();
    \   000049                ; Setup parameters for call to function CS5463_Init
-   \   000049   7909         MOV     R1,#0x9
-   \   00004B   12....       LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init
-     96          }
-   \   00004E   D083         POP     DPH
-   \   000050   D082         POP     DPL
-   \   000052   02....       LJMP    ?BRET
+   \   000049   12....       LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init
+     95          }
+   \   00004C   D083         POP     DPH
+   \   00004E   D082         POP     DPL
+   \   000050   02....       LJMP    ?BRET
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??osalInitTasks?relay:
    \   000000   12....       LCALL   ?BDISPATCH
    \   000003   ......       DC24    osalInitTasks
-     97          
-     98          /*********************************************************************
-     99          *********************************************************************/
+     96          
+     97          /*********************************************************************
+     98          *********************************************************************/
 
    Maximum stack usage in bytes:
 
@@ -322,19 +319,19 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
    Bytes  Function/Label
    -----  --------------
        6  ??osalInitTasks?relay
-      85  osalInitTasks
-      20  tasksArr
+      83  osalInitTasks
+      18  tasksArr
        1  tasksCnt
        2  tasksEvents
 
  
- 85 bytes in segment BANKED_CODE
+ 83 bytes in segment BANKED_CODE
   6 bytes in segment BANK_RELAYS
- 21 bytes in segment XDATA_ROM_C
+ 19 bytes in segment XDATA_ROM_C
   2 bytes in segment XDATA_Z
  
- 91 bytes of CODE  memory
- 21 bytes of CONST memory
+ 89 bytes of CODE  memory
+ 19 bytes of CONST memory
   2 bytes of XDATA memory
 
 Errors: none

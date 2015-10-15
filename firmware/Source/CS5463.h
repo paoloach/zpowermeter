@@ -11,14 +11,9 @@
 #ifndef __CS5463__H__
 #define __CS5463__H__
 
-/*
-  * Initialization for the task
-  */
-extern void CS5463_Init( byte task_id );
+extern void CS5463_Init(void);
 
-/*
- *  Event Process for the task
- */
-extern UINT16 CS5463_EventLoop( byte task_id, UINT16 events );
+extern void CS5463_startConversion(void);
+
 
 #endif

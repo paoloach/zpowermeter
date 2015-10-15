@@ -136,12 +136,10 @@ void afInit( void )
  *
  * @return  Pointer to epList_t on success, NULL otherwise.
  */
-epList_t *afRegisterExtended( endPointDesc_t *epDesc, pDescCB descFn, pApplCB applFn )
-{
+epList_t *afRegisterExtended( endPointDesc_t *epDesc, pDescCB descFn, pApplCB applFn ){
   epList_t *ep = osal_mem_alloc(sizeof(epList_t));
 
-  if (ep != NULL)
-  {
+  if (ep != NULL) {
     ep->nextDesc = epList;
     epList = ep;
     ep->epDesc = epDesc;
@@ -168,14 +166,12 @@ epList_t *afRegisterExtended( endPointDesc_t *epDesc, pDescCB descFn, pApplCB ap
  *          afStatus_MEM_FAIL - not enough memory to add descriptor
  *          afStatus_INVALID_PARAMETER - duplicate endpoint
  */
-afStatus_t afRegister( endPointDesc_t *epDesc )
-{
-  if (afFindEndPointDescList(epDesc->endPoint))  // Look for duplicate endpoint.
-  {
-    return afStatus_INVALID_PARAMETER;
-  }
+afStatus_t afRegister( endPointDesc_t *epDesc ){
+	if (afFindEndPointDescList(epDesc->endPoint)){  // Look for duplicate endpoint.
+    	return afStatus_INVALID_PARAMETER;
+	}
 
-  return ((NULL == afRegisterExtended(epDesc, NULL, NULL)) ? afStatus_MEM_FAIL : afStatus_SUCCESS);
+	return ((NULL == afRegisterExtended(epDesc, NULL, NULL)) ? afStatus_MEM_FAIL : afStatus_SUCCESS);
 }
 
 /*********************************************************************

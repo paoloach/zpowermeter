@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             14/Oct/2015  18:27:02 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -128,51 +128,169 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
      10          ***************************************************************************************************/
      11          #include "ZComDef.h"
      12          #include "OSAL.h"
-     13          #include "CS5463.h"
-     14          
+     13          #include "ioCC2530.h"
 
-   \                                 In  segment XDATA_Z, align 1, keep-with-next
-     15          static byte CS5463TaskId;
-   \                     CS5463TaskId:
+   \                                 In  segment SFR_AN, at 0x80
+   \   union <unnamed> volatile __sfr _A_P0
+   \                     _A_P0:
    \   000000                DS 1
-   \   000001                REQUIRE __INIT_XDATA_Z
-     16          
+
+   \                                 In  segment SFR_AN, at 0xc1
+   \   unsigned char volatile __sfr U0DBUF
+   \                     U0DBUF:
+   \   000000                DS 1
+
+   \                                 In  segment SFR_AN, at 0xc2
+   \   unsigned char volatile __sfr U0BAUD
+   \                     U0BAUD:
+   \   000000                DS 1
+     14          #include "CS5463.h"
+     15          
+     16          // U0GCR
+     17          __sfr __no_init volatile struct  {
+     18          	unsigned char U0_CPOL: 1;
+     19          	unsigned char U0_CPHA: 1;
+     20          	unsigned char U0_ORDER: 1;
+     21          	unsigned char U0_BAUD_E: 5;
+
+   \                                 In  segment SFR_AN, at 0xc5
+     22          } @ 0xC5;
+   \                     _A_U0_CPOL:
+   \   000000                DS 1
+     23          
+     24          // U0CSR
+     25          __sfr __no_init volatile struct  {
+     26          	unsigned char U0_MODE: 1;
+     27          	unsigned char U0_RE: 1;
+     28          	unsigned char U0_SLAVE: 1;
+     29          	unsigned char U0_FE: 1;
+     30          	unsigned char U0_ERR: 1;
+     31          	unsigned char U0_RX_BYTE: 1;
+     32          	unsigned char U0_TX_BYTE: 1;
+     33          	unsigned char U0_ACTIVE: 1;
+
+   \                                 In  segment SFR_AN, at 0x86
+     34          } @ 0x86;
+   \                     _A_U0_MODE:
+   \   000000                DS 1
+     35          
+     36          __sfr __no_init volatile struct  {
+     37          	unsigned char DIR0_7: 1;
+     38          	unsigned char DIR0_6: 1;
+     39          	unsigned char DIR0_5: 1;
+     40          	unsigned char DIR0_4: 1;
+     41          	unsigned char DIR0_3: 1;
+     42          	unsigned char DIR0_2: 1;
+     43          	unsigned char DIR0_1: 1;
+     44          	unsigned char DIR0_0: 1;
+
+   \                                 In  segment SFR_AN, at 0xfd
+     45          } @ 0xFD;
+   \                     _A_DIR0_7:
+   \   000000                DS 1
+     46          
+     47          __sfr __no_init volatile struct  {
+     48          	unsigned char P0SEL_7: 1;
+     49          	unsigned char P0SEL_6: 1;
+     50          	unsigned char P0SEL_5: 1;
+     51          	unsigned char P0SEL_4: 1;
+     52          	unsigned char P0SEL_3: 1;
+     53          	unsigned char P0SEL_2: 1;
+     54          	unsigned char P0SEL_1: 1;
+     55          	unsigned char P0SEL_0: 1;
+
+   \                                 In  segment SFR_AN, at 0xf3
+     56          } @ 0xF3;
+   \                     _A_P0SEL_7:
+   \   000000                DS 1
+     57          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     17          extern void CS5463_Init( byte taskId ){
+     58          void CS5463_Init(void ){
    \                     CS5463_Init:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-     18          	CS5463TaskId = taskId;
-   \   000004   E9           MOV     A,R1
-   \   000005   90....       MOV     DPTR,#CS5463TaskId
-   \   000008   F0           MOVX    @DPTR,A
-     19          }
-   \   000009   D083         POP     DPH
-   \   00000B   D082         POP     DPL
-   \   00000D   02....       LJMP    ?BRET
-     20          
-     21          /*
-     22           *  Event Process for the task
-     23           */
+     59          	U0_ACTIVE=0;
+   \   000004   53867F       ANL     0x86,#0x7f
+     60          	U0BAUD=0;
+   \   000007   75C200       MOV     0xc2,#0x0
+     61          	U0_BAUD_E=15;
+   \   00000A   E5C5         MOV     A,0xc5
+   \   00000C   5407         ANL     A,#0x7
+   \   00000E   4478         ORL     A,#0x78
+   \   000010   F5C5         MOV     0xc5,A
+     62          	U0_CPOL=0;
+   \   000012   53C5FE       ANL     0xc5,#0xfe
+     63          	U0_CPHA=0;
+   \   000015   53C5FD       ANL     0xc5,#0xfd
+     64          	U0_ORDER=1;
+   \   000018   43C504       ORL     0xc5,#0x4
+     65          	
+     66          	U0_MODE=0;
+   \   00001B   5386FE       ANL     0x86,#0xfe
+     67          	U0_SLAVE=0;
+   \   00001E   5386FB       ANL     0x86,#0xfb
+     68          	
+     69          	P0SEL_2=1;
+   \   000021   43F320       ORL     0xf3,#0x20
+     70          	P0SEL_3=1;
+   \   000024   43F310       ORL     0xf3,#0x10
+     71          	P0SEL_5=1;
+   \   000027   43F304       ORL     0xf3,#0x4
+     72          	
+     73          	DIR0_7 = 1;
+   \   00002A   43FD01       ORL     0xfd,#0x1
+     74          	P0SEL_7 = 0;
+   \   00002D   53F3FE       ANL     0xf3,#0xfe
+     75          	P0_7=1;
+   \   000030   D287         SETB    0x80.7
+     76          	
+     77          	CS5463_startConversion();
+   \   000032                ; Setup parameters for call to function CS5463_startConversion
+   \   000032   12....       LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion
+     78          }
+   \   000035   D083         POP     DPH
+   \   000037   D082         POP     DPL
+   \   000039   02....       LJMP    ?BRET
+   \   00003C                REQUIRE _A_U0_MODE
+   \   00003C                REQUIRE U0BAUD
+   \   00003C                REQUIRE _A_U0_CPOL
+   \   00003C                REQUIRE _A_P0SEL_7
+   \   00003C                REQUIRE _A_DIR0_7
+   \   00003C                REQUIRE _A_P0
+     79          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     24          extern UINT16 CS5463_EventLoop( byte task_id, UINT16 events ) {
-   \                     CS5463_EventLoop:
+     80          void CS5463_startConversion(void) {
+   \                     CS5463_startConversion:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
-     25          }
-                 ^
-Warning[Pe940]: missing return statement at end of non-void function
-          "CS5463_EventLoop"
-
-  static byte CS5463TaskId;
-              ^
-"C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c",15  Warning[Pe550]: 
-          variable "CS5463TaskId" was set but never used
-   \   000000   02....       LJMP    ?BRET
+     81          	P0_7=0;
+   \   000000   C287         CLR     0x80.7
+     82          	asm("NOP");
+   \   000002   00           NOP
+     83          	asm("NOP");
+   \   000003   00           NOP
+     84          	U0DBUF=0xE8;
+   \   000004   75C1E8       MOV     0xc1,#-0x18
+     85          	while(U0_TX_BYTE==0);
+   \                     ??CS5463_startConversion_0:
+   \   000007   E586         MOV     A,0x86
+   \   000009   A2E6         MOV     C,0xE0 /* A   */.6
+   \   00000B   50FA         JNC     ??CS5463_startConversion_0
+     86          	asm("NOP");
+   \   00000D   00           NOP
+     87          	asm("NOP");
+   \   00000E   00           NOP
+     88          	P0_7=1;
+   \   00000F   D287         SETB    0x80.7
+     89          }
+   \   000011   02....       LJMP    ?BRET
+   \   000014                REQUIRE _A_P0
+   \   000014                REQUIRE U0DBUF
+   \   000014                REQUIRE _A_U0_MODE
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??CS5463_Init?relay:
@@ -180,35 +298,43 @@ Warning[Pe940]: missing return statement at end of non-void function
    \   000003   ......       DC24    CS5463_Init
 
    \                                 In  segment BANK_RELAYS, align 1
-   \                     ??CS5463_EventLoop?relay:
+   \                     ??CS5463_startConversion?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    CS5463_EventLoop
+   \   000003   ......       DC24    CS5463_startConversion
+     90          
 
    Maximum stack usage in bytes:
 
    ISTACK Function
    ------ --------
-      0   CS5463_EventLoop
       2   CS5463_Init
+        2   -> CS5463_startConversion
+      0   CS5463_startConversion
 
 
    Segment part sizes:
 
    Bytes  Function/Label
    -----  --------------
-       6  ??CS5463_EventLoop?relay
        6  ??CS5463_Init?relay
-       1  CS5463TaskId
-       3  CS5463_EventLoop
-      16  CS5463_Init
+       6  ??CS5463_startConversion?relay
+      60  CS5463_Init
+      20  CS5463_startConversion
+       1  U0BAUD
+       1  U0DBUF
+       1  _A_DIR0_7
+       1  _A_P0
+       1  _A_P0SEL_7
+       1  _A_U0_CPOL
+       1  _A_U0_MODE
 
  
- 19 bytes in segment BANKED_CODE
+ 80 bytes in segment BANKED_CODE
  12 bytes in segment BANK_RELAYS
-  1 byte  in segment XDATA_Z
+  7 bytes in segment SFR_AN
  
- 31 bytes of CODE  memory
-  1 byte  of XDATA memory
+ 92 bytes of CODE memory
+  0 bytes of DATA memory (+ 7 bytes shared)
 
 Errors: none
-Warnings: 2
+Warnings: none

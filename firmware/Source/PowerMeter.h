@@ -11,48 +11,21 @@ extern "C"
 {
 #endif
 
-/*********************************************************************
- * INCLUDES
- */
 #include "zcl.h"
 
-/*********************************************************************
- * CONSTANTS
- */
-#define ENDPOINT            13
+#define ENDPOINT_ONOFF            13
 
 
-/*********************************************************************
- * MACROS
- */
-/*********************************************************************
- * TYPEDEFS
- */
+extern SimpleDescriptionFormat_t OnOff_SimpleDesc;
+extern SimpleDescriptionFormat_t PowerMetering_SimpleDesc;
 
-/*********************************************************************
- * VARIABLES
- */
-extern SimpleDescriptionFormat_t powerMeter_SimpleDesc;
+extern CONST zclAttrRec_t onOffAttrs[];
 
-extern CONST zclAttrRec_t powerMeterAttrs[];
-
-/*********************************************************************
- * FUNCTIONS
- */
-
- /*
-  * Initialization for the task
-  */
 extern void powerMeter_Init( byte task_id );
 
-/*
- *  Event Process for the task
- */
 extern UINT16 powerMeterEventLoop( byte task_id, UINT16 events );
 
 
-/*********************************************************************
-*********************************************************************/
 
 #ifdef __cplusplus
 }

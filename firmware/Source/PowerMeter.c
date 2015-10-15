@@ -25,6 +25,7 @@
 #include "hal_key.h"
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
+#include "clusters/ClusterOnOff.h"
 
 static byte zPowerMeterTaskID;
 
@@ -50,30 +51,15 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
  * @return      none
  */
 void powerMeter_Init( byte task_id ){
-  zPowerMeterTaskID = task_id;
-
-  // Set destination address to indirect
-  //zclSampleLight_DstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
-  //zclSampleLight_DstAddr.endPoint = 0;
-  //zclSampleLight_DstAddr.addr.shortAddr = 0;
-
-  // This app is part of the Home Automation Profile
-  zclHA_Init( &powerMeter_SimpleDesc );
-
-  // Register the ZCL General Cluster Library callback functions
-//  zclGeneral_RegisterCmdCallbacks(ENDPOINT, &zclSampleLight_CmdCallbacks );
-   zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
-  
-
-  	// Register the application's attribute list
-  	zcl_registerAttrList(ENDPOINT, powerMeterAttrs );
-
-  	// Register the Application to receive the unprocessed Foundation command/response messages
+	zPowerMeterTaskID = task_id;
+	zclHA_Init( &OnOff_SimpleDesc );
+	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
+ 	zcl_registerAttrList(ENDPOINT_ONOFF, onOffAttrs );
   	zcl_registerForMsg( zPowerMeterTaskID );
   
   	EA=1;
  	identifyInit(zPowerMeterTaskID);
-
+	onOffInit();
 }
 
 /*********************************************************************

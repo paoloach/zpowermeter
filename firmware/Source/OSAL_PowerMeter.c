@@ -32,7 +32,7 @@
 #endif
 
 #include "PowerMeter.h"
-#include "CS2530.h"
+#include "CS5463.h"
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -52,8 +52,7 @@ const pTaskEventHandlerFn tasksArr[] = {
   ZDNwkMgr_event_loop,
 #endif
   zcl_event_loop,
-  powerMeterEventLoop,
-  CS5463_EventLoop
+  powerMeterEventLoop
 };
 
 const uint8 tasksCnt = sizeof( tasksArr ) / sizeof( tasksArr[0] );
@@ -92,7 +91,7 @@ void osalInitTasks( void )
 #endif
   zcl_Init( taskID++ );
   powerMeter_Init( taskID++ );
-  CS5463_Init(taskID++);
+  CS5463_Init();
 }
 
 /*********************************************************************

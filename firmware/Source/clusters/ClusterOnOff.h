@@ -25,7 +25,7 @@ void setIOStatus(void);
 
 #define ONOF_ATTRIBUTES   {ZCL_CLUSTER_ID_GEN_ON_OFF,{ATTRID_ON_OFF, ZCL_DATATYPE_BOOLEAN, ACCESS_CONTROL_READ,(void *)&onOffValue,&setIOStatus } },
 
-
+void onOffInit(void);
 void setLightStatus(uint8 status);
 
 ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg);

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            14/Oct/2015  08:15:11 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:38 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -527,21 +527,19 @@ NwkInfoStrs:
 //  104  * @fn      zclHA_Init
 //  105  *
 //  106  * @brief   Register the Simple descriptor with the HA profile.
-//  107  *          This function also registers the profile's cluster
-//  108  *          conversion table.
-//  109  *
-//  110  * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
-//  111  *
-//  112  * @return  none
-//  113  */
+//  107  *          This function also registers the profile's cluster conversion table.
+//  108  *
+//  109  * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
+//  110  *
+//  111  * @return  none
+//  112  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  114 void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc )
+//  113 void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc ){
 zclHA_Init:
           CFI Block cfiBlock0 Using cfiCommon0
           CFI Function zclHA_Init
         CODE
-//  115 {
         FUNCALL zclHA_Init, osal_mem_alloc
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
@@ -586,55 +584,54 @@ zclHA_Init:
         MOV     R6,A
         MOV     A,R3
         MOV     R7,A
-//  116   endPointDesc_t *epDesc;
-//  117 
-//  118   // Register the application's endpoint descriptor
-//  119   //  - This memory is allocated and never freed.
-//  120   epDesc = osal_mem_alloc( sizeof ( endPointDesc_t ) );
+//  114   endPointDesc_t *epDesc;
+//  115 
+//  116   // Register the application's endpoint descriptor
+//  117   //  - This memory is allocated and never freed.
+//  118   epDesc = osal_mem_alloc( sizeof ( endPointDesc_t ) );
         ; Setup parameters for call to function osal_mem_alloc
         MOV     R2,#0x6
         MOV     R3,#0x0
         LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
-//  121   if ( epDesc )
+//  119   if ( epDesc ) {
         MOV     A,R2
         ORL     A,R3
         JZ      ??zclHA_Init_0
-//  122   {
-//  123     // Fill out the endpoint description.
-//  124     epDesc->endPoint = simpleDesc->EndPoint;
+//  120     // Fill out the endpoint description.
+//  121     epDesc->endPoint = simpleDesc->EndPoint;
         MOV     DPL,R6
         MOV     DPH,R7
         MOVX    A,@DPTR
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  125     epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
+//  122     epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
         INC     DPTR
         MOV     A,#zcl_TaskID & 0xff
         MOVX    @DPTR,A
         INC     DPTR
         MOV     A,#(zcl_TaskID >> 8) & 0xff
         LCALL   ?Subroutine3 & 0xFFFF
-//  126     epDesc->simpleDesc = simpleDesc;
+//  123     epDesc->simpleDesc = simpleDesc;
 ??CrossCallReturnLabel_5:
         MOV     A,R6
         MOVX    @DPTR,A
         INC     DPTR
         MOV     A,R7
         LCALL   ?Subroutine3 & 0xFFFF
-//  127     epDesc->latencyReq = noLatencyReqs;
+//  124     epDesc->latencyReq = noLatencyReqs;
 ??CrossCallReturnLabel_6:
         INC     DPTR
         INC     DPTR
         CLR     A
         MOVX    @DPTR,A
-//  128 
-//  129     // Register the endpoint description with the AF
-//  130     afRegister( epDesc );
+//  125 
+//  126     // Register the endpoint description with the AF
+//  127     afRegister( epDesc );
         ; Setup parameters for call to function afRegister
         LCALL   ??afRegister?relay   ; Banked call to: afRegister
-//  131   }
-//  132 }
+//  128   }
+//  129 }
 ??zclHA_Init_0:
         MOV     R7,#0x2
         LJMP    ?BANKED_LEAVE_XDATA
@@ -685,25 +682,25 @@ zclHA_Init:
           CFI EndBlock cfiCond1
           CFI EndBlock cfiCond2
           CFI EndBlock cfiPicker3
-//  133 
-//  134 /*********************************************************************
-//  135  * @fn      zclHA_isbit
-//  136  *
-//  137  * @brief   Returns TRUE if the index bit is set
+//  130 
+//  131 /*********************************************************************
+//  132  * @fn      zclHA_isbit
+//  133  *
+//  134  * @brief   Returns TRUE if the index bit is set
+//  135  *
+//  136  * @param   pArray   - array with bits in it
+//  137  *          bitIndex - index into the array of bits
 //  138  *
-//  139  * @param   pArray   - array with bits in it
-//  140  *          bitIndex - index into the array of bits
-//  141  *
-//  142  * @return  TRUE if index bit is set
-//  143  */
+//  139  * @return  TRUE if index bit is set
+//  140  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  144 bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
+//  141 bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
 zclHA_isbit:
           CFI Block cfiBlock4 Using cfiCommon0
           CFI Function zclHA_isbit
         CODE
-//  145 {
+//  142 {
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -714,9 +711,9 @@ zclHA_isbit:
         ; Auto size: 0
         MOV     A,R1
         MOV     R4,A
-//  146   uint8 bit;
-//  147   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  148   if( pArray[bitIndex >> 3] & bit )
+//  143   uint8 bit;
+//  144   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  145   if( pArray[bitIndex >> 3] & bit )
         RRC     A
         RRC     A
         RRC     A
@@ -745,35 +742,35 @@ zclHA_isbit:
 ??zclHA_isbit_1:
         MOV     C,0xE0 /* A   */.0
         JNC     ??zclHA_isbit_2
-//  149     return TRUE;
+//  146     return TRUE;
         MOV     R1,#0x1
         SJMP    ??zclHA_isbit_3
-//  150   return FALSE;
+//  147   return FALSE;
 ??zclHA_isbit_2:
         MOV     R1,#0x0
 ??zclHA_isbit_3:
         SJMP    ??Subroutine4_0
           CFI EndBlock cfiBlock4
-//  151 }
-//  152 
-//  153 /*********************************************************************
-//  154  * @fn      zclHA_setbit
-//  155  *
-//  156  * @brief   Sets a bit in a bit array
+//  148 }
+//  149 
+//  150 /*********************************************************************
+//  151  * @fn      zclHA_setbit
+//  152  *
+//  153  * @brief   Sets a bit in a bit array
+//  154  *
+//  155  * @param   pArray   - array with bits in it
+//  156  *          bitIndex - index into the array of bits
 //  157  *
-//  158  * @param   pArray   - array with bits in it
-//  159  *          bitIndex - index into the array of bits
-//  160  *
-//  161  * @return  none
-//  162  */
+//  158  * @return  none
+//  159  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  163 void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
+//  160 void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
 zclHA_setbit:
           CFI Block cfiBlock5 Using cfiCommon0
           CFI Function zclHA_setbit
         CODE
-//  164 {
+//  161 {
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -782,9 +779,9 @@ zclHA_setbit:
           CFI CFA_SP SP+-5
         ; Saved register size: 2
         ; Auto size: 0
-//  165   uint8 bit;
-//  166   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  167   pArray[bitIndex >> 3] |= bit;
+//  162   uint8 bit;
+//  163   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  164   pArray[bitIndex >> 3] |= bit;
         MOV     A,#0x7
         ANL     A,R1
         MOV     R0,A
@@ -802,7 +799,7 @@ zclHA_setbit:
           CFI EndBlock cfiBlock5
         REQUIRE ?Subroutine0
         ; // Fall through to label ?Subroutine0
-//  168 }
+//  165 }
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine0:
@@ -831,25 +828,25 @@ zclHA_setbit:
           CFI DPL0 SameValue
         LJMP    ?BRET
           CFI EndBlock cfiBlock7
-//  169 
-//  170 /*********************************************************************
-//  171  * @fn      zclHA_clearbit
-//  172  *
-//  173  * @brief   clears a bit in a bit array
+//  166 
+//  167 /*********************************************************************
+//  168  * @fn      zclHA_clearbit
+//  169  *
+//  170  * @brief   clears a bit in a bit array
+//  171  *
+//  172  * @param   pArray   - array with bits in it
+//  173  *          bitIndex - index into the array of bits
 //  174  *
-//  175  * @param   pArray   - array with bits in it
-//  176  *          bitIndex - index into the array of bits
-//  177  *
-//  178  * @return  none
-//  179  */
+//  175  * @return  none
+//  176  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  180 void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
+//  177 void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
 zclHA_clearbit:
           CFI Block cfiBlock8 Using cfiCommon0
           CFI Function zclHA_clearbit
         CODE
-//  181 {
+//  178 {
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -858,9 +855,9 @@ zclHA_clearbit:
           CFI CFA_SP SP+-5
         ; Saved register size: 2
         ; Auto size: 0
-//  182   uint8 bit;
-//  183   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  184   pArray[bitIndex >> 3] &= (~(unsigned)bit);
+//  179   uint8 bit;
+//  180   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  181   pArray[bitIndex >> 3] &= (~(unsigned)bit);
         MOV     A,#0x7
         ANL     A,R1
         MOV     R0,A
@@ -878,7 +875,7 @@ zclHA_clearbit:
         ANL     A,R0
         SJMP    ?Subroutine0
           CFI EndBlock cfiBlock8
-//  185 }
+//  182 }
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine1:
@@ -915,27 +912,27 @@ zclHA_clearbit:
           CFI EndBlock cfiCond9
           CFI EndBlock cfiCond10
           CFI EndBlock cfiPicker11
-//  186 
-//  187 /*********************************************************************
-//  188  * @fn      zclHA_uint16toa
-//  189  *
-//  190  * @brief   Converts from a uint16 to ascii hex string.
-//  191  *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
-//  192  *          NULL terminates the string.
+//  183 
+//  184 /*********************************************************************
+//  185  * @fn      zclHA_uint16toa
+//  186  *
+//  187  * @brief   Converts from a uint16 to ascii hex string.
+//  188  *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
+//  189  *          NULL terminates the string.
+//  190  *
+//  191  * @param   u - Number to be converted
+//  192  *          string - pointer to coverted string
 //  193  *
-//  194  * @param   u - Number to be converted
-//  195  *          string - pointer to coverted string
-//  196  *
-//  197  * @return  none
-//  198  */
+//  194  * @return  none
+//  195  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  199 void zclHA_uint16toa(uint16 u, char *string)
+//  196 void zclHA_uint16toa(uint16 u, char *string)
 zclHA_uint16toa:
           CFI Block cfiBlock12 Using cfiCommon0
           CFI Function zclHA_uint16toa
         CODE
-//  200 {
+//  197 {
         FUNCALL zclHA_uint16toa, _ltoa
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
@@ -969,29 +966,29 @@ zclHA_uint16toa:
           CFI CFA_XSP16 add(XSP16, 12)
         ; Saved register size: 12
         ; Auto size: 0
-//  201   // add preceding zeros
-//  202   if ( u < 0x1000 )
+//  198   // add preceding zeros
+//  199   if ( u < 0x1000 )
         CLR     C
         MOV     A,R3
         SUBB    A,#0x10
         JNC     ??CrossCallReturnLabel_2
-//  203   {
-//  204     *string++ = '0';
+//  200   {
+//  201     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  205   }
-//  206 
-//  207   if ( u < 0x0100 )
+//  202   }
+//  203 
+//  204   if ( u < 0x0100 )
 ??CrossCallReturnLabel_2:
         CLR     C
         MOV     A,R3
         SUBB    A,#0x1
         JNC     ??CrossCallReturnLabel_3
-//  208   {
-//  209     *string++ = '0';
+//  205   {
+//  206     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  210   }
-//  211 
-//  212   if ( u < 0x0010 )
+//  207   }
+//  208 
+//  209   if ( u < 0x0010 )
 ??CrossCallReturnLabel_3:
         CLR     C
         MOV     A,R2
@@ -999,12 +996,12 @@ zclHA_uint16toa:
         MOV     A,R3
         SUBB    A,#0x0
         JNC     ??CrossCallReturnLabel_4
-//  213   {
-//  214     *string++ = '0';
+//  210   {
+//  211     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  215   }
-//  216 
-//  217   _ltoa((unsigned long)u, (unsigned char *)string, 16);
+//  212   }
+//  213 
+//  214   _ltoa((unsigned long)u, (unsigned char *)string, 16);
 ??CrossCallReturnLabel_4:
         ; Setup parameters for call to function _ltoa
         MOV     ?V0,R4
@@ -1020,7 +1017,7 @@ zclHA_uint16toa:
         MOV     A,#0x2
         LCALL   ?DEALLOC_XSTACK8
           CFI CFA_XSP16 add(XSP16, 12)
-//  218 }
+//  215 }
         MOV     R7,#0x4
         LJMP    ?BANKED_LEAVE_XDATA
           CFI EndBlock cfiBlock12
@@ -1093,27 +1090,27 @@ zclHA_uint16toa:
           CFI EndBlock cfiCond14
           CFI EndBlock cfiCond15
           CFI EndBlock cfiPicker16
-//  219 
-//  220 /*********************************************************************
-//  221  * @fn      zclHA_uint8toa
-//  222  *
-//  223  * @brief   Converts from a uint8 to ascii decimal string.
-//  224  *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
-//  225  *          No null terminator.
+//  216 
+//  217 /*********************************************************************
+//  218  * @fn      zclHA_uint8toa
+//  219  *
+//  220  * @brief   Converts from a uint8 to ascii decimal string.
+//  221  *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
+//  222  *          No null terminator.
+//  223  *
+//  224  * @param   b - Byte to be converted
+//  225  *          string - pointer to coverted string
 //  226  *
-//  227  * @param   b - Byte to be converted
-//  228  *          string - pointer to coverted string
-//  229  *
-//  230  * @return  none
-//  231  */
+//  227  * @return  none
+//  228  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  232 void zclHA_uint8toa(uint8 b, char *string)
+//  229 void zclHA_uint8toa(uint8 b, char *string)
 zclHA_uint8toa:
           CFI Block cfiBlock17 Using cfiCommon0
           CFI Function zclHA_uint8toa
         CODE
-//  233 {
+//  230 {
         MOV     A,#-0x9
         LCALL   ?BANKED_ENTER_XDATA
           CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
@@ -1131,8 +1128,8 @@ zclHA_uint8toa:
         ; Auto size: 0
         MOV     A,R1
         MOV     R6,A
-//  234   // write the level (up to 3 digits, pre-padded with spaces)
-//  235   string[0] = string[1] = string[2] = '0';
+//  231   // write the level (up to 3 digits, pre-padded with spaces)
+//  232   string[0] = string[1] = string[2] = '0';
         MOV     A,R2
         ADD     A,#0x2
         MOV     R0,A
@@ -1156,7 +1153,7 @@ zclHA_uint8toa:
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  236   string[2] = '0' + (b % 10);  // 1s
+//  233   string[2] = '0' + (b % 10);  // 1s
         MOV     A,R6
         MOV     B,#0xa
         DIV     AB
@@ -1165,15 +1162,15 @@ zclHA_uint8toa:
         MOV     DPL,R4
         MOV     DPH,R5
         MOVX    @DPTR,A
-//  237   b = b / 10;
+//  234   b = b / 10;
         MOV     B,#0xa
         MOV     A,R6
         DIV     AB
         MOV     R6,A
-//  238   if( b )
+//  235   if( b )
         JZ      ??zclHA_uint8toa_0
-//  239   {
-//  240     string[1] = '0' + (b % 10);  // 10s
+//  236   {
+//  237     string[1] = '0' + (b % 10);  // 10s
         MOV     B,#0xa
         DIV     AB
         MOV     A,B
@@ -1181,15 +1178,15 @@ zclHA_uint8toa:
         MOV     DPL,R0
         MOV     DPH,R1
         MOVX    @DPTR,A
-//  241     b = b / 10;
+//  238     b = b / 10;
         MOV     B,#0xa
         MOV     A,R6
         DIV     AB
-//  242   }
-//  243   if( b )
+//  239   }
+//  240   if( b )
         JZ      ??zclHA_uint8toa_0
-//  244   {
-//  245    string[0] = '0' + (b % 10);  // 100s
+//  241   {
+//  242    string[0] = '0' + (b % 10);  // 100s
         MOV     B,#0xa
         DIV     AB
         MOV     A,B
@@ -1197,57 +1194,57 @@ zclHA_uint8toa:
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  246   }
-//  247 }
+//  243   }
+//  244 }
 ??zclHA_uint8toa_0:
         MOV     R7,#0x1
         LJMP    ?BANKED_LEAVE_XDATA
           CFI EndBlock cfiBlock17
-//  248 
-//  249 /*********************************************************************
-//  250  * @fn      zclHA_LcdStatusLine1
-//  251  *
-//  252  * @brief   Display LCD line 1 with network status
-//  253  *          only call after on network
-//  254  *          ZC: PPPP CH ADDR
-//  255  *          ZR: PPPP CH ADDR
-//  256  *          ZE: PPPP CH ADDR
-//  257  *
-//  258  * @param   kind (0=ZC, 1=ZR, 2=ZED)
-//  259  *
-//  260  * @return  none
-//  261  */
+//  245 
+//  246 /*********************************************************************
+//  247  * @fn      zclHA_LcdStatusLine1
+//  248  *
+//  249  * @brief   Display LCD line 1 with network status
+//  250  *          only call after on network
+//  251  *          ZC: PPPP CH ADDR
+//  252  *          ZR: PPPP CH ADDR
+//  253  *          ZE: PPPP CH ADDR
+//  254  *
+//  255  * @param   kind (0=ZC, 1=ZR, 2=ZED)
+//  256  *
+//  257  * @return  none
+//  258  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  262 void zclHA_LcdStatusLine1( uint8 kind )
+//  259 void zclHA_LcdStatusLine1( uint8 kind )
 zclHA_LcdStatusLine1:
           CFI Block cfiBlock18 Using cfiCommon0
           CFI Function zclHA_LcdStatusLine1
         CODE
-//  263 {
+//  260 {
         ; Saved register size: 0
         ; Auto size: 0
-//  264 #if defined ( LCD_SUPPORTED )
-//  265   char szLine[20];
-//  266 
-//  267   // copy in what node type it is
-//  268   if ( kind > ZCL_HA_DEVICE_END_DEVICE )
-//  269   {
-//  270     return;
-//  271   }
-//  272 
-//  273   // ZE: PANx CH ADDR
-//  274   osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
-//  275   zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
-//  276   szLine[8] = ' ';
+//  261 #if defined ( LCD_SUPPORTED )
+//  262   char szLine[20];
+//  263 
+//  264   // copy in what node type it is
+//  265   if ( kind > ZCL_HA_DEVICE_END_DEVICE )
+//  266   {
+//  267     return;
+//  268   }
+//  269 
+//  270   // ZE: PANx CH ADDR
+//  271   osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
+//  272   zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
+//  273   szLine[8] = ' ';
+//  274 
+//  275   _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
+//  276   szLine[11] = ' ';
 //  277 
-//  278   _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
-//  279   szLine[11] = ' ';
-//  280 
-//  281   zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
-//  282   HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
-//  283 #endif
-//  284 }
+//  278   zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
+//  279   HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
+//  280 #endif
+//  281 }
         LJMP    ?BRET
           CFI EndBlock cfiBlock18
 
@@ -1301,9 +1298,9 @@ zclHA_LcdStatusLine1:
         DC24    zclHA_LcdStatusLine1
 
         END
-//  285 
-//  286 /*********************************************************************
-//  287 *********************************************************************/
+//  282 
+//  283 /*********************************************************************
+//  284 *********************************************************************/
 // 
 // 371 bytes in segment BANKED_CODE
 //  42 bytes in segment BANK_RELAYS

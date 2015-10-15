@@ -504,16 +504,13 @@ uint8 zcl_getParsedTransSeqNum( void )
  *
  * @return      ZSuccess if OK
  */
-ZStatus_t zcl_registerPlugin( uint16 startClusterID,
-          uint16 endClusterID, zclInHdlr_t pfnIncomingHdlr )
-{
+ZStatus_t zcl_registerPlugin( uint16 startClusterID, uint16 endClusterID, zclInHdlr_t pfnIncomingHdlr ){
   zclLibPlugin_t *pNewItem;
   zclLibPlugin_t *pLoop;
 
   // Fill in the new profile list
   pNewItem = zcl_mem_alloc( sizeof( zclLibPlugin_t ) );
-  if ( pNewItem == NULL )
-  {
+  if ( pNewItem == NULL ){
     return (ZMemError);
   }
 

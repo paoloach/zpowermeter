@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            14/Oct/2015  18:27:02 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:45 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -135,19 +135,27 @@
 
         EXTERN ?BDISPATCH
         EXTERN ?BRET
-        EXTERN __INIT_XDATA_Z
 
-        PUBLIC ??CS5463_EventLoop?relay
-        FUNCTION ??CS5463_EventLoop?relay,0203H
         PUBLIC ??CS5463_Init?relay
         FUNCTION ??CS5463_Init?relay,0203H
-        PUBLIC CS5463_EventLoop
-        FUNCTION CS5463_EventLoop,0203H
-        ARGFRAME XSTACK, 0, STACK
+        PUBLIC ??CS5463_startConversion?relay
+        FUNCTION ??CS5463_startConversion?relay,0203H
         PUBLIC CS5463_Init
-        FUNCTION CS5463_Init,0203H
+        FUNCTION CS5463_Init,021203H
         ARGFRAME XSTACK, 0, STACK
         LOCFRAME ISTACK, 2, STACK
+        PUBLIC CS5463_startConversion
+        FUNCTION CS5463_startConversion,080203H
+        ARGFRAME XSTACK, 0, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        PUBWEAK U0BAUD
+        PUBWEAK U0DBUF
+        PUBWEAK _A_DIR0_7
+        PUBWEAK _A_P0
+        PUBWEAK _A_P0SEL_7
+        PUBWEAK _A_U0_CPOL
+        PUBWEAK _A_U0_MODE
         
           CFI Names cfiNames0
           CFI StackFrame CFA_SP SP IDATA
@@ -237,10 +245,10 @@
           CFI ?RET_LOW Frame(CFA_SP, 1)
           CFI EndCommon cfiCommon0
         
-CS5463_EventLoop    SYMBOL "CS5463_EventLoop"
-??CS5463_EventLoop?relay SYMBOL "?relay", CS5463_EventLoop
 CS5463_Init         SYMBOL "CS5463_Init"
 ??CS5463_Init?relay SYMBOL "?relay", CS5463_Init
+CS5463_startConversion SYMBOL "CS5463_startConversion"
+??CS5463_startConversion?relay SYMBOL "?relay", CS5463_startConversion
 
 // C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
 //    1 /**************************************************************************************************
@@ -255,23 +263,107 @@ CS5463_Init         SYMBOL "CS5463_Init"
 //   10 ***************************************************************************************************/
 //   11 #include "ZComDef.h"
 //   12 #include "OSAL.h"
-//   13 #include "CS5463.h"
-//   14 
+//   13 #include "ioCC2530.h"
 
-        RSEG XDATA_Z:XDATA:NOROOT(0)
+        ASEGN SFR_AN:DATA:NOROOT,080H
+// union <unnamed> volatile __sfr _A_P0
+_A_P0:
         DATA8
-//   15 static byte CS5463TaskId;
-CS5463TaskId:
         DS 1
-        REQUIRE __INIT_XDATA_Z
-//   16 
+
+        ASEGN SFR_AN:DATA:NOROOT,0c1H
+// unsigned char volatile __sfr U0DBUF
+U0DBUF:
+        DATA8
+        DS 1
+
+        ASEGN SFR_AN:DATA:NOROOT,0c2H
+// unsigned char volatile __sfr U0BAUD
+U0BAUD:
+        DATA8
+        DS 1
+//   14 #include "CS5463.h"
+//   15 
+//   16 // U0GCR
+//   17 __sfr __no_init volatile struct  {
+//   18 	unsigned char U0_CPOL: 1;
+//   19 	unsigned char U0_CPHA: 1;
+//   20 	unsigned char U0_ORDER: 1;
+//   21 	unsigned char U0_BAUD_E: 5;
+
+        ASEGN SFR_AN:DATA:NOROOT,0c5H
+//   22 } @ 0xC5;
+_A_U0_CPOL:
+        DATA8
+        DS 1
+//   23 
+//   24 // U0CSR
+//   25 __sfr __no_init volatile struct  {
+//   26 	unsigned char U0_MODE: 1;
+//   27 	unsigned char U0_RE: 1;
+//   28 	unsigned char U0_SLAVE: 1;
+//   29 	unsigned char U0_FE: 1;
+//   30 	unsigned char U0_ERR: 1;
+//   31 	unsigned char U0_RX_BYTE: 1;
+//   32 	unsigned char U0_TX_BYTE: 1;
+//   33 	unsigned char U0_ACTIVE: 1;
+
+        ASEGN SFR_AN:DATA:NOROOT,086H
+//   34 } @ 0x86;
+_A_U0_MODE:
+        DATA8
+        DS 1
+//   35 
+//   36 __sfr __no_init volatile struct  {
+//   37 	unsigned char DIR0_7: 1;
+//   38 	unsigned char DIR0_6: 1;
+//   39 	unsigned char DIR0_5: 1;
+//   40 	unsigned char DIR0_4: 1;
+//   41 	unsigned char DIR0_3: 1;
+//   42 	unsigned char DIR0_2: 1;
+//   43 	unsigned char DIR0_1: 1;
+//   44 	unsigned char DIR0_0: 1;
+
+        ASEGN SFR_AN:DATA:NOROOT,0fdH
+//   45 } @ 0xFD;
+_A_DIR0_7:
+        DATA8
+        DS 1
+//   46 
+//   47 __sfr __no_init volatile struct  {
+//   48 	unsigned char P0SEL_7: 1;
+//   49 	unsigned char P0SEL_6: 1;
+//   50 	unsigned char P0SEL_5: 1;
+//   51 	unsigned char P0SEL_4: 1;
+//   52 	unsigned char P0SEL_3: 1;
+//   53 	unsigned char P0SEL_2: 1;
+//   54 	unsigned char P0SEL_1: 1;
+//   55 	unsigned char P0SEL_0: 1;
+
+        ASEGN SFR_AN:DATA:NOROOT,0f3H
+//   56 } @ 0xF3;
+_A_P0SEL_7:
+        DATA8
+        DS 1
+//   57 
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//   17 extern void CS5463_Init( byte taskId ){
+//   58 void CS5463_Init(void ){
 CS5463_Init:
           CFI Block cfiBlock0 Using cfiCommon0
           CFI Function CS5463_Init
         CODE
+        FUNCALL CS5463_Init, CS5463_startConversion
+        LOCFRAME ISTACK, 2, STACK
+        LOCFRAME PSTACK, 0, STACK
+        LOCFRAME XSTACK, 0, STACK
+        LOCFRAME IOVERLAY, 0, STATIC
+        LOCFRAME DOVERLAY, 0, STATIC
+        ARGFRAME ISTACK, 2, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 0, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -280,11 +372,45 @@ CS5463_Init:
           CFI CFA_SP SP+-5
         ; Saved register size: 2
         ; Auto size: 0
-//   18 	CS5463TaskId = taskId;
-        MOV     A,R1
-        MOV     DPTR,#CS5463TaskId
-        MOVX    @DPTR,A
-//   19 }
+//   59 	U0_ACTIVE=0;
+        ANL     0x86,#0x7f
+//   60 	U0BAUD=0;
+        MOV     0xc2,#0x0
+//   61 	U0_BAUD_E=15;
+        MOV     A,0xc5
+        ANL     A,#0x7
+        ORL     A,#0x78
+        MOV     0xc5,A
+//   62 	U0_CPOL=0;
+        ANL     0xc5,#0xfe
+//   63 	U0_CPHA=0;
+        ANL     0xc5,#0xfd
+//   64 	U0_ORDER=1;
+        ORL     0xc5,#0x4
+//   65 	
+//   66 	U0_MODE=0;
+        ANL     0x86,#0xfe
+//   67 	U0_SLAVE=0;
+        ANL     0x86,#0xfb
+//   68 	
+//   69 	P0SEL_2=1;
+        ORL     0xf3,#0x20
+//   70 	P0SEL_3=1;
+        ORL     0xf3,#0x10
+//   71 	P0SEL_5=1;
+        ORL     0xf3,#0x4
+//   72 	
+//   73 	DIR0_7 = 1;
+        ORL     0xfd,#0x1
+//   74 	P0SEL_7 = 0;
+        ANL     0xf3,#0xfe
+//   75 	P0_7=1;
+        SETB    0x80.7
+//   76 	
+//   77 	CS5463_startConversion();
+        ; Setup parameters for call to function CS5463_startConversion
+        LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion
+//   78 }
         POP     DPH
           CFI DPH0 SameValue
           CFI CFA_SP SP+-4
@@ -293,22 +419,47 @@ CS5463_Init:
           CFI CFA_SP SP+-3
         LJMP    ?BRET
           CFI EndBlock cfiBlock0
-//   20 
-//   21 /*
-//   22  *  Event Process for the task
-//   23  */
+        REQUIRE _A_U0_MODE
+        REQUIRE U0BAUD
+        REQUIRE _A_U0_CPOL
+        REQUIRE _A_P0SEL_7
+        REQUIRE _A_DIR0_7
+        REQUIRE _A_P0
+//   79 
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//   24 extern UINT16 CS5463_EventLoop( byte task_id, UINT16 events ) {
-CS5463_EventLoop:
+//   80 void CS5463_startConversion(void) {
+CS5463_startConversion:
           CFI Block cfiBlock1 Using cfiCommon0
-          CFI Function CS5463_EventLoop
+          CFI Function CS5463_startConversion
         CODE
         ; Saved register size: 0
         ; Auto size: 0
-//   25 }
+//   81 	P0_7=0;
+        CLR     0x80.7
+//   82 	asm("NOP");
+        NOP
+//   83 	asm("NOP");
+        NOP
+//   84 	U0DBUF=0xE8;
+        MOV     0xc1,#-0x18
+//   85 	while(U0_TX_BYTE==0);
+??CS5463_startConversion_0:
+        MOV     A,0x86
+        MOV     C,0xE0 /* A   */.6
+        JNC     ??CS5463_startConversion_0
+//   86 	asm("NOP");
+        NOP
+//   87 	asm("NOP");
+        NOP
+//   88 	P0_7=1;
+        SETB    0x80.7
+//   89 }
         LJMP    ?BRET
           CFI EndBlock cfiBlock1
+        REQUIRE _A_P0
+        REQUIRE U0DBUF
+        REQUIRE _A_U0_MODE
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??CS5463_Init?relay:
@@ -318,20 +469,21 @@ CS5463_EventLoop:
         DC24    CS5463_Init
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
-??CS5463_EventLoop?relay:
+??CS5463_startConversion?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    CS5463_EventLoop
+        DC24    CS5463_startConversion
 
         END
+//   90 
 // 
-// 19 bytes in segment BANKED_CODE
+// 80 bytes in segment BANKED_CODE
 // 12 bytes in segment BANK_RELAYS
-//  1 byte  in segment XDATA_Z
+//  7 bytes in segment SFR_AN
 // 
-// 31 bytes of CODE  memory
-//  1 byte  of XDATA memory
+// 92 bytes of CODE memory
+//  0 bytes of DATA memory (+ 7 bytes shared)
 //
 //Errors: none
-//Warnings: 2
+//Warnings: none
