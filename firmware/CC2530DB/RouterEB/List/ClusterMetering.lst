@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:21 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\clusters\ClusterMetering.c               #
+#                          re\Source\clusters\ClusterMetering.cpp             #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,8 +45,8 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\clusters\ClusterMetering.c -D SECURE=0   #
-#                          -D OSC32K_CRYSTAL_INSTALLED=FALSE -D               #
+#                          re\Source\clusters\ClusterMetering.cpp -D          #
+#                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D      #
 #                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
 #                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
 #                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\ClusterMetering.lst      #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterMetering.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterMetering.cpp
       1          
       2          /**************************************************************************************************
       3          
@@ -133,20 +132,32 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterMete
      15          
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     16          uint16 mainVoltage=0;
-   \                     mainVoltage:
-   \   000000                DS 2
-   \   000002                REQUIRE __INIT_XDATA_Z
+     16          uint48 currentSummationDelivered;
+   \                     currentSummationDelivered:
+   \   000000                DS 6
+   \   000006                REQUIRE __INIT_XDATA_Z
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     17          uint16 batteryVoltage=0;
-   \                     batteryVoltage:
-   \   000000                DS 2
-   \   000002                REQUIRE __INIT_XDATA_Z
+     17          uint8  status=0;
+   \                     status:
+   \   000000                DS 1
+   \   000001                REQUIRE __INIT_XDATA_Z
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     18          uint8  batteryAlarmMask=0;
-   \                     batteryAlarmMask:
+     18          uint8  unitOfMeasure=0; // kW (kilo-Watts) & kWh (kilo-WattHours) in pure Binary format
+   \                     unitOfMeasure:
+   \   000000                DS 1
+   \   000001                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     19          uint8  summationFormatting=0;
+   \                     summationFormatting:
+   \   000000                DS 1
+   \   000001                REQUIRE __INIT_XDATA_Z
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     20          uint8  metteringDeviceType=0; //Electric Metering
+   \                     metteringDeviceType:
    \   000000                DS 1
    \   000001                REQUIRE __INIT_XDATA_Z
 
@@ -155,14 +166,16 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterMete
 
    Bytes  Function/Label
    -----  --------------
-       1  batteryAlarmMask
-       2  batteryVoltage
-       2  mainVoltage
+       6  currentSummationDelivered
+       1  metteringDeviceType
+       1  status
+       1  summationFormatting
+       1  unitOfMeasure
 
  
- 5 bytes in segment XDATA_Z
+ 10 bytes in segment XDATA_Z
  
- 5 bytes of XDATA memory
+ 10 bytes of XDATA memory
 
 Errors: none
 Warnings: none

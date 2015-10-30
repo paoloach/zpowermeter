@@ -1,0 +1,885 @@
+///////////////////////////////////////////////////////////////////////////////
+//                                                                            /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:14:24 /
+// Copyright 2004-2013 IAR Systems AB.                                        /
+//                                                                            /
+//    Core               =  plain                                             /
+//    Code model         =  banked                                            /
+//    Data model         =  large                                             /
+//    Calling convention =  xdata reentrant                                   /
+//    Constant location  =  data_rom                                          /
+//    Dptr setup         =  1,16                                              /
+//                                                                            /
+//    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\Components\stack\zcl\zclReadCmd_t.cpp         /
+//    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
+//                          (-DCPU32MHZ -DROOT=__near_func                    /
+//                          -DMAC_CFG_APP_PENDING_QUEUE=TRUE                  /
+//                          -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8        /
+//                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO  /
+//                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR      /
+//                          -DDEFAULT_CHANLIST=0x00000800                     /
+//                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                      /
+//                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_M /
+//                          ASK=0x007F -DBEACON_REQUEST_DELAY=100             /
+//                          -DBEACON_REQ_DELAY_MASK=0x00FF                    /
+//                          -DLINK_STATUS_JITTER_MASK=0x007F                  /
+//                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_P /
+//                          OLLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7           /
+//                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3   /
+//                          -DNWK_MAX_DATA_RETRIES=2                          /
+//                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9        /
+//                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40          /
+//                          -DNWK_MAX_BINDING_ENTRIES=4                       /
+//                          -DMAX_BINDING_CLUSTER_IDS=4                       /
+//                          "-DDEFAULT_KEY={0x01, 0x03, 0x05, 0x07, 0x09,     /
+//                          0x0B, 0x0D, 0x0F, 0x00, 0x02, 0x04, 0x06, 0x08,   /
+//                          0x0A, 0x0C, 0x0D}" -DMAC_MAX_FRAME_SIZE=116       /
+//                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const    /
+//                          __code" -DGENERIC=__generic                       /
+//                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000       /
+//                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100   /
+//                          -DREJOIN_POLL_RATE=440) -f                        /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\Components\stack\zcl\zclReadCmd_t.cpp -D      /
+//                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D     /
+//                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D      /
+//                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
+//                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE  /
+//                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC         /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\ -lA                   /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\ --diag_suppress       /
+//                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zp /
+//                          owermeter\firmware\CC2530DB\RouterEB\Obj\ -e      /
+//                          --debug --core=plain --dptr=16,1                  /
+//                          --data_model=large --code_model=banked            /
+//                          --calling_convention=xdata_reentrant              /
+//                          --place_constants=data_rom --nr_virtual_regs 16   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\ -I C:\Users\paolo\Documents\GitH /
+//                          ub\zpowermeter\firmware\CC2530DB\..\Source\ -I    /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Source\ha\ -I                     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Source\zmain\ -I                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\hal\include\ -I        /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\hal\target\CC2530EB\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\mac\include\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\mac\high_level\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\mac\low_level\srf04\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\mac\low_level\srf04 /
+//                          \single_chip\ -I C:\Users\paolo\Documents\GitHub\ /
+//                          zpowermeter\firmware\CC2530DB\..\Components\mt\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\osal\include\ -I    /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\services\saddr\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\services\sdata\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\af\ -I           /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\nwk\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sapi\ -I         /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sec\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sys\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\zcl\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\zdo\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\zmac\ -I               /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
+//    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\zclReadCmd_t.s51       /
+//                                                                            /
+//                                                                            /
+///////////////////////////////////////////////////////////////////////////////
+
+        NAME zclReadCmd_t
+
+        RTMODEL "__SystemLibrary", "CLib"
+        RTMODEL "__calling_convention", "xdata_reentrant"
+        RTMODEL "__code_model", "banked"
+        RTMODEL "__core", "plain"
+        RTMODEL "__data_model", "large"
+        RTMODEL "__dptr_size", "16"
+        RTMODEL "__extended_stack", "disabled"
+        RTMODEL "__location_for_constants", "data"
+        RTMODEL "__number_of_dptrs", "1"
+        RTMODEL "__rt_version", "1"
+
+        RSEG DOVERLAY:DATA:NOROOT(0)
+        RSEG IOVERLAY:IDATA:NOROOT(0)
+        RSEG ISTACK:IDATA:NOROOT(0)
+        RSEG PSTACK:XDATA:NOROOT(0)
+        RSEG XSTACK:XDATA:NOROOT(0)
+
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
+        EXTERN ?V0
+        EXTERN ?V1
+        EXTERN ?V2
+        EXTERN ?V3
+        EXTERN ?V4
+        EXTERN ?V5
+        EXTERN ?BANKED_ENTER_XDATA
+        EXTERN ?BANKED_LEAVE_XDATA
+        EXTERN ?BDISPATCH
+
+        PUBLIC ??getBufferFromAttribute
+        FUNCTION ??getBufferFromAttribute,0a1203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME ISTACK, 1, STACK
+        LOCFRAME XSTACK, 14, STACK
+        PUBLIC ??getBufferFromAttribute?relay
+        FUNCTION ??getBufferFromAttribute?relay,0203H
+        PUBLIC `??new zclReadCmd_t`
+        FUNCTION `??new zclReadCmd_t`,0a1203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME XSTACK, 10, STACK
+        PUBLIC `??new zclReadCmd_t?relay`
+        FUNCTION `??new zclReadCmd_t?relay`,0203H
+        PUBLIC ??zclReadCmd_t
+        FUNCTION ??zclReadCmd_t,0a1203H
+        ARGFRAME XSTACK, 10, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        LOCFRAME ISTACK, 1, STACK
+        LOCFRAME XSTACK, 14, STACK
+        PUBLIC ??zclReadCmd_t?relay
+        FUNCTION ??zclReadCmd_t?relay,0203H
+        
+          CFI Names cfiNames0
+          CFI StackFrame CFA_SP SP IDATA
+          CFI StackFrame CFA_PSP16 PSP16 XDATA
+          CFI StackFrame CFA_XSP16 XSP16 XDATA
+          CFI StaticOverlayFrame CFA_IOVERLAY IOVERLAY
+          CFI StaticOverlayFrame CFA_DOVERLAY DOVERLAY
+          CFI Resource `PSW.CY`:1, `B.BR0`:1, `B.BR1`:1, `B.BR2`:1, `B.BR3`:1
+          CFI Resource `B.BR4`:1, `B.BR5`:1, `B.BR6`:1, `B.BR7`:1, `VB.BR8`:1
+          CFI Resource `VB.BR9`:1, `VB.BR10`:1, `VB.BR11`:1, `VB.BR12`:1
+          CFI Resource `VB.BR13`:1, `VB.BR14`:1, `VB.BR15`:1, VB:8, B:8, A:8
+          CFI Resource PSW:8, DPL0:8, DPH0:8, R0:8, R1:8, R2:8, R3:8, R4:8, R5:8
+          CFI Resource R6:8, R7:8, V0:8, V1:8, V2:8, V3:8, V4:8, V5:8, V6:8, V7:8
+          CFI Resource V8:8, V9:8, V10:8, V11:8, V12:8, V13:8, V14:8, V15:8, SP:8
+          CFI Resource PSPH:8, PSPL:8, PSP16:16, XSPH:8, XSPL:8, XSP16:16
+          CFI VirtualResource ?RET:24
+          CFI Resource ?BRET_EXT:8
+          CFI VirtualResource ?RET_HIGH:8, ?RET_LOW:8
+          CFI ResourceParts PSP16 PSPH, PSPL
+          CFI ResourceParts XSP16 XSPH, XSPL
+          CFI ResourceParts ?RET ?BRET_EXT, ?RET_HIGH, ?RET_LOW
+          CFI EndNames cfiNames0
+        
+          CFI Common cfiCommon0 Using cfiNames0
+          CFI CodeAlign 1
+          CFI DataAlign -1
+          CFI ReturnAddress ?RET CODE
+          CFI CFA_DOVERLAY Used
+          CFI CFA_IOVERLAY Used
+          CFI CFA_SP SP+-3
+          CFI CFA_PSP16 PSP16+0
+          CFI CFA_XSP16 XSP16+0
+          CFI `PSW.CY` SameValue
+          CFI `B.BR0` SameValue
+          CFI `B.BR1` SameValue
+          CFI `B.BR2` SameValue
+          CFI `B.BR3` SameValue
+          CFI `B.BR4` SameValue
+          CFI `B.BR5` SameValue
+          CFI `B.BR6` SameValue
+          CFI `B.BR7` SameValue
+          CFI `VB.BR8` SameValue
+          CFI `VB.BR9` SameValue
+          CFI `VB.BR10` SameValue
+          CFI `VB.BR11` SameValue
+          CFI `VB.BR12` SameValue
+          CFI `VB.BR13` SameValue
+          CFI `VB.BR14` SameValue
+          CFI `VB.BR15` SameValue
+          CFI VB SameValue
+          CFI B Undefined
+          CFI A Undefined
+          CFI PSW SameValue
+          CFI DPL0 SameValue
+          CFI DPH0 SameValue
+          CFI R0 Undefined
+          CFI R1 Undefined
+          CFI R2 Undefined
+          CFI R3 Undefined
+          CFI R4 Undefined
+          CFI R5 Undefined
+          CFI R6 SameValue
+          CFI R7 SameValue
+          CFI V0 SameValue
+          CFI V1 SameValue
+          CFI V2 SameValue
+          CFI V3 SameValue
+          CFI V4 SameValue
+          CFI V5 SameValue
+          CFI V6 SameValue
+          CFI V7 SameValue
+          CFI V8 SameValue
+          CFI V9 SameValue
+          CFI V10 SameValue
+          CFI V11 SameValue
+          CFI V12 SameValue
+          CFI V13 SameValue
+          CFI V14 SameValue
+          CFI V15 SameValue
+          CFI PSPH Undefined
+          CFI PSPL Undefined
+          CFI XSPH Undefined
+          CFI XSPL Undefined
+          CFI ?RET Concat
+          CFI ?BRET_EXT Frame(CFA_SP, 3)
+          CFI ?RET_HIGH Frame(CFA_SP, 2)
+          CFI ?RET_LOW Frame(CFA_SP, 1)
+          CFI EndCommon cfiCommon0
+        
+        
+          CFI Common cfiCommon1 Using cfiNames0
+          CFI CodeAlign 1
+          CFI DataAlign -1
+          CFI ReturnAddress ?RET CODE
+          CFI CFA_DOVERLAY Used
+          CFI CFA_IOVERLAY Used
+          CFI CFA_SP SP+-2
+          CFI CFA_PSP16 PSP16+0
+          CFI CFA_XSP16 XSP16+0
+          CFI `PSW.CY` SameValue
+          CFI `B.BR0` SameValue
+          CFI `B.BR1` SameValue
+          CFI `B.BR2` SameValue
+          CFI `B.BR3` SameValue
+          CFI `B.BR4` SameValue
+          CFI `B.BR5` SameValue
+          CFI `B.BR6` SameValue
+          CFI `B.BR7` SameValue
+          CFI `VB.BR8` SameValue
+          CFI `VB.BR9` SameValue
+          CFI `VB.BR10` SameValue
+          CFI `VB.BR11` SameValue
+          CFI `VB.BR12` SameValue
+          CFI `VB.BR13` SameValue
+          CFI `VB.BR14` SameValue
+          CFI `VB.BR15` SameValue
+          CFI VB SameValue
+          CFI B SameValue
+          CFI A SameValue
+          CFI PSW SameValue
+          CFI DPL0 SameValue
+          CFI DPH0 SameValue
+          CFI R0 SameValue
+          CFI R1 SameValue
+          CFI R2 SameValue
+          CFI R3 SameValue
+          CFI R4 SameValue
+          CFI R5 SameValue
+          CFI R6 SameValue
+          CFI R7 SameValue
+          CFI V0 SameValue
+          CFI V1 SameValue
+          CFI V2 SameValue
+          CFI V3 SameValue
+          CFI V4 SameValue
+          CFI V5 SameValue
+          CFI V6 SameValue
+          CFI V7 SameValue
+          CFI V8 SameValue
+          CFI V9 SameValue
+          CFI V10 SameValue
+          CFI V11 SameValue
+          CFI V12 SameValue
+          CFI V13 SameValue
+          CFI V14 SameValue
+          CFI V15 SameValue
+          CFI PSPH Undefined
+          CFI PSPL Undefined
+          CFI XSPH Undefined
+          CFI XSPL Undefined
+          CFI ?RET Concat
+          CFI ?BRET_EXT SameValue
+          CFI ?RET_HIGH Frame(CFA_SP, 2)
+          CFI ?RET_LOW Frame(CFA_SP, 1)
+          CFI EndCommon cfiCommon1
+        
+
+`??operator new?relay` SYMBOL "?relay", `??operator new`
+
+`??operator new[]?relay` SYMBOL "?relay", `??operator new[]`
+osal_mem_alloc      SYMBOL "osal_mem_alloc"
+??osal_mem_alloc?relay SYMBOL "?relay", osal_mem_alloc
+
+??getBufferFromAttribute?relay SYMBOL "?relay", ??getBufferFromAttribute
+
+`??new zclReadCmd_t?relay` SYMBOL "?relay", `??new zclReadCmd_t`
+
+??zclReadCmd_t?relay SYMBOL "?relay", ??zclReadCmd_t
+
+        EXTERN `??operator new`
+        FUNCTION `??operator new`,010202H
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 10, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        EXTERN `??operator new?relay`
+        FUNCTION `??operator new?relay`,00H
+        EXTERN `??operator new[]`
+        FUNCTION `??operator new[]`,010202H
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 14, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        EXTERN `??operator new[]?relay`
+        FUNCTION `??operator new[]?relay`,00H
+        EXTERN ??osal_mem_alloc?relay
+        FUNCTION ??osal_mem_alloc?relay,00H
+        EXTERN osal_mem_alloc
+        FUNCTION osal_mem_alloc,0202H
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 14, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+// __banked_func __xdata_reentrant zclReadCmd_t &zclReadCmd_t::new zclReadCmd_t(zclParseCmd_t *)
+`??new zclReadCmd_t`:
+          CFI Block cfiBlock0 Using cfiCommon0
+          CFI Function `??new zclReadCmd_t`
+        CODE
+        FUNCALL `??new zclReadCmd_t`, `??operator new`
+        LOCFRAME ISTACK, 0, STACK
+        LOCFRAME PSTACK, 0, STACK
+        LOCFRAME XSTACK, 10, STACK
+        LOCFRAME IOVERLAY, 0, STATIC
+        LOCFRAME DOVERLAY, 0, STATIC
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 10, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        FUNCALL `??new zclReadCmd_t`, ??zclReadCmd_t
+        LOCFRAME ISTACK, 0, STACK
+        LOCFRAME PSTACK, 0, STACK
+        LOCFRAME XSTACK, 10, STACK
+        LOCFRAME IOVERLAY, 0, STATIC
+        LOCFRAME DOVERLAY, 0, STATIC
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 10, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        REQUIRE ?V0
+        REQUIRE ?V1
+        MOV     A,#-0xa
+        LCALL   ?BANKED_ENTER_XDATA
+          CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI V1 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI VB load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI CFA_SP SP+0
+          CFI CFA_XSP16 add(XSP16, 10)
+        ; Saved register size: 10
+        ; Auto size: 0
+        MOV     A,R2
+        MOV     R6,A
+        MOV     A,R3
+        MOV     R7,A
+        ; Setup parameters for call to function operator new(unsigned int)
+        MOV     R2,#0x3
+        MOV     R3,#0x0
+        LCALL   `??operator new?relay`; Banked call to: operator new(unsigned int)
+        MOV     A,R2
+        ORL     A,R3
+        JZ      `??new zclReadCmd_t_1`
+        ; Setup parameters for call to function zclReadCmd_t::zclReadCmd_t(zclParseCmd_t *)
+        MOV     A,R6
+        MOV     R4,A
+        MOV     A,R7
+        MOV     R5,A
+        LCALL   ??zclReadCmd_t?relay ; Banked call to: zclReadCmd_t::zclReadCmd_t(zclParseCmd_t *)
+        SJMP    `??new zclReadCmd_t_2`
+`??new zclReadCmd_t_1`:
+        MOV     R2,#0x0
+        MOV     R3,#0x0
+`??new zclReadCmd_t_2`:
+        MOV     R7,#0x2
+        LJMP    ?BANKED_LEAVE_XDATA
+          CFI EndBlock cfiBlock0
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zclReadCmd_t.cpp
+//    1 
+//    2 
+//    3 #include "zclReadCmd_t.h"
+//    4 #include "OSAL_Memory.h"
+//    5 #include "hal_defs.h"
+//    6 
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+//    7 zclReadCmd_t::zclReadCmd_t(zclParseCmd_t * pCmd){
+??zclReadCmd_t:
+          CFI Block cfiBlock1 Using cfiCommon0
+          CFI Function ??zclReadCmd_t
+        CODE
+        FUNCALL ??zclReadCmd_t, osal_mem_alloc
+        LOCFRAME ISTACK, 0, STACK
+        LOCFRAME PSTACK, 0, STACK
+        LOCFRAME XSTACK, 14, STACK
+        LOCFRAME IOVERLAY, 0, STATIC
+        LOCFRAME DOVERLAY, 0, STATIC
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 14, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        REQUIRE ?V0
+        REQUIRE ?V1
+        REQUIRE ?V2
+        REQUIRE ?V3
+        REQUIRE ?V4
+        REQUIRE ?V5
+        MOV     A,#-0xe
+        LCALL   ?BANKED_ENTER_XDATA
+          CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI V5 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI V4 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI V3 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI V2 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI V1 load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI VB load(1, XDATA, add(CFA_XSP16, literal(-13)))
+          CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-14)))
+          CFI CFA_SP SP+0
+          CFI CFA_XSP16 add(XSP16, 14)
+        ; Saved register size: 14
+        ; Auto size: 0
+        MOV     A,R2
+        MOV     R6,A
+        MOV     A,R3
+        MOV     R7,A
+//    8 	uint8 *pBuf = pCmd->pData;
+        MOV     DPL,R4
+        MOV     DPH,R5
+        INC     DPTR
+        INC     DPTR
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     R0,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     R1,A
+        MOV     ?V0,R0
+        MOV     ?V1,R1
+//    9 
+//   10 	attrID = (uint16 *)osal_mem_alloc( pCmd->dataLen );
+        MOV     DPL,R6
+        MOV     DPH,R7
+        INC     DPTR
+        MOV     ?V2,DPL
+        MOV     ?V3,DPH
+        MOV     DPL,R4
+        MOV     DPH,R5
+        INC     DPTR
+        MOV     ?V4,DPL
+        MOV     ?V5,DPH
+        ; Setup parameters for call to function osal_mem_alloc
+        MOVX    A,@DPTR
+        MOV     R2,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     R3,A
+        LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
+        MOV     DPL,?V2
+        MOV     DPH,?V3
+        MOV     A,R2
+        MOVX    @DPTR,A
+        INC     DPTR
+        MOV     A,R3
+        MOVX    @DPTR,A
+//   11 	uint8 i;
+//   12 	numAttr = pCmd->dataLen / 2; // Atrribute ID
+        MOV     DPL,?V4
+        MOV     DPH,?V5
+        MOVX    A,@DPTR
+        MOV     R0,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        CLR     C
+        RRC     A
+        MOV     A,R0
+        RRC     A
+        MOV     DPL,R6
+        MOV     DPH,R7
+        MOVX    @DPTR,A
+//   13 	for ( i = 0; i < numAttr; i++ ) {
+        MOV     R5,#0x0
+        SJMP    ??zclReadCmd_t_1
+//   14 		attrID[i] = BUILD_UINT16( pBuf[0], pBuf[1] );
+??zclReadCmd_t_2:
+        MOV     DPL,?V0
+        MOV     DPH,?V1
+        MOVX    A,@DPTR
+        MOV     R2,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     R0,A
+        CLR     A
+        XCH     A,R0
+        MOV     R1,A
+        MOV     A,R2
+        ADD     A,R0
+        CLR     A
+        ADDC    A,R1
+        MOV     R3,A
+        MOV     A,R5
+        ADD     A,0xE0 /* A   */
+        MOV     R0,A
+        CLR     A
+        RLC     A
+        MOV     R1,A
+        MOV     DPL,?V2
+        MOV     DPH,?V3
+        MOVX    A,@DPTR
+        ADD     A,R0
+        MOV     R4,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        ADDC    A,R1
+        MOV     DPL,R4
+        MOV     DPH,A
+        MOV     A,R2
+        MOVX    @DPTR,A
+        INC     DPTR
+        MOV     A,R3
+        MOVX    @DPTR,A
+//   15 		pBuf += 2;
+        MOV     A,?V0
+        ADD     A,#0x2
+        MOV     ?V0,A
+        JNC     ??zclReadCmd_t_3
+        INC     ?V1
+//   16 	}
+??zclReadCmd_t_3:
+        INC     R5
+??zclReadCmd_t_1:
+        MOV     DPL,R6
+        MOV     DPH,R7
+        MOVX    A,@DPTR
+        MOV     R0,A
+        MOV     A,R5
+        CLR     C
+        SUBB    A,R0
+        JC      ??zclReadCmd_t_2
+//   17 }
+        MOV     A,R6
+        MOV     R2,A
+        MOV     A,R7
+        MOV     R3,A
+          CFI EndBlock cfiBlock1
+        REQUIRE ?Subroutine0
+        ; // Fall through to label ?Subroutine0
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+?Subroutine0:
+          CFI Block cfiBlock2 Using cfiCommon0
+          CFI NoFunction
+          CFI CFA_SP SP+0
+          CFI CFA_XSP16 add(XSP16, 14)
+          CFI VB load(1, XDATA, add(CFA_XSP16, literal(-13)))
+          CFI DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-14)))
+          CFI R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI V1 load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI V2 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI V3 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI V4 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI V5 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+        MOV     R7,#0x6
+        LJMP    ?BANKED_LEAVE_XDATA
+          CFI EndBlock cfiBlock2
+//   18 
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+//   19 BufferData zclReadCmd_t::getBufferFromAttribute() {
+??getBufferFromAttribute:
+          CFI Block cfiBlock3 Using cfiCommon0
+          CFI Function ??getBufferFromAttribute
+        CODE
+        FUNCALL ??getBufferFromAttribute, `??operator new[]`
+        LOCFRAME ISTACK, 0, STACK
+        LOCFRAME PSTACK, 0, STACK
+        LOCFRAME XSTACK, 14, STACK
+        LOCFRAME IOVERLAY, 0, STATIC
+        LOCFRAME DOVERLAY, 0, STATIC
+        ARGFRAME ISTACK, 0, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 14, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        REQUIRE ?V0
+        REQUIRE ?V1
+        REQUIRE ?V2
+        REQUIRE ?V3
+        REQUIRE ?V4
+        REQUIRE ?V5
+        MOV     A,#-0xe
+        LCALL   ?BANKED_ENTER_XDATA
+          CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI V5 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI V4 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI V3 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI V2 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI V1 load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI VB load(1, XDATA, add(CFA_XSP16, literal(-13)))
+          CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-14)))
+          CFI CFA_SP SP+0
+          CFI CFA_XSP16 add(XSP16, 14)
+        ; Saved register size: 14
+        ; Auto size: 0
+        MOV     A,R2
+        MOV     R6,A
+        MOV     A,R3
+        MOV     R7,A
+        MOV     ?V0,R4
+        MOV     ?V1,R5
+//   20 	uint16 dataLen = numAttr * 2; // Attribute ID
+//   21 	BufferData buffer(dataLen);
+        MOV     DPL,R6
+        MOV     DPH,R7
+        MOVX    A,@DPTR
+        ADD     A,0xE0 /* A   */
+        MOV     ?V4,A
+        CLR     A
+        RLC     A
+        MOV     ?V5,A
+        MOV     A,R4
+        ADD     A,#0x2
+        MOV     R0,A
+        CLR     A
+        ADDC    A,?V1
+        MOV     R1,A
+        MOV     ?V2,R0
+        MOV     ?V3,R1
+        ; Setup parameters for call to function operator new[](unsigned int)
+        MOV     R2,?V4
+        MOV     R3,?V5
+        LCALL   `??operator new[]?relay`; Banked call to: operator new[](unsigned int)
+        MOV     DPL,?V2
+        MOV     DPH,?V3
+        MOV     A,R2
+        MOVX    @DPTR,A
+        INC     DPTR
+        MOV     A,R3
+        MOVX    @DPTR,A
+        MOV     DPL,?V0
+        MOV     DPH,?V1
+        MOV     A,?V4
+        MOVX    @DPTR,A
+        INC     DPTR
+        MOV     A,?V5
+        MOVX    @DPTR,A
+//   22 	if ( buffer.isValid() ){
+        MOV     DPL,?V2
+        MOV     DPH,?V3
+        MOVX    A,@DPTR
+        MOV     R0,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     R1,A
+        MOV     A,R0
+        ORL     A,R1
+        JZ      ??getBufferFromAttribute_1
+//   23 		uint8 i;
+//   24 
+//   25 		uint8 *pBuf = buffer.data;
+//   26     	for (i = 0; i < numAttr; i++) {
+        MOV     ?V2,#0x0
+        MOV     DPL,R6
+        MOV     DPH,R7
+        INC     DPTR
+        MOV     R4,DPL
+        MOV     R5,DPH
+        SJMP    ??getBufferFromAttribute_2
+//   27       		*pBuf++ = LO_UINT16( attrID[i] );
+??getBufferFromAttribute_3:
+        MOV     R2,?V2
+        MOV     A,R2
+        ADD     A,R2
+        MOV     R2,A
+        CLR     A
+        RLC     A
+        MOV     R3,A
+        LCALL   ?Subroutine1 & 0xFFFF
+??CrossCallReturnLabel_0:
+        MOVX    A,@DPTR
+        MOV     DPL,R0
+        MOV     DPH,R1
+        MOVX    @DPTR,A
+        INC     DPTR
+        MOV     R0,DPL
+        MOV     R1,DPH
+//   28       		*pBuf++ = HI_UINT16( attrID[i] );
+        LCALL   ?Subroutine1 & 0xFFFF
+//   29     	}
+??CrossCallReturnLabel_1:
+        INC     DPTR
+        MOVX    A,@DPTR
+        MOV     DPL,R0
+        MOV     DPH,R1
+        MOVX    @DPTR,A
+        INC     DPTR
+        INC     R0
+        MOV     R1,DPH
+        INC     ?V2
+??getBufferFromAttribute_2:
+        MOV     DPL,R6
+        MOV     DPH,R7
+        MOVX    A,@DPTR
+        MOV     R2,A
+        MOV     A,?V2
+        CLR     C
+        SUBB    A,R2
+        JC      ??getBufferFromAttribute_3
+//   30 	}
+//   31 	return buffer;
+??getBufferFromAttribute_1:
+        LJMP    ?Subroutine0 & 0xFFFF
+          CFI EndBlock cfiBlock3
+//   32 }
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+?Subroutine1:
+          CFI Block cfiCond4 Using cfiCommon0
+          CFI Function ??getBufferFromAttribute
+          CFI Conditional ??CrossCallReturnLabel_0
+          CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-14)))
+          CFI VB load(1, XDATA, add(CFA_XSP16, literal(-13)))
+          CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI V1 load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI V2 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI V3 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI V4 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI V5 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI CFA_SP SP+-2
+          CFI CFA_XSP16 add(XSP16, 14)
+          CFI Block cfiCond5 Using cfiCommon0
+          CFI (cfiCond5) Function ??getBufferFromAttribute
+          CFI (cfiCond5) Conditional ??CrossCallReturnLabel_1
+          CFI (cfiCond5) R6 load(1, XDATA, add(CFA_XSP16, literal(-14)))
+          CFI (cfiCond5) VB load(1, XDATA, add(CFA_XSP16, literal(-13)))
+          CFI (cfiCond5) V0 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI (cfiCond5) V1 load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI (cfiCond5) V2 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI (cfiCond5) V3 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI (cfiCond5) V4 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI (cfiCond5) V5 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI (cfiCond5) R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI (cfiCond5) ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI (cfiCond5) ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI (cfiCond5) ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI (cfiCond5) DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI (cfiCond5) DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI (cfiCond5) CFA_SP SP+-2
+          CFI (cfiCond5) CFA_XSP16 add(XSP16, 14)
+          CFI Block cfiPicker6 Using cfiCommon1
+          CFI (cfiPicker6) NoFunction
+          CFI (cfiPicker6) Picker
+        MOV     DPL,R4
+        MOV     DPH,R5
+        MOVX    A,@DPTR
+        ADD     A,R2
+        MOV     ?V0,A
+        INC     DPTR
+        MOVX    A,@DPTR
+        ADDC    A,R3
+        MOV     DPL,?V0
+        MOV     DPH,A
+        RET
+          CFI EndBlock cfiCond4
+          CFI EndBlock cfiCond5
+          CFI EndBlock cfiPicker6
+
+        RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
+`??new zclReadCmd_t?relay`:
+        CODE
+        LCALL   ?BDISPATCH
+        DATA24
+        DC24    `??new zclReadCmd_t`
+
+        RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
+??zclReadCmd_t?relay:
+        CODE
+        LCALL   ?BDISPATCH
+        DATA24
+        DC24    ??zclReadCmd_t
+
+        RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
+??getBufferFromAttribute?relay:
+        CODE
+        LCALL   ?BDISPATCH
+        DATA24
+        DC24    ??getBufferFromAttribute
+
+        END
+// 
+// 373 bytes in segment BANKED_CODE
+//  18 bytes in segment BANK_RELAYS
+// 
+// 391 bytes of CODE memory
+//
+//Errors: none
+//Warnings: none

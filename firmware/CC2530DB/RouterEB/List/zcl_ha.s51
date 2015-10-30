@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:38 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:23 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\ha\zcl_ha.c                            /
+//                          are\Source\ha\zcl_ha.cpp                          /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\ha\zcl_ha.c -D SECURE=0 -D             /
+//                          are\Source\ha\zcl_ha.cpp -D SECURE=0 -D           /
 //                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE   /
 //                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN    /
 //                          -D NV_INIT -D xNV_RESTORE -D                      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\zcl_ha.s51             /
 //                                                                            /
@@ -158,10 +157,6 @@
         FUNCTION ??zclHA_uint16toa?relay,0203H
         PUBLIC ??zclHA_uint8toa?relay
         FUNCTION ??zclHA_uint8toa?relay,0203H
-        PUBLIC NwkInfoStrs
-        PUBLIC NwkInfoZcStr
-        PUBLIC NwkInfoZedStr
-        PUBLIC NwkInfoZrStr
         PUBLIC zclHA_Init
         FUNCTION zclHA_Init,0a1203H
         ARGFRAME XSTACK, 0, STACK
@@ -397,7 +392,7 @@ zclHA_uint8toa      SYMBOL "zclHA_uint8toa"
         ARGFRAME DOVERLAY, 0, STATIC
         EXTERN zcl_TaskID
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.cpp
 //    1 /**************************************************************************************************
 //    2   Filename:       zcl_ha.c
 //    3   Revised:        $Date: 2013-10-21 12:15:10 -0700 (Mon, 21 Oct 2013) $
@@ -440,102 +435,77 @@ zclHA_uint8toa      SYMBOL "zclHA_uint8toa"
 //   40 /*********************************************************************
 //   41  * INCLUDES
 //   42  */
-//   43 #include "ZComDef.h"
-//   44 #include "OSAL.h"
-//   45 
-//   46 #include "zcl.h"
-//   47 #include "zcl_general.h"
-//   48 #include "zcl_closures.h"
-//   49 #include "zcl_HVAC.h"
-//   50 #include "zcl_ss.h"
-//   51 #include "zcl_ms.h"
-//   52 #include "zcl_lighting.h"
-//   53 #include "zcl_ha.h"
-//   54 
-//   55 /* HAL */
-//   56 #include "hal_lcd.h"
-//   57 
-//   58 /*********************************************************************
-//   59  * MACROS
-//   60  */
-//   61 
-//   62 /*********************************************************************
-//   63  * CONSTANTS
-//   64  */
-//   65 
-//   66 /*********************************************************************
-//   67  * TYPEDEFS
-//   68  */
-//   69 
-//   70 /*********************************************************************
-//   71  * GLOBAL VARIABLES
-//   72  */
-//   73 
-//   74 /*********************************************************************
-//   75  * EXTERNAL VARIABLES
-//   76  */
-//   77 
-//   78 /*********************************************************************
-//   79  * EXTERNAL FUNCTIONS
-//   80  */
-//   81 
-//   82 /*********************************************************************
-//   83  * LOCAL VARIABLES
-//   84  */
-//   85 
-//   86 /*********************************************************************
-//   87  * STATUS STRINGS
-//   88  */
-//   89 // NwkInfo displayed on line 1 once on the network
-//   90 // 0123456789012345
-//   91 // Zc: PPPP CH ADDR
-//   92 // Zr: PPPP CH ADDR
-//   93 // Zed:PPPP CH ADDR
-
-        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
-        DATA8
-//   94 const char NwkInfoZcStr[]  = "ZC: ";
-NwkInfoZcStr:
-        DB "ZC: "
-
-        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
-        DATA8
-//   95 const char NwkInfoZrStr[]  = "ZR: ";
-NwkInfoZrStr:
-        DB "ZR: "
-
-        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
-        DATA8
-//   96 const char NwkInfoZedStr[] = "Zed:";
-NwkInfoZedStr:
-        DB "Zed:"
-
-        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
-        DATA8
-//   97 const char * const NwkInfoStrs[] = { NwkInfoZcStr, NwkInfoZrStr, NwkInfoZedStr };
-NwkInfoStrs:
-        DATA16
-        DW NwkInfoZcStr
-        DW NwkInfoZrStr
-        DW NwkInfoZedStr
-//   98 
-//   99 /*********************************************************************
-//  100  * LOCAL FUNCTIONS
-//  101  */
-//  102 
-//  103 /*********************************************************************
-//  104  * @fn      zclHA_Init
-//  105  *
-//  106  * @brief   Register the Simple descriptor with the HA profile.
-//  107  *          This function also registers the profile's cluster conversion table.
+//   43 
+//   44 #include "ZComDef.h"
+//   45 #include "OSAL.h"
+//   46 
+//   47 #include "zcl.h"
+//   48 #include "zcl_general.h"
+//   49 #include "zcl_closures.h"
+//   50 //#include "zcl_HVAC.h"
+//   51 #include "zcl_ss.h"
+//   52 #include "zcl_ms.h"
+//   53 #include "zcl_lighting.h"
+//   54 #include "zcl_ha.h"
+//   55 
+//   56 /*********************************************************************
+//   57  * MACROS
+//   58  */
+//   59 
+//   60 /*********************************************************************
+//   61  * CONSTANTS
+//   62  */
+//   63 
+//   64 /*********************************************************************
+//   65  * TYPEDEFS
+//   66  */
+//   67 
+//   68 /*********************************************************************
+//   69  * GLOBAL VARIABLES
+//   70  */
+//   71 
+//   72 /*********************************************************************
+//   73  * EXTERNAL VARIABLES
+//   74  */
+//   75 
+//   76 /*********************************************************************
+//   77  * EXTERNAL FUNCTIONS
+//   78  */
+//   79 
+//   80 /*********************************************************************
+//   81  * LOCAL VARIABLES
+//   82  */
+//   83 
+//   84 /*********************************************************************
+//   85  * STATUS STRINGS
+//   86  */
+//   87 // NwkInfo displayed on line 1 once on the network
+//   88 // 0123456789012345
+//   89 // Zc: PPPP CH ADDR
+//   90 // Zr: PPPP CH ADDR
+//   91 // Zed:PPPP CH ADDR
+//   92 const char NwkInfoZcStr[]  = "ZC: ";
+//   93 const char NwkInfoZrStr[]  = "ZR: ";
+//   94 const char NwkInfoZedStr[] = "Zed:";
+//   95 const char * const NwkInfoStrs[] = { NwkInfoZcStr, NwkInfoZrStr, NwkInfoZedStr };
+//   96 
+//   97 /*********************************************************************
+//   98  * LOCAL FUNCTIONS
+//   99  */
+//  100 
+//  101 /*********************************************************************
+//  102  * @fn      zclHA_Init
+//  103  *
+//  104  * @brief   Register the Simple descriptor with the HA profile.
+//  105  *          This function also registers the profile's cluster conversion table.
+//  106  *
+//  107  * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
 //  108  *
-//  109  * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
-//  110  *
-//  111  * @return  none
-//  112  */
+//  109  * @return  none
+//  110  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  113 void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc ){
+//  111 void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc ){
 zclHA_Init:
           CFI Block cfiBlock0 Using cfiCommon0
           CFI Function zclHA_Init
@@ -584,54 +554,54 @@ zclHA_Init:
         MOV     R6,A
         MOV     A,R3
         MOV     R7,A
-//  114   endPointDesc_t *epDesc;
-//  115 
-//  116   // Register the application's endpoint descriptor
-//  117   //  - This memory is allocated and never freed.
-//  118   epDesc = osal_mem_alloc( sizeof ( endPointDesc_t ) );
+//  112   endPointDesc_t *epDesc;
+//  113 
+//  114   // Register the application's endpoint descriptor
+//  115   //  - This memory is allocated and never freed.
+//  116   epDesc = (endPointDesc_t *)osal_mem_alloc( sizeof ( endPointDesc_t ) );
         ; Setup parameters for call to function osal_mem_alloc
         MOV     R2,#0x6
         MOV     R3,#0x0
         LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
-//  119   if ( epDesc ) {
+//  117   if ( epDesc ) {
         MOV     A,R2
         ORL     A,R3
         JZ      ??zclHA_Init_0
-//  120     // Fill out the endpoint description.
-//  121     epDesc->endPoint = simpleDesc->EndPoint;
+//  118     // Fill out the endpoint description.
+//  119     epDesc->endPoint = simpleDesc->EndPoint;
         MOV     DPL,R6
         MOV     DPH,R7
         MOVX    A,@DPTR
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  122     epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
+//  120     epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
         INC     DPTR
         MOV     A,#zcl_TaskID & 0xff
         MOVX    @DPTR,A
         INC     DPTR
         MOV     A,#(zcl_TaskID >> 8) & 0xff
         LCALL   ?Subroutine3 & 0xFFFF
-//  123     epDesc->simpleDesc = simpleDesc;
-??CrossCallReturnLabel_5:
+//  121     epDesc->simpleDesc = simpleDesc;
+??CrossCallReturnLabel_3:
         MOV     A,R6
         MOVX    @DPTR,A
         INC     DPTR
         MOV     A,R7
         LCALL   ?Subroutine3 & 0xFFFF
-//  124     epDesc->latencyReq = noLatencyReqs;
-??CrossCallReturnLabel_6:
+//  122     epDesc->latencyReq = noLatencyReqs;
+??CrossCallReturnLabel_4:
         INC     DPTR
         INC     DPTR
         CLR     A
         MOVX    @DPTR,A
-//  125 
-//  126     // Register the endpoint description with the AF
-//  127     afRegister( epDesc );
+//  123 
+//  124     // Register the endpoint description with the AF
+//  125     afRegister( epDesc );
         ; Setup parameters for call to function afRegister
         LCALL   ??afRegister?relay   ; Banked call to: afRegister
-//  128   }
-//  129 }
+//  126   }
+//  127 }
 ??zclHA_Init_0:
         MOV     R7,#0x2
         LJMP    ?BANKED_LEAVE_XDATA
@@ -641,7 +611,7 @@ zclHA_Init:
 ?Subroutine3:
           CFI Block cfiCond1 Using cfiCommon0
           CFI Function zclHA_Init
-          CFI Conditional ??CrossCallReturnLabel_5
+          CFI Conditional ??CrossCallReturnLabel_3
           CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-10)))
           CFI VB load(1, XDATA, add(CFA_XSP16, literal(-9)))
           CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-8)))
@@ -656,7 +626,7 @@ zclHA_Init:
           CFI CFA_XSP16 add(XSP16, 10)
           CFI Block cfiCond2 Using cfiCommon0
           CFI (cfiCond2) Function zclHA_Init
-          CFI (cfiCond2) Conditional ??CrossCallReturnLabel_6
+          CFI (cfiCond2) Conditional ??CrossCallReturnLabel_4
           CFI (cfiCond2) R6 load(1, XDATA, add(CFA_XSP16, literal(-10)))
           CFI (cfiCond2) VB load(1, XDATA, add(CFA_XSP16, literal(-9)))
           CFI (cfiCond2) V0 load(1, XDATA, add(CFA_XSP16, literal(-8)))
@@ -682,25 +652,25 @@ zclHA_Init:
           CFI EndBlock cfiCond1
           CFI EndBlock cfiCond2
           CFI EndBlock cfiPicker3
-//  130 
-//  131 /*********************************************************************
-//  132  * @fn      zclHA_isbit
+//  128 
+//  129 /*********************************************************************
+//  130  * @fn      zclHA_isbit
+//  131  *
+//  132  * @brief   Returns TRUE if the index bit is set
 //  133  *
-//  134  * @brief   Returns TRUE if the index bit is set
-//  135  *
-//  136  * @param   pArray   - array with bits in it
-//  137  *          bitIndex - index into the array of bits
-//  138  *
-//  139  * @return  TRUE if index bit is set
-//  140  */
+//  134  * @param   pArray   - array with bits in it
+//  135  *          bitIndex - index into the array of bits
+//  136  *
+//  137  * @return  TRUE if index bit is set
+//  138  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  141 bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
+//  139 bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
 zclHA_isbit:
           CFI Block cfiBlock4 Using cfiCommon0
           CFI Function zclHA_isbit
         CODE
-//  142 {
+//  140 {
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -709,27 +679,15 @@ zclHA_isbit:
           CFI CFA_SP SP+-5
         ; Saved register size: 2
         ; Auto size: 0
-        MOV     A,R1
-        MOV     R4,A
-//  143   uint8 bit;
-//  144   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  145   if( pArray[bitIndex >> 3] & bit )
-        RRC     A
-        RRC     A
-        RRC     A
-        ANL     A,#0x1f
-        MOV     R0,A
-        MOV     A,R2
-        ADD     A,R0
-        MOV     DPL,A
-        CLR     A
-        ADDC    A,R3
-        MOV     DPH,A
-        MOVX    A,@DPTR
+//  141   uint8 bit;
+//  142   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  143   if( pArray[bitIndex >> 3] & bit )
+        LCALL   ??Subroutine5_0 & 0xFFFF
+??CrossCallReturnLabel_5:
         PUSH    A
           CFI CFA_SP SP+-6
         MOV     A,#0x7
-        ANL     A,R4
+        ANL     A,R1
         MOV     R0,A
         POP     A
           CFI CFA_SP SP+-5
@@ -742,35 +700,35 @@ zclHA_isbit:
 ??zclHA_isbit_1:
         MOV     C,0xE0 /* A   */.0
         JNC     ??zclHA_isbit_2
-//  146     return TRUE;
-        MOV     R1,#0x1
+//  144     return TRUE;
+        SETB    C
         SJMP    ??zclHA_isbit_3
-//  147   return FALSE;
+//  145   return FALSE;
 ??zclHA_isbit_2:
-        MOV     R1,#0x0
+        CLR     C
 ??zclHA_isbit_3:
         SJMP    ??Subroutine4_0
           CFI EndBlock cfiBlock4
-//  148 }
-//  149 
-//  150 /*********************************************************************
-//  151  * @fn      zclHA_setbit
+//  146 }
+//  147 
+//  148 /*********************************************************************
+//  149  * @fn      zclHA_setbit
+//  150  *
+//  151  * @brief   Sets a bit in a bit array
 //  152  *
-//  153  * @brief   Sets a bit in a bit array
-//  154  *
-//  155  * @param   pArray   - array with bits in it
-//  156  *          bitIndex - index into the array of bits
-//  157  *
-//  158  * @return  none
-//  159  */
+//  153  * @param   pArray   - array with bits in it
+//  154  *          bitIndex - index into the array of bits
+//  155  *
+//  156  * @return  none
+//  157  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  160 void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
+//  158 void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
 zclHA_setbit:
           CFI Block cfiBlock5 Using cfiCommon0
           CFI Function zclHA_setbit
         CODE
-//  161 {
+//  159 {
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
           CFI CFA_SP SP+-4
@@ -779,9 +737,9 @@ zclHA_setbit:
           CFI CFA_SP SP+-5
         ; Saved register size: 2
         ; Auto size: 0
-//  162   uint8 bit;
-//  163   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  164   pArray[bitIndex >> 3] |= bit;
+//  160   uint8 bit;
+//  161   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  162   pArray[bitIndex >> 3] |= bit;
         MOV     A,#0x7
         ANL     A,R1
         MOV     R0,A
@@ -794,12 +752,12 @@ zclHA_setbit:
         DJNZ    R0,??zclHA_setbit_0
 ??zclHA_setbit_1:
         LCALL   ?Subroutine1 & 0xFFFF
-??CrossCallReturnLabel_0:
+??CrossCallReturnLabel_6:
         ORL     A,R0
           CFI EndBlock cfiBlock5
         REQUIRE ?Subroutine0
         ; // Fall through to label ?Subroutine0
-//  165 }
+//  163 }
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine0:
@@ -828,73 +786,54 @@ zclHA_setbit:
           CFI DPL0 SameValue
         LJMP    ?BRET
           CFI EndBlock cfiBlock7
-//  166 
-//  167 /*********************************************************************
-//  168  * @fn      zclHA_clearbit
-//  169  *
-//  170  * @brief   clears a bit in a bit array
-//  171  *
-//  172  * @param   pArray   - array with bits in it
-//  173  *          bitIndex - index into the array of bits
-//  174  *
-//  175  * @return  none
-//  176  */
-
-        RSEG BANKED_CODE:CODE:NOROOT(0)
-//  177 void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
-zclHA_clearbit:
-          CFI Block cfiBlock8 Using cfiCommon0
-          CFI Function zclHA_clearbit
-        CODE
-//  178 {
-        PUSH    DPL
-          CFI DPL0 Frame(CFA_SP, 4)
-          CFI CFA_SP SP+-4
-        PUSH    DPH
-          CFI DPH0 Frame(CFA_SP, 5)
-          CFI CFA_SP SP+-5
-        ; Saved register size: 2
-        ; Auto size: 0
-//  179   uint8 bit;
-//  180   bit = ( 1 << ( bitIndex & 0x7 ) );
-//  181   pArray[bitIndex >> 3] &= (~(unsigned)bit);
-        MOV     A,#0x7
-        ANL     A,R1
-        MOV     R0,A
-        MOV     A,#0x1
-        CJNE    R0,#0x0,??zclHA_clearbit_0
-        SJMP    ??zclHA_clearbit_1
-??zclHA_clearbit_0:
-        CLR     C
-        RLC     A
-        DJNZ    R0,??zclHA_clearbit_0
-??zclHA_clearbit_1:
-        CPL     A
-        LCALL   ?Subroutine1 & 0xFFFF
-??CrossCallReturnLabel_1:
-        ANL     A,R0
-        SJMP    ?Subroutine0
-          CFI EndBlock cfiBlock8
-//  182 }
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine1:
-          CFI Block cfiCond9 Using cfiCommon0
+          CFI Block cfiCond8 Using cfiCommon0
           CFI Function zclHA_setbit
-          CFI Conditional ??CrossCallReturnLabel_0
+          CFI Conditional ??CrossCallReturnLabel_6
           CFI DPL0 Frame(CFA_SP, 4)
           CFI DPH0 Frame(CFA_SP, 5)
           CFI CFA_SP SP+-7
-          CFI Block cfiCond10 Using cfiCommon0
-          CFI (cfiCond10) Function zclHA_clearbit
-          CFI (cfiCond10) Conditional ??CrossCallReturnLabel_1
-          CFI (cfiCond10) DPL0 Frame(CFA_SP, 4)
-          CFI (cfiCond10) DPH0 Frame(CFA_SP, 5)
-          CFI (cfiCond10) CFA_SP SP+-7
-          CFI Block cfiPicker11 Using cfiCommon1
-          CFI (cfiPicker11) NoFunction
-          CFI (cfiPicker11) Picker
+          CFI Block cfiCond9 Using cfiCommon0
+          CFI (cfiCond9) Function zclHA_clearbit
+          CFI (cfiCond9) Conditional ??CrossCallReturnLabel_7
+          CFI (cfiCond9) DPL0 Frame(CFA_SP, 4)
+          CFI (cfiCond9) DPH0 Frame(CFA_SP, 5)
+          CFI (cfiCond9) CFA_SP SP+-7
+          CFI Block cfiPicker10 Using cfiCommon1
+          CFI (cfiPicker10) NoFunction
+          CFI (cfiPicker10) Picker
         MOV     R0,A
+          CFI EndBlock cfiCond8
+          CFI EndBlock cfiCond9
+          CFI EndBlock cfiPicker10
+        REQUIRE ??Subroutine5_0
+        ; // Fall through to label ??Subroutine5_0
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+??Subroutine5_0:
+          CFI Block cfiCond11 Using cfiCommon0
+          CFI Function zclHA_isbit
+          CFI Conditional ??CrossCallReturnLabel_5
+          CFI DPL0 Frame(CFA_SP, 4)
+          CFI DPH0 Frame(CFA_SP, 5)
+          CFI CFA_SP SP+-7
+          CFI Block cfiCond12 Using cfiCommon0
+          CFI (cfiCond12) Function zclHA_setbit
+          CFI (cfiCond12) Conditional ??CrossCallReturnLabel_6
+          CFI (cfiCond12) DPL0 Frame(CFA_SP, 4)
+          CFI (cfiCond12) DPH0 Frame(CFA_SP, 5)
+          CFI (cfiCond12) CFA_SP SP+-7
+          CFI Block cfiCond13 Using cfiCommon0
+          CFI (cfiCond13) Function zclHA_clearbit
+          CFI (cfiCond13) Conditional ??CrossCallReturnLabel_7
+          CFI (cfiCond13) DPL0 Frame(CFA_SP, 4)
+          CFI (cfiCond13) DPH0 Frame(CFA_SP, 5)
+          CFI (cfiCond13) CFA_SP SP+-7
+          CFI Block cfiPicker14 Using cfiCommon1
+          CFI (cfiPicker14) NoFunction
+          CFI (cfiPicker14) Picker
         MOV     A,R1
         RRC     A
         RRC     A
@@ -909,30 +848,79 @@ zclHA_clearbit:
         MOV     DPH,A
         MOVX    A,@DPTR
         RET
-          CFI EndBlock cfiCond9
-          CFI EndBlock cfiCond10
-          CFI EndBlock cfiPicker11
-//  183 
-//  184 /*********************************************************************
-//  185  * @fn      zclHA_uint16toa
-//  186  *
-//  187  * @brief   Converts from a uint16 to ascii hex string.
-//  188  *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
-//  189  *          NULL terminates the string.
-//  190  *
-//  191  * @param   u - Number to be converted
-//  192  *          string - pointer to coverted string
-//  193  *
-//  194  * @return  none
-//  195  */
+          CFI EndBlock cfiCond11
+          CFI EndBlock cfiCond12
+          CFI EndBlock cfiCond13
+          CFI EndBlock cfiPicker14
+//  164 
+//  165 /*********************************************************************
+//  166  * @fn      zclHA_clearbit
+//  167  *
+//  168  * @brief   clears a bit in a bit array
+//  169  *
+//  170  * @param   pArray   - array with bits in it
+//  171  *          bitIndex - index into the array of bits
+//  172  *
+//  173  * @return  none
+//  174  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  196 void zclHA_uint16toa(uint16 u, char *string)
+//  175 void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
+zclHA_clearbit:
+          CFI Block cfiBlock15 Using cfiCommon0
+          CFI Function zclHA_clearbit
+        CODE
+//  176 {
+        PUSH    DPL
+          CFI DPL0 Frame(CFA_SP, 4)
+          CFI CFA_SP SP+-4
+        PUSH    DPH
+          CFI DPH0 Frame(CFA_SP, 5)
+          CFI CFA_SP SP+-5
+        ; Saved register size: 2
+        ; Auto size: 0
+//  177   uint8 bit;
+//  178   bit = ( 1 << ( bitIndex & 0x7 ) );
+//  179   pArray[bitIndex >> 3] &= (~(unsigned)bit);
+        MOV     A,#0x7
+        ANL     A,R1
+        MOV     R0,A
+        MOV     A,#0x1
+        CJNE    R0,#0x0,??zclHA_clearbit_0
+        SJMP    ??zclHA_clearbit_1
+??zclHA_clearbit_0:
+        CLR     C
+        RLC     A
+        DJNZ    R0,??zclHA_clearbit_0
+??zclHA_clearbit_1:
+        CPL     A
+        LCALL   ?Subroutine1 & 0xFFFF
+??CrossCallReturnLabel_7:
+        ANL     A,R0
+        SJMP    ?Subroutine0
+          CFI EndBlock cfiBlock15
+//  180 }
+//  181 
+//  182 /*********************************************************************
+//  183  * @fn      zclHA_uint16toa
+//  184  *
+//  185  * @brief   Converts from a uint16 to ascii hex string.
+//  186  *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
+//  187  *          NULL terminates the string.
+//  188  *
+//  189  * @param   u - Number to be converted
+//  190  *          string - pointer to coverted string
+//  191  *
+//  192  * @return  none
+//  193  */
+
+        RSEG BANKED_CODE:CODE:NOROOT(0)
+//  194 void zclHA_uint16toa(uint16 u, char *string)
 zclHA_uint16toa:
-          CFI Block cfiBlock12 Using cfiCommon0
+          CFI Block cfiBlock16 Using cfiCommon0
           CFI Function zclHA_uint16toa
         CODE
-//  197 {
+//  195 {
         FUNCALL zclHA_uint16toa, _ltoa
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
@@ -966,43 +954,43 @@ zclHA_uint16toa:
           CFI CFA_XSP16 add(XSP16, 12)
         ; Saved register size: 12
         ; Auto size: 0
-//  198   // add preceding zeros
-//  199   if ( u < 0x1000 )
+//  196   // add preceding zeros
+//  197   if ( u < 0x1000 )
         CLR     C
         MOV     A,R3
         SUBB    A,#0x10
-        JNC     ??CrossCallReturnLabel_2
-//  200   {
-//  201     *string++ = '0';
+        JNC     ??CrossCallReturnLabel_0
+//  198   {
+//  199     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  202   }
-//  203 
-//  204   if ( u < 0x0100 )
-??CrossCallReturnLabel_2:
+//  200   }
+//  201 
+//  202   if ( u < 0x0100 )
+??CrossCallReturnLabel_0:
         CLR     C
         MOV     A,R3
         SUBB    A,#0x1
-        JNC     ??CrossCallReturnLabel_3
-//  205   {
-//  206     *string++ = '0';
+        JNC     ??CrossCallReturnLabel_1
+//  203   {
+//  204     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  207   }
-//  208 
-//  209   if ( u < 0x0010 )
-??CrossCallReturnLabel_3:
+//  205   }
+//  206 
+//  207   if ( u < 0x0010 )
+??CrossCallReturnLabel_1:
         CLR     C
         MOV     A,R2
         SUBB    A,#0x10
         MOV     A,R3
         SUBB    A,#0x0
-        JNC     ??CrossCallReturnLabel_4
-//  210   {
-//  211     *string++ = '0';
+        JNC     ??CrossCallReturnLabel_2
+//  208   {
+//  209     *string++ = '0';
         LCALL   ?Subroutine2 & 0xFFFF
-//  212   }
-//  213 
-//  214   _ltoa((unsigned long)u, (unsigned char *)string, 16);
-??CrossCallReturnLabel_4:
+//  210   }
+//  211 
+//  212   _ltoa((unsigned long)u, (unsigned char *)string, 16);
+??CrossCallReturnLabel_2:
         ; Setup parameters for call to function _ltoa
         MOV     ?V0,R4
         MOV     ?V1,R5
@@ -1017,16 +1005,16 @@ zclHA_uint16toa:
         MOV     A,#0x2
         LCALL   ?DEALLOC_XSTACK8
           CFI CFA_XSP16 add(XSP16, 12)
-//  215 }
+//  213 }
         MOV     R7,#0x4
         LJMP    ?BANKED_LEAVE_XDATA
-          CFI EndBlock cfiBlock12
+          CFI EndBlock cfiBlock16
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine2:
-          CFI Block cfiCond13 Using cfiCommon0
+          CFI Block cfiCond17 Using cfiCommon0
           CFI Function zclHA_uint16toa
-          CFI Conditional ??CrossCallReturnLabel_2
+          CFI Conditional ??CrossCallReturnLabel_0
           CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-12)))
           CFI VB load(1, XDATA, add(CFA_XSP16, literal(-11)))
           CFI V0 load(1, XDATA, add(CFA_XSP16, literal(-10)))
@@ -1041,43 +1029,43 @@ zclHA_uint16toa:
           CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
           CFI CFA_SP SP+-2
           CFI CFA_XSP16 add(XSP16, 12)
-          CFI Block cfiCond14 Using cfiCommon0
-          CFI (cfiCond14) Function zclHA_uint16toa
-          CFI (cfiCond14) Conditional ??CrossCallReturnLabel_3
-          CFI (cfiCond14) R6 load(1, XDATA, add(CFA_XSP16, literal(-12)))
-          CFI (cfiCond14) VB load(1, XDATA, add(CFA_XSP16, literal(-11)))
-          CFI (cfiCond14) V0 load(1, XDATA, add(CFA_XSP16, literal(-10)))
-          CFI (cfiCond14) V1 load(1, XDATA, add(CFA_XSP16, literal(-9)))
-          CFI (cfiCond14) V2 load(1, XDATA, add(CFA_XSP16, literal(-8)))
-          CFI (cfiCond14) V3 load(1, XDATA, add(CFA_XSP16, literal(-7)))
-          CFI (cfiCond14) R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
-          CFI (cfiCond14) ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
-          CFI (cfiCond14) ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
-          CFI (cfiCond14) ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
-          CFI (cfiCond14) DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
-          CFI (cfiCond14) DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
-          CFI (cfiCond14) CFA_SP SP+-2
-          CFI (cfiCond14) CFA_XSP16 add(XSP16, 12)
-          CFI Block cfiCond15 Using cfiCommon0
-          CFI (cfiCond15) Function zclHA_uint16toa
-          CFI (cfiCond15) Conditional ??CrossCallReturnLabel_4
-          CFI (cfiCond15) R6 load(1, XDATA, add(CFA_XSP16, literal(-12)))
-          CFI (cfiCond15) VB load(1, XDATA, add(CFA_XSP16, literal(-11)))
-          CFI (cfiCond15) V0 load(1, XDATA, add(CFA_XSP16, literal(-10)))
-          CFI (cfiCond15) V1 load(1, XDATA, add(CFA_XSP16, literal(-9)))
-          CFI (cfiCond15) V2 load(1, XDATA, add(CFA_XSP16, literal(-8)))
-          CFI (cfiCond15) V3 load(1, XDATA, add(CFA_XSP16, literal(-7)))
-          CFI (cfiCond15) R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
-          CFI (cfiCond15) ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
-          CFI (cfiCond15) ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
-          CFI (cfiCond15) ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
-          CFI (cfiCond15) DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
-          CFI (cfiCond15) DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
-          CFI (cfiCond15) CFA_SP SP+-2
-          CFI (cfiCond15) CFA_XSP16 add(XSP16, 12)
-          CFI Block cfiPicker16 Using cfiCommon1
-          CFI (cfiPicker16) NoFunction
-          CFI (cfiPicker16) Picker
+          CFI Block cfiCond18 Using cfiCommon0
+          CFI (cfiCond18) Function zclHA_uint16toa
+          CFI (cfiCond18) Conditional ??CrossCallReturnLabel_1
+          CFI (cfiCond18) R6 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI (cfiCond18) VB load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI (cfiCond18) V0 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI (cfiCond18) V1 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI (cfiCond18) V2 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI (cfiCond18) V3 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI (cfiCond18) R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI (cfiCond18) ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI (cfiCond18) ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI (cfiCond18) ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI (cfiCond18) DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI (cfiCond18) DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI (cfiCond18) CFA_SP SP+-2
+          CFI (cfiCond18) CFA_XSP16 add(XSP16, 12)
+          CFI Block cfiCond19 Using cfiCommon0
+          CFI (cfiCond19) Function zclHA_uint16toa
+          CFI (cfiCond19) Conditional ??CrossCallReturnLabel_2
+          CFI (cfiCond19) R6 load(1, XDATA, add(CFA_XSP16, literal(-12)))
+          CFI (cfiCond19) VB load(1, XDATA, add(CFA_XSP16, literal(-11)))
+          CFI (cfiCond19) V0 load(1, XDATA, add(CFA_XSP16, literal(-10)))
+          CFI (cfiCond19) V1 load(1, XDATA, add(CFA_XSP16, literal(-9)))
+          CFI (cfiCond19) V2 load(1, XDATA, add(CFA_XSP16, literal(-8)))
+          CFI (cfiCond19) V3 load(1, XDATA, add(CFA_XSP16, literal(-7)))
+          CFI (cfiCond19) R7 load(1, XDATA, add(CFA_XSP16, literal(-6)))
+          CFI (cfiCond19) ?RET_LOW load(1, XDATA, add(CFA_XSP16, literal(-5)))
+          CFI (cfiCond19) ?RET_HIGH load(1, XDATA, add(CFA_XSP16, literal(-4)))
+          CFI (cfiCond19) ?BRET_EXT load(1, XDATA, add(CFA_XSP16, literal(-3)))
+          CFI (cfiCond19) DPL0 load(1, XDATA, add(CFA_XSP16, literal(-2)))
+          CFI (cfiCond19) DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
+          CFI (cfiCond19) CFA_SP SP+-2
+          CFI (cfiCond19) CFA_XSP16 add(XSP16, 12)
+          CFI Block cfiPicker20 Using cfiCommon1
+          CFI (cfiPicker20) NoFunction
+          CFI (cfiPicker20) Picker
         MOV     DPL,R4
         MOV     DPH,R5
         MOV     A,#0x30
@@ -1086,31 +1074,31 @@ zclHA_uint16toa:
         MOV     R4,DPL
         MOV     R5,DPH
         RET
-          CFI EndBlock cfiCond13
-          CFI EndBlock cfiCond14
-          CFI EndBlock cfiCond15
-          CFI EndBlock cfiPicker16
-//  216 
-//  217 /*********************************************************************
-//  218  * @fn      zclHA_uint8toa
-//  219  *
-//  220  * @brief   Converts from a uint8 to ascii decimal string.
-//  221  *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
-//  222  *          No null terminator.
-//  223  *
-//  224  * @param   b - Byte to be converted
-//  225  *          string - pointer to coverted string
-//  226  *
-//  227  * @return  none
-//  228  */
+          CFI EndBlock cfiCond17
+          CFI EndBlock cfiCond18
+          CFI EndBlock cfiCond19
+          CFI EndBlock cfiPicker20
+//  214 
+//  215 /*********************************************************************
+//  216  * @fn      zclHA_uint8toa
+//  217  *
+//  218  * @brief   Converts from a uint8 to ascii decimal string.
+//  219  *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
+//  220  *          No null terminator.
+//  221  *
+//  222  * @param   b - Byte to be converted
+//  223  *          string - pointer to coverted string
+//  224  *
+//  225  * @return  none
+//  226  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  229 void zclHA_uint8toa(uint8 b, char *string)
+//  227 void zclHA_uint8toa(uint8 b, char *string)
 zclHA_uint8toa:
-          CFI Block cfiBlock17 Using cfiCommon0
+          CFI Block cfiBlock21 Using cfiCommon0
           CFI Function zclHA_uint8toa
         CODE
-//  230 {
+//  228 {
         MOV     A,#-0x9
         LCALL   ?BANKED_ENTER_XDATA
           CFI DPH0 load(1, XDATA, add(CFA_XSP16, literal(-1)))
@@ -1128,8 +1116,8 @@ zclHA_uint8toa:
         ; Auto size: 0
         MOV     A,R1
         MOV     R6,A
-//  231   // write the level (up to 3 digits, pre-padded with spaces)
-//  232   string[0] = string[1] = string[2] = '0';
+//  229   // write the level (up to 3 digits, pre-padded with spaces)
+//  230   string[0] = string[1] = string[2] = '0';
         MOV     A,R2
         ADD     A,#0x2
         MOV     R0,A
@@ -1153,7 +1141,7 @@ zclHA_uint8toa:
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  233   string[2] = '0' + (b % 10);  // 1s
+//  231   string[2] = '0' + (b % 10);  // 1s
         MOV     A,R6
         MOV     B,#0xa
         DIV     AB
@@ -1162,15 +1150,15 @@ zclHA_uint8toa:
         MOV     DPL,R4
         MOV     DPH,R5
         MOVX    @DPTR,A
-//  234   b = b / 10;
+//  232   b = b / 10;
         MOV     B,#0xa
         MOV     A,R6
         DIV     AB
         MOV     R6,A
-//  235   if( b )
+//  233   if( b )
         JZ      ??zclHA_uint8toa_0
-//  236   {
-//  237     string[1] = '0' + (b % 10);  // 10s
+//  234   {
+//  235     string[1] = '0' + (b % 10);  // 10s
         MOV     B,#0xa
         DIV     AB
         MOV     A,B
@@ -1178,15 +1166,15 @@ zclHA_uint8toa:
         MOV     DPL,R0
         MOV     DPH,R1
         MOVX    @DPTR,A
-//  238     b = b / 10;
+//  236     b = b / 10;
         MOV     B,#0xa
         MOV     A,R6
         DIV     AB
-//  239   }
-//  240   if( b )
+//  237   }
+//  238   if( b )
         JZ      ??zclHA_uint8toa_0
-//  241   {
-//  242    string[0] = '0' + (b % 10);  // 100s
+//  239   {
+//  240    string[0] = '0' + (b % 10);  // 100s
         MOV     B,#0xa
         DIV     AB
         MOV     A,B
@@ -1194,59 +1182,59 @@ zclHA_uint8toa:
         MOV     DPL,R2
         MOV     DPH,R3
         MOVX    @DPTR,A
-//  243   }
-//  244 }
+//  241   }
+//  242 }
 ??zclHA_uint8toa_0:
         MOV     R7,#0x1
         LJMP    ?BANKED_LEAVE_XDATA
-          CFI EndBlock cfiBlock17
-//  245 
-//  246 /*********************************************************************
-//  247  * @fn      zclHA_LcdStatusLine1
-//  248  *
-//  249  * @brief   Display LCD line 1 with network status
-//  250  *          only call after on network
-//  251  *          ZC: PPPP CH ADDR
-//  252  *          ZR: PPPP CH ADDR
-//  253  *          ZE: PPPP CH ADDR
+          CFI EndBlock cfiBlock21
+//  243 
+//  244 /*********************************************************************
+//  245  * @fn      zclHA_LcdStatusLine1
+//  246  *
+//  247  * @brief   Display LCD line 1 with network status
+//  248  *          only call after on network
+//  249  *          ZC: PPPP CH ADDR
+//  250  *          ZR: PPPP CH ADDR
+//  251  *          ZE: PPPP CH ADDR
+//  252  *
+//  253  * @param   kind (0=ZC, 1=ZR, 2=ZED)
 //  254  *
-//  255  * @param   kind (0=ZC, 1=ZR, 2=ZED)
-//  256  *
-//  257  * @return  none
-//  258  */
+//  255  * @return  none
+//  256  */
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//  259 void zclHA_LcdStatusLine1( uint8 kind )
+//  257 void zclHA_LcdStatusLine1( uint8 kind )
 zclHA_LcdStatusLine1:
-          CFI Block cfiBlock18 Using cfiCommon0
+          CFI Block cfiBlock22 Using cfiCommon0
           CFI Function zclHA_LcdStatusLine1
         CODE
-//  260 {
+//  258 {
         ; Saved register size: 0
         ; Auto size: 0
-//  261 #if defined ( LCD_SUPPORTED )
-//  262   char szLine[20];
-//  263 
-//  264   // copy in what node type it is
-//  265   if ( kind > ZCL_HA_DEVICE_END_DEVICE )
-//  266   {
-//  267     return;
-//  268   }
-//  269 
-//  270   // ZE: PANx CH ADDR
-//  271   osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
-//  272   zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
-//  273   szLine[8] = ' ';
-//  274 
-//  275   _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
-//  276   szLine[11] = ' ';
-//  277 
-//  278   zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
-//  279   HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
-//  280 #endif
-//  281 }
+//  259 #if defined ( LCD_SUPPORTED )
+//  260   char szLine[20];
+//  261 
+//  262   // copy in what node type it is
+//  263   if ( kind > ZCL_HA_DEVICE_END_DEVICE )
+//  264   {
+//  265     return;
+//  266   }
+//  267 
+//  268   // ZE: PANx CH ADDR
+//  269   osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
+//  270   zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
+//  271   szLine[8] = ' ';
+//  272 
+//  273   _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
+//  274   szLine[11] = ' ';
+//  275 
+//  276   zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
+//  277   HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
+//  278 #endif
+//  279 }
         LJMP    ?BRET
-          CFI EndBlock cfiBlock18
+          CFI EndBlock cfiBlock22
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??zclHA_Init?relay:
@@ -1298,16 +1286,14 @@ zclHA_LcdStatusLine1:
         DC24    zclHA_LcdStatusLine1
 
         END
-//  282 
-//  283 /*********************************************************************
-//  284 *********************************************************************/
+//  280 
+//  281 /*********************************************************************
+//  282 *********************************************************************/
 // 
-// 371 bytes in segment BANKED_CODE
+// 355 bytes in segment BANKED_CODE
 //  42 bytes in segment BANK_RELAYS
-//  21 bytes in segment XDATA_ROM_C
 // 
-// 413 bytes of CODE  memory
-//  21 bytes of CONST memory
+// 397 bytes of CODE memory
 //
 //Errors: none
-//Warnings: none
+//Warnings: 1

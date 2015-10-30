@@ -1,0 +1,366 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             26/Oct/2015  21:36:36 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\endpointList.cpp           #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\endpointList.cpp -D        #
+#                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D      #
+#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
+#                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
+#                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\endpointList.lst         #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\endpointList.r51          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\endpointList.cpp
+      1          #include <stdlib.h>
+      2          #include "OSAL_Memory.h"
+      3          #include "endpointList.h"
+      4          
+      5          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+      6          EndpointList::EndpointList() {
+   \                     ??EndpointList:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+      7          	head=(EndpointList::Item *)NULL;
+   \   000004   8A82         MOV     DPL,R2
+   \   000006   8B83         MOV     DPH,R3
+   \   000008   E4           CLR     A
+   \   000009   F0           MOVX    @DPTR,A
+   \   00000A   A3           INC     DPTR
+   \   00000B   F0           MOVX    @DPTR,A
+      8          }
+   \   00000C                REQUIRE ?Subroutine0
+   \   00000C                ; // Fall through to label ?Subroutine0
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000   D083         POP     DPH
+   \   000002   D082         POP     DPL
+   \   000004   02....       LJMP    ?BRET
+      9          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     10          void EndpointList::add( unsigned char endpoint, CONST zclAttrRec_t  newAttrList[]) {
+   \                     ??add:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000   74F2         MOV     A,#-0xe
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 14
+   \   000005                ; Auto size: 0
+   \   000005   8A..         MOV     ?V0,R2
+   \   000007   8B..         MOV     ?V1,R3
+   \   000009   89..         MOV     ?V2,R1
+   \   00000B   EC           MOV     A,R4
+   \   00000C   FE           MOV     R6,A
+   \   00000D   ED           MOV     A,R5
+   \   00000E   FF           MOV     R7,A
+     11          	EndpointList::Item * newItem = (EndpointList::Item *)osal_mem_alloc( sizeof( zclAttrRecsList ) );
+   \   00000F                ; Setup parameters for call to function osal_mem_alloc
+   \   00000F   7A05         MOV     R2,#0x5
+   \   000011   7B00         MOV     R3,#0x0
+   \   000013   12....       LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
+   \   000016   8A..         MOV     ?V4,R2
+   \   000018   8B..         MOV     ?V5,R3
+   \   00001A   A8..         MOV     R0,?V4
+   \   00001C   A9..         MOV     R1,?V5
+     12          	if ( newItem != NULL )  {
+   \   00001E   E8           MOV     A,R0
+   \   00001F   49           ORL     A,R1
+   \   000020   6034         JZ      ??add_1
+     13          		newItem->next = head;
+   \   000022   85..82       MOV     DPL,?V0
+   \   000025   85..83       MOV     DPH,?V1
+   \   000028   E0           MOVX    A,@DPTR
+   \   000029   FA           MOV     R2,A
+   \   00002A   A3           INC     DPTR
+   \   00002B   E0           MOVX    A,@DPTR
+   \   00002C   FB           MOV     R3,A
+   \   00002D   8882         MOV     DPL,R0
+   \   00002F   8983         MOV     DPH,R1
+   \   000031   EA           MOV     A,R2
+   \   000032   F0           MOVX    @DPTR,A
+   \   000033   A3           INC     DPTR
+   \   000034   EB           MOV     A,R3
+   \   000035   F0           MOVX    @DPTR,A
+     14            		newItem->endpoint = endpoint;
+   \   000036   8882         MOV     DPL,R0
+   \   000038   8983         MOV     DPH,R1
+   \   00003A   A3           INC     DPTR
+   \   00003B   A3           INC     DPTR
+   \   00003C   E5..         MOV     A,?V2
+   \   00003E   F0           MOVX    @DPTR,A
+     15          		newItem->attrs = newAttrList;
+   \   00003F   8882         MOV     DPL,R0
+   \   000041   8983         MOV     DPH,R1
+   \   000043   A3           INC     DPTR
+   \   000044   A3           INC     DPTR
+   \   000045   A3           INC     DPTR
+   \   000046   EE           MOV     A,R6
+   \   000047   F0           MOVX    @DPTR,A
+   \   000048   A3           INC     DPTR
+   \   000049   EF           MOV     A,R7
+   \   00004A   F0           MOVX    @DPTR,A
+     16          		head = newItem;
+   \   00004B   85..82       MOV     DPL,?V0
+   \   00004E   85..83       MOV     DPH,?V1
+   \   000051   E8           MOV     A,R0
+   \   000052   F0           MOVX    @DPTR,A
+   \   000053   A3           INC     DPTR
+   \   000054   E9           MOV     A,R1
+   \   000055   F0           MOVX    @DPTR,A
+     17           	}
+     18          }
+   \                     ??add_1:
+   \   000056   7F06         MOV     R7,#0x6
+   \   000058   02....       LJMP    ?BANKED_LEAVE_XDATA
+     19          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     20          const zclAttrRec_t  __code  * EndpointList::zclFindAttrRecsList( unsigned char endpoint ) {
+   \                     ??zclFindAttrRecsList:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     21          	EndpointList::Item *pLoop = head;
+     22          
+     23          	while ( pLoop != NULL ){
+     24          		if ( pLoop->endpoint == endpoint ) {
+     25          			return  pLoop->attrs; ;
+     26              	}
+     27          
+     28              	pLoop = pLoop->next;
+   \                     ??zclFindAttrRecsList_1:
+   \   000004   8A82         MOV     DPL,R2
+   \   000006   8B83         MOV     DPH,R3
+   \   000008   E0           MOVX    A,@DPTR
+   \   000009   FA           MOV     R2,A
+   \   00000A   A3           INC     DPTR
+   \   00000B   E0           MOVX    A,@DPTR
+   \   00000C   FB           MOV     R3,A
+   \   00000D   EA           MOV     A,R2
+   \   00000E   4B           ORL     A,R3
+   \   00000F   6018         JZ      ??zclFindAttrRecsList_2
+   \   000011   8A82         MOV     DPL,R2
+   \   000013   8B83         MOV     DPH,R3
+   \   000015   A3           INC     DPTR
+   \   000016   A3           INC     DPTR
+   \   000017   E0           MOVX    A,@DPTR
+   \   000018   69           XRL     A,R1
+   \   000019   70E9         JNZ     ??zclFindAttrRecsList_1
+   \   00001B   8A82         MOV     DPL,R2
+   \   00001D   8B83         MOV     DPH,R3
+   \   00001F   A3           INC     DPTR
+   \   000020   A3           INC     DPTR
+   \   000021   A3           INC     DPTR
+   \   000022   E0           MOVX    A,@DPTR
+   \   000023   FA           MOV     R2,A
+   \   000024   A3           INC     DPTR
+   \   000025   E0           MOVX    A,@DPTR
+   \   000026   FB           MOV     R3,A
+   \   000027   8004         SJMP    ??zclFindAttrRecsList_3
+     29            	}
+     30          
+     31          	return (const zclAttrRec_t  __code  *)NULL;
+   \                     ??zclFindAttrRecsList_2:
+   \   000029   7A00         MOV     R2,#0x0
+   \   00002B   7B00         MOV     R3,#0x0
+   \                     ??zclFindAttrRecsList_3:
+   \   00002D   02....       LJMP    ?Subroutine0 & 0xFFFF
+     32          }
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     `??new EndpointList?relay`:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `??new EndpointList`
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??EndpointList?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??EndpointList
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??add?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??add
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??zclFindAttrRecsList?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??zclFindAttrRecsList
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \   __banked_func __xdata_reentrant EndpointList &EndpointList::new EndpointList()
+   \                     `??new EndpointList`:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000   74F6         MOV     A,#-0xa
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 10
+   \   000005                ; Auto size: 0
+   \   000005                ; Setup parameters for call to function operator new(unsigned int)
+   \   000005   7A02         MOV     R2,#0x2
+   \   000007   7B00         MOV     R3,#0x0
+   \   000009   12....       LCALL   `??operator new?relay`; Banked call to: operator new(unsigned int)
+   \   00000C   EA           MOV     A,R2
+   \   00000D   4B           ORL     A,R3
+   \   00000E   600A         JZ      `??new EndpointList_1`
+   \   000010   8A82         MOV     DPL,R2
+   \   000012   8B83         MOV     DPH,R3
+   \   000014   E4           CLR     A
+   \   000015   F0           MOVX    @DPTR,A
+   \   000016   A3           INC     DPTR
+   \   000017   F0           MOVX    @DPTR,A
+   \   000018   8004         SJMP    `??new EndpointList_2`
+   \                     `??new EndpointList_1`:
+   \   00001A   7A00         MOV     R2,#0x0
+   \   00001C   7B00         MOV     R3,#0x0
+   \                     `??new EndpointList_2`:
+   \   00001E   7F02         MOV     R7,#0x2
+   \   000020   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   Maximum stack usage in bytes:
+
+   ISTACK XSTACK Function
+   ------ ------ --------
+      2      0   EndpointList::EndpointList()
+      1     14   EndpointList::add(unsigned char, zclAttrRec_t const __code *)
+        0     14   -> osal_mem_alloc
+      0     10   EndpointList::new EndpointList()
+        0     10   -> operator new(unsigned int)
+      2      0   EndpointList::zclFindAttrRecsList(unsigned char)
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       6  ??EndpointList?relay
+       6  ??add?relay
+       6  ??new EndpointList?relay
+       6  ??zclFindAttrRecsList?relay
+       7  ?Subroutine0
+      12  EndpointList::EndpointList()
+      91  EndpointList::add(unsigned char, zclAttrRec_t const __code *)
+      35  EndpointList::new EndpointList()
+      48  EndpointList::zclFindAttrRecsList(unsigned char)
+
+ 
+ 193 bytes in segment BANKED_CODE
+  24 bytes in segment BANK_RELAYS
+ 
+ 217 bytes of CODE memory
+
+Errors: none
+Warnings: none

@@ -14,12 +14,15 @@ extern "C"
 #include "zcl.h"
 
 #define ENDPOINT_ONOFF            13
+	
+#define ENDPOINT_SMART_PLUG       15
 
 
 extern SimpleDescriptionFormat_t OnOff_SimpleDesc;
-extern SimpleDescriptionFormat_t PowerMetering_SimpleDesc;
+extern SimpleDescriptionFormat_t SmartPlug_SimpleDesc;
 
-extern CONST zclAttrRec_t onOffAttrs[];
+extern CONST struct zclAttrRec_t onOffAttrs[];
+extern CONST struct zclAttrRec_t smartPlugAttrs[];
 
 extern void powerMeter_Init( byte task_id );
 

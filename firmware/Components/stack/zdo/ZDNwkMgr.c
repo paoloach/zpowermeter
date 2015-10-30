@@ -52,29 +52,11 @@ extern "C"
 #include "ZGlobals.h"
 #include "ZDNwkMgr.h"
 
-#if defined( MT_ZDO_FUNC )
-  #include "MT_ZDO.h"
-#endif
-  
-#if defined ( LCD_SUPPORTED )
-  #include "OnBoard.h"
-#endif
-
-/* HAL */
-#include "hal_lcd.h"
-  
 /******************************************************************************
  * CONSTANTS
  */
 
 #define ONE_MINUTE             60000  // 1(m) * 60(s) * 1000(ms)
-
-#if defined ( LCD_SUPPORTED )
-  const char NwkMgrStr_1[]     = "NM-fail not hi";
-  const char NwkMgrStr_2[]     = "NM-cur<last fail";
-  const char NwkMgrStr_3[]     = "NM-energy too hi";
-  const char NwkMgrStr_4[]     = "NM-energy not up";
-#endif
   
 /******************************************************************************
  * TYPEDEFS

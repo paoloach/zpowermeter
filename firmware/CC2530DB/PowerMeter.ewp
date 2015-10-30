@@ -529,7 +529,7 @@
         </option>
         <option>
           <name>IccLang</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>IccCDialect</name>
@@ -2209,13 +2209,13 @@
           <name>$PROJ_DIR$\..\Source\clusters\ClusterBasic.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.h</name>
@@ -2227,39 +2227,114 @@
           <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\Source\clusters\ClusterTemperatureMeasurement.cpp</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\Source\clusters\uint48.h</name>
         </file>
       </group>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterBasic.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterBasic.cpp</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure.cpp</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.cpp</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.cpp</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.cpp</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.cpp</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterTemperatureMeasurement.c</name>
+        <excluded>
+          <configuration>RouterEB</configuration>
+        </excluded>
       </file>
     </group>
     <file>
       <name>$PROJ_DIR$\..\Source\CS5463.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\CS5463.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\CS5463.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\OSAL_PowerMeter.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\OSAL_PowerMeter.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\PowerMeter.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\PowerMeter.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\PowerMeter.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\PowerMeter_data.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\PowerMeter_data.cpp</name>
     </file>
   </group>
   <group>
@@ -2576,6 +2651,9 @@
     <name>OSAL</name>
     <file>
       <name>$PROJ_DIR$\..\Components\osal\include\comdef.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\osal\common\new.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\osal\common\OSAL.c</name>
@@ -2940,6 +3018,12 @@
   </group>
   <group>
     <name>Profile</name>
+    <group>
+      <name>include</name>
+      <file>
+        <name>$PROJ_DIR$\..\Components\stack\zcl\ZCL_StatusCode.h</name>
+      </file>
+    </group>
     <file>
       <name>$PROJ_DIR$\..\Components\stack\af\AF.c</name>
     </file>
@@ -2947,10 +3031,28 @@
       <name>$PROJ_DIR$\..\Components\stack\af\AF.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\AttributeUtils.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\AttributeUtils.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\BufferData.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_clusterDef.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_diagnostic.c</name>
@@ -2960,21 +3062,57 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_ezmode.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_ezmode.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_ezmode.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_general.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_general.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\Source\ha\zcl_ha.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\ha\zcl_ha.cpp</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\ha\zcl_ha.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclListAttribute.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclListAttribute.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclReadCmd_t.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclReadCmd_t.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\ZclWriteCmd.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\ZclWriteRspCmd.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\ZclWriteRspCmd.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\ZclWriteRspStatus.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\ZclWriteRspStatus.h</name>
     </file>
   </group>
   <group>
@@ -3091,9 +3229,6 @@
       <name>$PROJ_DIR$\..\Source\zmain\ZMain.c</name>
     </file>
   </group>
-  <file>
-    <name>$PROJ_DIR$\EndDeviceEB\Exe\PowerMeter.d51</name>
-  </file>
 </project>
 
 

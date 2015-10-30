@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:17:23 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:22 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\OSAL_PowerMeter.c                        #
+#                          re\Source\OSAL_PowerMeter.cpp                      #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,7 +45,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\OSAL_PowerMeter.c -D SECURE=0 -D         #
+#                          re\Source\OSAL_PowerMeter.cpp -D SECURE=0 -D       #
 #                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
 #                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
 #                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\OSAL_PowerMeter.lst      #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.cpp
       1          
       2          /**************************************************************************************************
       3          
@@ -280,8 +279,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
    \   000044   7908         MOV     R1,#0x8
    \   000046   12....       LCALL   ??powerMeter_Init?relay; Banked call to: powerMeter_Init
      94            CS5463_Init();
-   \   000049                ; Setup parameters for call to function CS5463_Init
-   \   000049   12....       LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init
+   \   000049                ; Setup parameters for call to function CS5463_Init()
+   \   000049   12....       LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init()
      95          }
    \   00004C   D083         POP     DPH
    \   00004E   D082         POP     DPL
@@ -302,7 +301,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
       2   osalInitTasks
         2   -> APSF_Init
         2   -> APS_Init
-        2   -> CS5463_Init
+        2   -> CS5463_Init()
         2   -> Hal_Init
         2   -> ZDApp_Init
         2   -> ZDNwkMgr_Init

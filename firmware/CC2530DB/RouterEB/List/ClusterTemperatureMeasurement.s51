@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:46 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:22 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -12,7 +12,7 @@
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\Source\clusters\ClusterTemperatureMeasurement /
-//                          .c                                                /
+//                          .cpp                                              /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -48,9 +48,9 @@
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\Source\clusters\ClusterTemperatureMeasurement /
-//                          .c -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE  /
-//                          -D HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D   /
-//                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
+//                          .cpp -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALS /
+//                          E -D HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17    /
+//                          -D TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D   /
 //                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE  /
 //                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC         /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
@@ -107,8 +107,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\ClusterTemperatureMeas /
 //                          urement.s51                                       /
@@ -135,6 +134,12 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN ?V0
         EXTERN ?V1
         EXTERN ?V2
@@ -149,15 +154,49 @@
         EXTERN __INIT_XDATA_I
         EXTERN __INIT_XDATA_Z
 
+        PUBLIC ??clusterTemperatureMeasurementeInit
+        FUNCTION ??clusterTemperatureMeasurementeInit,021203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME ISTACK, 2, STACK
+        LOCFRAME XSTACK, 4, STACK
         PUBLIC ??clusterTemperatureMeasurementeInit?relay
         FUNCTION ??clusterTemperatureMeasurementeInit?relay,0203H
+        FUNCTION ??read,0203H
+        ARGFRAME XSTACK, 12, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
         FUNCTION ??read?relay,0203H
+        FUNCTION ??readSyncronus,021203H
+        ARGFRAME XSTACK, 0, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        LOCFRAME ISTACK, 2, STACK
+        LOCFRAME XSTACK, 4, STACK
         FUNCTION ??readSyncronus?relay,0203H
+        PUBLIC ??readTemperature
+        FUNCTION ??readTemperature,021203H
+        ARGFRAME XSTACK, 12, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        LOCFRAME ISTACK, 2, STACK
+        LOCFRAME XSTACK, 4, STACK
         PUBLIC ??readTemperature?relay
         FUNCTION ??readTemperature?relay,0203H
+        PUBLIC ??readTemperatureLoop
+        FUNCTION ??readTemperatureLoop,0a1203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME XSTACK, 12, STACK
         PUBLIC ??readTemperatureLoop?relay
         FUNCTION ??readTemperatureLoop?relay,0203H
+        FUNCTION ??reset,0203H
+        ARGFRAME XSTACK, 12, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
         FUNCTION ??reset?relay,0203H
+        FUNCTION ??write,0203H
+        ARGFRAME XSTACK, 12, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
         FUNCTION ??write?relay,0203H
         PUBWEAK P0DIR
         PUBWEAK P1DIR
@@ -174,46 +213,12 @@
         PUBWEAK _A_TIMIF
         PUBWEAK __Constant_2710
         PUBWEAK __Constant_2ee
-        PUBLIC clusterTemperatureMeasurementeInit
-        FUNCTION clusterTemperatureMeasurementeInit,021203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME ISTACK, 2, STACK
-        LOCFRAME XSTACK, 4, STACK
         PUBLIC decTemperatureValue
         PUBLIC maxTemperatureValue
         PUBLIC minTemperatureValue
-        FUNCTION `read`,0203H
-        ARGFRAME XSTACK, 12, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        FUNCTION readSyncronus,021203H
-        ARGFRAME XSTACK, 0, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        LOCFRAME ISTACK, 2, STACK
-        LOCFRAME XSTACK, 4, STACK
-        PUBLIC readTemperature
-        FUNCTION readTemperature,021203H
-        ARGFRAME XSTACK, 12, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        LOCFRAME ISTACK, 2, STACK
-        LOCFRAME XSTACK, 4, STACK
-        PUBLIC readTemperatureLoop
-        FUNCTION readTemperatureLoop,0a1203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME XSTACK, 12, STACK
-        FUNCTION reset,0203H
-        ARGFRAME XSTACK, 12, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
         PUBLIC tempTemperatureValue
         PUBLIC temperatureValue
         PUBLIC toleranceTemperature
-        FUNCTION `write`,0203H
-        ARGFRAME XSTACK, 12, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
         
           CFI Names cfiNames0
           CFI StackFrame CFA_SP SP IDATA
@@ -374,12 +379,12 @@ osal_pwrmgr_task_state SYMBOL "osal_pwrmgr_task_state"
 ??osal_pwrmgr_task_state?relay SYMBOL "?relay", osal_pwrmgr_task_state
 osal_start_timerEx  SYMBOL "osal_start_timerEx"
 ??osal_start_timerEx?relay SYMBOL "?relay", osal_start_timerEx
-clusterTemperatureMeasurementeInit SYMBOL "clusterTemperatureMeasurementeInit"
-??clusterTemperatureMeasurementeInit?relay SYMBOL "?relay", clusterTemperatureMeasurementeInit
-readTemperature     SYMBOL "readTemperature"
-??readTemperature?relay SYMBOL "?relay", readTemperature
-readTemperatureLoop SYMBOL "readTemperatureLoop"
-??readTemperatureLoop?relay SYMBOL "?relay", readTemperatureLoop
+
+??clusterTemperatureMeasurementeInit?relay SYMBOL "?relay", ??clusterTemperatureMeasurementeInit
+
+??readTemperature?relay SYMBOL "?relay", ??readTemperature
+
+??readTemperatureLoop?relay SYMBOL "?relay", ??readTemperatureLoop
 
         EXTERN ??osal_pwrmgr_task_state?relay
         FUNCTION ??osal_pwrmgr_task_state?relay,00H
@@ -401,7 +406,7 @@ readTemperatureLoop SYMBOL "readTemperatureLoop"
         ARGFRAME DOVERLAY, 0, STATIC
         EXTERN temperatureSensorTaskID
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.c
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.cpp
 //    1 /**************************************************************************************************
 //    2 
 //    3  DESCRIPTION:
@@ -628,11 +633,11 @@ toleranceTemperature:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  108 void clusterTemperatureMeasurementeInit(void) {
-clusterTemperatureMeasurementeInit:
+??clusterTemperatureMeasurementeInit:
           CFI Block cfiBlock0 Using cfiCommon0
-          CFI Function clusterTemperatureMeasurementeInit
+          CFI Function ??clusterTemperatureMeasurementeInit
         CODE
-        FUNCALL clusterTemperatureMeasurementeInit, readTemperature
+        FUNCALL ??clusterTemperatureMeasurementeInit, ??readTemperature
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -643,7 +648,7 @@ clusterTemperatureMeasurementeInit:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL clusterTemperatureMeasurementeInit, osal_start_timerEx
+        FUNCALL ??clusterTemperatureMeasurementeInit, osal_start_timerEx
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 4, STACK
@@ -674,8 +679,8 @@ clusterTemperatureMeasurementeInit:
 //  117 //	P0=0;
 //  118 	readTemperature();
 ??CrossCallReturnLabel_2:
-        ; Setup parameters for call to function readTemperature
-        LCALL   ??readTemperature?relay; Banked call to: readTemperature
+        ; Setup parameters for call to function readTemperature()
+        LCALL   ??readTemperature?relay; Banked call to: readTemperature()
           CFI EndBlock cfiBlock0
 //  119 	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
         ; Setup parameters for call to function osal_start_timerEx
@@ -727,11 +732,11 @@ clusterTemperatureMeasurementeInit:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  122 uint16 readTemperatureLoop(uint16 events) {
-readTemperatureLoop:
+??readTemperatureLoop:
           CFI Block cfiBlock3 Using cfiCommon0
-          CFI Function readTemperatureLoop
+          CFI Function ??readTemperatureLoop
         CODE
-        FUNCALL readTemperatureLoop, readTemperature
+        FUNCALL ??readTemperatureLoop, ??readTemperature
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -742,7 +747,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, reset
+        FUNCALL ??readTemperatureLoop, ??reset
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -753,7 +758,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, `write`
+        FUNCALL ??readTemperatureLoop, ??write
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -764,7 +769,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, `write`
+        FUNCALL ??readTemperatureLoop, ??write
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -775,7 +780,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, `read`
+        FUNCALL ??readTemperatureLoop, ??read
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -786,7 +791,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, `read`
+        FUNCALL ??readTemperatureLoop, ??read
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -797,7 +802,7 @@ readTemperatureLoop:
         ARGFRAME XSTACK, 12, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperatureLoop, osal_pwrmgr_task_state
+        FUNCALL ??readTemperatureLoop, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 12, STACK
@@ -837,36 +842,36 @@ readTemperatureLoop:
 //  123 	if (events & READ_TEMP_EVT){
         MOV     A,R6
         ANL     A,#0x4
-        JZ      ??readTemperatureLoop_0
+        JZ      ??readTemperatureLoop_1
 //  124 		readTemperature();
-        ; Setup parameters for call to function readTemperature
-        LCALL   ??readTemperature?relay; Banked call to: readTemperature
+        ; Setup parameters for call to function readTemperature()
+        LCALL   ??readTemperature?relay; Banked call to: readTemperature()
 //  125 		return ( events ^ READ_TEMP_EVT );
         MOV     A,R6
         XRL     A,#0x4
-        LJMP    ??readTemperatureLoop_1 & 0xFFFF
+        LJMP    ??readTemperatureLoop_2 & 0xFFFF
 //  126 	};
 //  127 	if (events & END_READ_TEMP_EVT){
-??readTemperatureLoop_0:
+??readTemperatureLoop_1:
         MOV     A,R6
         ANL     A,#0x8
         JNZ     $+5
-        LJMP    ??readTemperatureLoop_2 & 0xFFFF
+        LJMP    ??readTemperatureLoop_3 & 0xFFFF
 //  128 		finalizeReadTemp();
-        ; Setup parameters for call to function reset
-        LCALL   ??reset?relay        ; Banked call to: reset
-        ; Setup parameters for call to function write
+        ; Setup parameters for call to function reset()
+        LCALL   ??reset?relay        ; Banked call to: reset()
+        ; Setup parameters for call to function write(unsigned char)
         MOV     R1,#-0x34
-        LCALL   ??write?relay        ; Banked call to: write
-        ; Setup parameters for call to function write
+        LCALL   ??write?relay        ; Banked call to: write(unsigned char)
+        ; Setup parameters for call to function write(unsigned char)
         MOV     R1,#-0x42
-        LCALL   ??write?relay        ; Banked call to: write
-        ; Setup parameters for call to function read
-        LCALL   ??read?relay         ; Banked call to: read
+        LCALL   ??write?relay        ; Banked call to: write(unsigned char)
+        ; Setup parameters for call to function read()
+        LCALL   ??read?relay         ; Banked call to: read()
         MOV     A,R1
         MOV     ?V0,A
-        ; Setup parameters for call to function read
-        LCALL   ??read?relay         ; Banked call to: read
+        ; Setup parameters for call to function read()
+        LCALL   ??read?relay         ; Banked call to: read()
         MOV     A,?V0
         MOV     DPTR,#tempTemperatureValue
         MOVX    @DPTR,A
@@ -929,13 +934,13 @@ readTemperatureLoop:
 //  129 		return ( events ^ END_READ_TEMP_EVT );
         MOV     A,R6
         XRL     A,#0x8
-??readTemperatureLoop_1:
+??readTemperatureLoop_2:
         MOV     R2,A
         MOV     A,R7
         MOV     R3,A
 //  130 	}
 //  131 	return events;
-??readTemperatureLoop_2:
+??readTemperatureLoop_3:
         MOV     R7,#0x4
         LJMP    ?BANKED_LEAVE_XDATA
           CFI EndBlock cfiBlock3
@@ -944,11 +949,11 @@ readTemperatureLoop:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  134 void readTemperature(void) {
-readTemperature:
+??readTemperature:
           CFI Block cfiBlock4 Using cfiCommon0
-          CFI Function readTemperature
+          CFI Function ??readTemperature
         CODE
-        FUNCALL readTemperature, osal_pwrmgr_task_state
+        FUNCALL ??readTemperature, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -959,7 +964,7 @@ readTemperature:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperature, readSyncronus
+        FUNCALL ??readTemperature, ??readSyncronus
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -970,7 +975,7 @@ readTemperature:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readTemperature, osal_start_timerEx
+        FUNCALL ??readTemperature, osal_start_timerEx
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 4, STACK
@@ -998,8 +1003,8 @@ readTemperature:
         LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
 //  136 #if 1
 //  137 	readSyncronus();
-        ; Setup parameters for call to function readSyncronus
-        LCALL   ??readSyncronus?relay; Banked call to: readSyncronus
+        ; Setup parameters for call to function readSyncronus()
+        LCALL   ??readSyncronus?relay; Banked call to: readSyncronus()
 //  138 //	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
 //  139 #else
 //  140 	readAsyncronus();
@@ -1013,11 +1018,11 @@ readTemperature:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  145 void readSyncronus(void) {
-readSyncronus:
+??readSyncronus:
           CFI Block cfiBlock5 Using cfiCommon0
-          CFI Function readSyncronus
+          CFI Function ??readSyncronus
         CODE
-        FUNCALL readSyncronus, reset
+        FUNCALL ??readSyncronus, ??reset
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -1028,7 +1033,7 @@ readSyncronus:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readSyncronus, `write`
+        FUNCALL ??readSyncronus, ??write
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -1039,7 +1044,7 @@ readSyncronus:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readSyncronus, `write`
+        FUNCALL ??readSyncronus, ??write
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -1050,7 +1055,7 @@ readSyncronus:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL readSyncronus, osal_start_timerEx
+        FUNCALL ??readSyncronus, osal_start_timerEx
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 4, STACK
@@ -1094,20 +1099,20 @@ readSyncronus:
 //  159 	st(T3IE=0;);
         CLR     0xb8.3
 //  160 	if (reset()==0)
-        ; Setup parameters for call to function reset
-        LCALL   ??reset?relay        ; Banked call to: reset
+        ; Setup parameters for call to function reset()
+        LCALL   ??reset?relay        ; Banked call to: reset()
         MOV     A,R1
-        JZ      ??readSyncronus_0
+        JZ      ??readSyncronus_1
 //  161 		return;
 //  162 	
 //  163 	write(0xCC);
-        ; Setup parameters for call to function write
+        ; Setup parameters for call to function write(unsigned char)
         MOV     R1,#-0x34
-        LCALL   ??write?relay        ; Banked call to: write
+        LCALL   ??write?relay        ; Banked call to: write(unsigned char)
 //  164 	write(0x44);
-        ; Setup parameters for call to function write
+        ; Setup parameters for call to function write(unsigned char)
         MOV     R1,#0x44
-        LCALL   ??write?relay        ; Banked call to: write
+        LCALL   ??write?relay        ; Banked call to: write(unsigned char)
 //  165 	
 //  166 	osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 750 );
         ; Setup parameters for call to function osal_start_timerEx
@@ -1134,7 +1139,7 @@ readSyncronus:
 //  175 	finalizeReadTemp();
 //  176 	*/
 //  177 }
-??readSyncronus_0:
+??readSyncronus_1:
         LJMP    ??Subroutine3_0 & 0xFFFF
           CFI EndBlock cfiBlock5
         REQUIRE P1SEL
@@ -1152,13 +1157,13 @@ readSyncronus:
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine2:
           CFI Block cfiCond6 Using cfiCommon0
-          CFI Function clusterTemperatureMeasurementeInit
+          CFI Function ??clusterTemperatureMeasurementeInit
           CFI Conditional ??CrossCallReturnLabel_2
           CFI DPL0 Frame(CFA_SP, 4)
           CFI DPH0 Frame(CFA_SP, 5)
           CFI CFA_SP SP+-7
           CFI Block cfiCond7 Using cfiCommon0
-          CFI (cfiCond7) Function readSyncronus
+          CFI (cfiCond7) Function ??readSyncronus
           CFI (cfiCond7) Conditional ??CrossCallReturnLabel_3
           CFI (cfiCond7) DPL0 Frame(CFA_SP, 4)
           CFI (cfiCond7) DPH0 Frame(CFA_SP, 5)
@@ -1194,9 +1199,9 @@ readSyncronus:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  196 uint8 reset() {
-reset:
+??reset:
           CFI Block cfiBlock9 Using cfiCommon0
-          CFI Function reset
+          CFI Function ??reset
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -1212,47 +1217,47 @@ reset:
 //  200 	T3_start=1;
         ORL     0xcb,#0x10
 //  201 	while(T3CNT < 244);
-??reset_0:
+??reset_1:
         MOV     A,0xca
         CLR     C
         SUBB    A,#-0xc
-        JC      ??reset_0
+        JC      ??reset_1
 //  202 	P1_HIGH;
         ANL     0xfe,#0xfb
 //  203 	T3_clear=1;
         ORL     0xcb,#0x4
 //  204 	while(T3CNT < 30);
-??reset_1:
-        MOV     A,0xca
-        CLR     C
-        SUBB    A,#0x1e
-        JC      ??reset_1
-//  205 	T3_clear=1;
-        ORL     0xcb,#0x4
-//  206 	while(T3CNT < 240  && P1_2 == 1);
 ??reset_2:
         MOV     A,0xca
         CLR     C
-        SUBB    A,#-0x10
-        JNC     ??reset_3
-        MOV     C,0x90.2
+        SUBB    A,#0x1e
         JC      ??reset_2
+//  205 	T3_clear=1;
+        ORL     0xcb,#0x4
+//  206 	while(T3CNT < 240  && P1_2 == 1);
+??reset_3:
+        MOV     A,0xca
+        CLR     C
+        SUBB    A,#-0x10
+        JNC     ??reset_4
+        MOV     C,0x90.2
+        JC      ??reset_3
 //  207 	
 //  208 	if (P1_2 == 1){
-??reset_3:
-        MOV     C,0x90.2
-        JNC     ??reset_4
-//  209 		return 0;
-        MOV     R1,#0x0
-        SJMP    ??reset_5
-//  210 	}
-//  211 	while(P1_2==0);
 ??reset_4:
         MOV     C,0x90.2
-        JNC     ??reset_4
+        JNC     ??reset_5
+//  209 		return 0;
+        MOV     R1,#0x0
+        SJMP    ??reset_6
+//  210 	}
+//  211 	while(P1_2==0);
+??reset_5:
+        MOV     C,0x90.2
+        JNC     ??reset_5
 //  212 	return 1;
         MOV     R1,#0x1
-??reset_5:
+??reset_6:
         LJMP    ?BRET
           CFI EndBlock cfiBlock9
         REQUIRE P1DIR
@@ -1264,9 +1269,9 @@ reset:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  215 void write(unsigned char byte){
-`write`:
+??write:
           CFI Block cfiBlock10 Using cfiCommon0
-          CFI Function `write`
+          CFI Function ??write
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -1286,39 +1291,39 @@ reset:
 //  222 
 //  223 	while(bit > 0){
 //  224 		P1_LOW;
-??write_0:
+??write_1:
         ORL     0xfe,#0x4
 //  225 		T3_clear=1;
         ORL     0xcb,#0x4
 //  226 		if (byte & 0x1){
         MOV     A,R1
         MOV     C,0xE0 /* A   */.0
-        JNC     ??write_1
+        JNC     ??write_2
 //  227 			while(T3CNT < 10);
-??write_2:
+??write_3:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0xa
-        JNC     ??write_3
-        SJMP    ??write_2
+        JNC     ??write_4
+        SJMP    ??write_3
 //  228 		} else {
 //  229 			while(T3CNT < 60);
-??write_1:
+??write_2:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0x3c
-        JC      ??write_1
+        JC      ??write_2
 //  230 		}
 //  231 		
 //  232 		P1_HIGH;
-??write_3:
+??write_4:
         ANL     0xfe,#0xfb
 //  233 		while(T3CNT < 62);
-??write_4:
+??write_5:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0x3e
-        JC      ??write_4
+        JC      ??write_5
 //  234 		byte = byte >> 1;
         MOV     A,R1
         CLR     C
@@ -1328,7 +1333,7 @@ reset:
 //  236 	}
         DEC     R0
         MOV     A,R0
-        JNZ     ??write_0
+        JNZ     ??write_1
 //  237 	
 //  238 }
         LJMP    ?BRET
@@ -1340,9 +1345,9 @@ reset:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  240 uint8  read(void) {
-`read`:
+??read:
           CFI Block cfiBlock11 Using cfiCommon0
-          CFI Function `read`
+          CFI Function ??read
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -1365,26 +1370,26 @@ reset:
         JC      ??CrossCallReturnLabel_1
 //  250 	while(bit > 0){
 //  251 		P1_LOW;
-??read_0:
+??read_1:
         ORL     0xfe,#0x4
 //  252 		T3_clear=1;
         ORL     0xcb,#0x4
 //  253 		while(T3CNT < 2);
-??read_1:
+??read_2:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0x2
-        JC      ??read_1
+        JC      ??read_2
 //  254 		P1_HIGH;
         ANL     0xfe,#0xfb
 //  255 		T3_clear=1;
         ORL     0xcb,#0x4
 //  256 		while(T3CNT < 10);
-??read_2:
+??read_3:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0xa
-        JC      ??read_2
+        JC      ??read_3
 //  257 		result >>= 1;
         MOV     A,R1
         CLR     C
@@ -1392,25 +1397,25 @@ reset:
         MOV     R1,A
 //  258 		if (P1_2){
         MOV     C,0x90.2
-        JNC     ??read_3
+        JNC     ??read_4
 //  259 			result |= 0x80;
         SETB    0xE0 /* A   */.7
         MOV     R1,A
 //  260 		}
 //  261 		T3_clear=1;
-??read_3:
+??read_4:
         ORL     0xcb,#0x4
 //  262 		while(T3CNT < 30);
-??read_4:
+??read_5:
         MOV     A,0xca
         CLR     C
         SUBB    A,#0x1e
-        JC      ??read_4
+        JC      ??read_5
 //  263 		bit--;
 //  264 	}
         DEC     R0
         MOV     A,R0
-        JNZ     ??read_0
+        JNZ     ??read_1
 //  265 	return result;
         LJMP    ?BRET
           CFI EndBlock cfiBlock11
@@ -1423,11 +1428,11 @@ reset:
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine1:
           CFI Block cfiCond12 Using cfiCommon0
-          CFI Function `write`
+          CFI Function ??write
           CFI Conditional ??CrossCallReturnLabel_0
           CFI CFA_SP SP+-5
           CFI Block cfiCond13 Using cfiCommon0
-          CFI (cfiCond13) Function `read`
+          CFI (cfiCond13) Function ??read
           CFI (cfiCond13) Conditional ??CrossCallReturnLabel_1
           CFI (cfiCond13) CFA_SP SP+-5
           CFI Block cfiPicker14 Using cfiCommon1
@@ -1475,49 +1480,49 @@ __Constant_2ee:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    clusterTemperatureMeasurementeInit
+        DC24    ??clusterTemperatureMeasurementeInit
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??readTemperatureLoop?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    readTemperatureLoop
+        DC24    ??readTemperatureLoop
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??readTemperature?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    readTemperature
+        DC24    ??readTemperature
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??readSyncronus?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    readSyncronus
+        DC24    ??readSyncronus
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??reset?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    reset
+        DC24    ??reset
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??write?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    `write`
+        DC24    ??write
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??read?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    `read`
+        DC24    ??read
 
         END
 //  267 

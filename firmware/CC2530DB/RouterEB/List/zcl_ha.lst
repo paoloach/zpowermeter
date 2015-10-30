@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:38 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:23 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\ha\zcl_ha.c                              #
+#                          re\Source\ha\zcl_ha.cpp                            #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,7 +45,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\ha\zcl_ha.c -D SECURE=0 -D               #
+#                          re\Source\ha\zcl_ha.cpp -D SECURE=0 -D             #
 #                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
 #                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
 #                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\zcl_ha.lst               #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.cpp
       1          /**************************************************************************************************
       2            Filename:       zcl_ha.c
       3            Revised:        $Date: 2013-10-21 12:15:10 -0700 (Mon, 21 Oct 2013) $
@@ -158,100 +157,79 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
      40          /*********************************************************************
      41           * INCLUDES
      42           */
-     43          #include "ZComDef.h"
-     44          #include "OSAL.h"
-     45          
-     46          #include "zcl.h"
-     47          #include "zcl_general.h"
-     48          #include "zcl_closures.h"
-     49          #include "zcl_HVAC.h"
-     50          #include "zcl_ss.h"
-     51          #include "zcl_ms.h"
-     52          #include "zcl_lighting.h"
-     53          #include "zcl_ha.h"
-     54          
-     55          /* HAL */
-     56          #include "hal_lcd.h"
-     57          
-     58          /*********************************************************************
-     59           * MACROS
-     60           */
-     61          
-     62          /*********************************************************************
-     63           * CONSTANTS
-     64           */
-     65          
-     66          /*********************************************************************
-     67           * TYPEDEFS
-     68           */
-     69          
-     70          /*********************************************************************
-     71           * GLOBAL VARIABLES
-     72           */
-     73          
-     74          /*********************************************************************
-     75           * EXTERNAL VARIABLES
-     76           */
-     77          
-     78          /*********************************************************************
-     79           * EXTERNAL FUNCTIONS
-     80           */
-     81          
-     82          /*********************************************************************
-     83           * LOCAL VARIABLES
-     84           */
-     85          
-     86          /*********************************************************************
-     87           * STATUS STRINGS
-     88           */
-     89          // NwkInfo displayed on line 1 once on the network
-     90          // 0123456789012345
-     91          // Zc: PPPP CH ADDR
-     92          // Zr: PPPP CH ADDR
-     93          // Zed:PPPP CH ADDR
-
-   \                                 In  segment XDATA_ROM_C, align 1
-     94          const char NwkInfoZcStr[]  = "ZC: ";
-   \                     NwkInfoZcStr:
-   \   000000   5A433A20     DB "ZC: "
-   \            00      
-
-   \                                 In  segment XDATA_ROM_C, align 1
-     95          const char NwkInfoZrStr[]  = "ZR: ";
-   \                     NwkInfoZrStr:
-   \   000000   5A523A20     DB "ZR: "
-   \            00      
-
-   \                                 In  segment XDATA_ROM_C, align 1
-     96          const char NwkInfoZedStr[] = "Zed:";
-   \                     NwkInfoZedStr:
-   \   000000   5A65643A     DB "Zed:"
-   \            00      
-
-   \                                 In  segment XDATA_ROM_C, align 1
-     97          const char * const NwkInfoStrs[] = { NwkInfoZcStr, NwkInfoZrStr, NwkInfoZedStr };
-   \                     NwkInfoStrs:
-   \   000000   ....         DW NwkInfoZcStr
-   \   000002   ....         DW NwkInfoZrStr
-   \   000004   ....         DW NwkInfoZedStr
-     98          
-     99          /*********************************************************************
-    100           * LOCAL FUNCTIONS
-    101           */
-    102          
-    103          /*********************************************************************
-    104           * @fn      zclHA_Init
-    105           *
-    106           * @brief   Register the Simple descriptor with the HA profile.
-    107           *          This function also registers the profile's cluster conversion table.
+     43          
+     44          #include "ZComDef.h"
+     45          #include "OSAL.h"
+     46          
+     47          #include "zcl.h"
+     48          #include "zcl_general.h"
+     49          #include "zcl_closures.h"
+     50          //#include "zcl_HVAC.h"
+     51          #include "zcl_ss.h"
+     52          #include "zcl_ms.h"
+     53          #include "zcl_lighting.h"
+     54          #include "zcl_ha.h"
+     55          
+     56          /*********************************************************************
+     57           * MACROS
+     58           */
+     59          
+     60          /*********************************************************************
+     61           * CONSTANTS
+     62           */
+     63          
+     64          /*********************************************************************
+     65           * TYPEDEFS
+     66           */
+     67          
+     68          /*********************************************************************
+     69           * GLOBAL VARIABLES
+     70           */
+     71          
+     72          /*********************************************************************
+     73           * EXTERNAL VARIABLES
+     74           */
+     75          
+     76          /*********************************************************************
+     77           * EXTERNAL FUNCTIONS
+     78           */
+     79          
+     80          /*********************************************************************
+     81           * LOCAL VARIABLES
+     82           */
+     83          
+     84          /*********************************************************************
+     85           * STATUS STRINGS
+     86           */
+     87          // NwkInfo displayed on line 1 once on the network
+     88          // 0123456789012345
+     89          // Zc: PPPP CH ADDR
+     90          // Zr: PPPP CH ADDR
+     91          // Zed:PPPP CH ADDR
+     92          const char NwkInfoZcStr[]  = "ZC: ";
+     93          const char NwkInfoZrStr[]  = "ZR: ";
+     94          const char NwkInfoZedStr[] = "Zed:";
+     95          const char * const NwkInfoStrs[] = { NwkInfoZcStr, NwkInfoZrStr, NwkInfoZedStr };
+                                    ^
+Warning[Pe177]: variable "NwkInfoStrs" was declared but never referenced
+     96          
+     97          /*********************************************************************
+     98           * LOCAL FUNCTIONS
+     99           */
+    100          
+    101          /*********************************************************************
+    102           * @fn      zclHA_Init
+    103           *
+    104           * @brief   Register the Simple descriptor with the HA profile.
+    105           *          This function also registers the profile's cluster conversion table.
+    106           *
+    107           * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
     108           *
-    109           * @param   simpleDesc - a pointer to a valid SimpleDescriptionFormat_t, must not be NULL.
-    110           *
-    111           * @return  none
-    112           */
+    109           * @return  none
+    110           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    113          void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc ){
+    111          void zclHA_Init( SimpleDescriptionFormat_t *simpleDesc ){
    \                     zclHA_Init:
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
@@ -263,54 +241,54 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000006   FE           MOV     R6,A
    \   000007   EB           MOV     A,R3
    \   000008   FF           MOV     R7,A
-    114            endPointDesc_t *epDesc;
-    115          
-    116            // Register the application's endpoint descriptor
-    117            //  - This memory is allocated and never freed.
-    118            epDesc = osal_mem_alloc( sizeof ( endPointDesc_t ) );
+    112            endPointDesc_t *epDesc;
+    113          
+    114            // Register the application's endpoint descriptor
+    115            //  - This memory is allocated and never freed.
+    116            epDesc = (endPointDesc_t *)osal_mem_alloc( sizeof ( endPointDesc_t ) );
    \   000009                ; Setup parameters for call to function osal_mem_alloc
    \   000009   7A06         MOV     R2,#0x6
    \   00000B   7B00         MOV     R3,#0x0
    \   00000D   12....       LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
-    119            if ( epDesc ) {
+    117            if ( epDesc ) {
    \   000010   EA           MOV     A,R2
    \   000011   4B           ORL     A,R3
    \   000012   6022         JZ      ??zclHA_Init_0
-    120              // Fill out the endpoint description.
-    121              epDesc->endPoint = simpleDesc->EndPoint;
+    118              // Fill out the endpoint description.
+    119              epDesc->endPoint = simpleDesc->EndPoint;
    \   000014   8E82         MOV     DPL,R6
    \   000016   8F83         MOV     DPH,R7
    \   000018   E0           MOVX    A,@DPTR
    \   000019   8A82         MOV     DPL,R2
    \   00001B   8B83         MOV     DPH,R3
    \   00001D   F0           MOVX    @DPTR,A
-    122              epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
+    120              epDesc->task_id = &zcl_TaskID;   // all messages get sent to ZCL first
    \   00001E   A3           INC     DPTR
    \   00001F   74..         MOV     A,#zcl_TaskID & 0xff
    \   000021   F0           MOVX    @DPTR,A
    \   000022   A3           INC     DPTR
    \   000023   74..         MOV     A,#(zcl_TaskID >> 8) & 0xff
    \   000025   12....       LCALL   ?Subroutine3 & 0xFFFF
-    123              epDesc->simpleDesc = simpleDesc;
-   \                     ??CrossCallReturnLabel_5:
+    121              epDesc->simpleDesc = simpleDesc;
+   \                     ??CrossCallReturnLabel_3:
    \   000028   EE           MOV     A,R6
    \   000029   F0           MOVX    @DPTR,A
    \   00002A   A3           INC     DPTR
    \   00002B   EF           MOV     A,R7
    \   00002C   12....       LCALL   ?Subroutine3 & 0xFFFF
-    124              epDesc->latencyReq = noLatencyReqs;
-   \                     ??CrossCallReturnLabel_6:
+    122              epDesc->latencyReq = noLatencyReqs;
+   \                     ??CrossCallReturnLabel_4:
    \   00002F   A3           INC     DPTR
    \   000030   A3           INC     DPTR
    \   000031   E4           CLR     A
    \   000032   F0           MOVX    @DPTR,A
-    125          
-    126              // Register the endpoint description with the AF
-    127              afRegister( epDesc );
+    123          
+    124              // Register the endpoint description with the AF
+    125              afRegister( epDesc );
    \   000033                ; Setup parameters for call to function afRegister
    \   000033   12....       LCALL   ??afRegister?relay   ; Banked call to: afRegister
-    128            }
-    129          }
+    126            }
+    127          }
    \                     ??zclHA_Init_0:
    \   000036   7F02         MOV     R7,#0x2
    \   000038   02....       LJMP    ?BANKED_LEAVE_XDATA
@@ -324,95 +302,100 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000006   A3           INC     DPTR
    \   000007   A3           INC     DPTR
    \   000008   22           RET
-    130          
-    131          /*********************************************************************
-    132           * @fn      zclHA_isbit
+    128          
+    129          /*********************************************************************
+    130           * @fn      zclHA_isbit
+    131           *
+    132           * @brief   Returns TRUE if the index bit is set
     133           *
-    134           * @brief   Returns TRUE if the index bit is set
-    135           *
-    136           * @param   pArray   - array with bits in it
-    137           *          bitIndex - index into the array of bits
-    138           *
-    139           * @return  TRUE if index bit is set
-    140           */
+    134           * @param   pArray   - array with bits in it
+    135           *          bitIndex - index into the array of bits
+    136           *
+    137           * @return  TRUE if index bit is set
+    138           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    141          bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
+    139          bool zclHA_isbit(uint8 *pArray, uint8 bitIndex)
    \                     zclHA_isbit:
-    142          {
+    140          {
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-   \   000004   E9           MOV     A,R1
-   \   000005   FC           MOV     R4,A
-    143            uint8 bit;
-    144            bit = ( 1 << ( bitIndex & 0x7 ) );
-    145            if( pArray[bitIndex >> 3] & bit )
-   \   000006   13           RRC     A
-   \   000007   13           RRC     A
-   \   000008   13           RRC     A
-   \   000009   541F         ANL     A,#0x1f
-   \   00000B   F8           MOV     R0,A
-   \   00000C   EA           MOV     A,R2
-   \   00000D   28           ADD     A,R0
-   \   00000E   F582         MOV     DPL,A
-   \   000010   E4           CLR     A
-   \   000011   3B           ADDC    A,R3
-   \   000012   F583         MOV     DPH,A
-   \   000014   E0           MOVX    A,@DPTR
-   \   000015   C0E0         PUSH    A
-   \   000017   7407         MOV     A,#0x7
-   \   000019   5C           ANL     A,R4
-   \   00001A   F8           MOV     R0,A
-   \   00001B   D0E0         POP     A
-   \   00001D   B80002       CJNE    R0,#0x0,??zclHA_isbit_0
-   \   000020   8004         SJMP    ??zclHA_isbit_1
+    141            uint8 bit;
+    142            bit = ( 1 << ( bitIndex & 0x7 ) );
+    143            if( pArray[bitIndex >> 3] & bit )
+   \   000004   12....       LCALL   ??Subroutine5_0 & 0xFFFF
+   \                     ??CrossCallReturnLabel_5:
+   \   000007   C0E0         PUSH    A
+   \   000009   7407         MOV     A,#0x7
+   \   00000B   59           ANL     A,R1
+   \   00000C   F8           MOV     R0,A
+   \   00000D   D0E0         POP     A
+   \   00000F   B80002       CJNE    R0,#0x0,??zclHA_isbit_0
+   \   000012   8004         SJMP    ??zclHA_isbit_1
    \                     ??zclHA_isbit_0:
-   \   000022   C3           CLR     C
-   \   000023   13           RRC     A
-   \   000024   D8FC         DJNZ    R0,??zclHA_isbit_0
+   \   000014   C3           CLR     C
+   \   000015   13           RRC     A
+   \   000016   D8FC         DJNZ    R0,??zclHA_isbit_0
    \                     ??zclHA_isbit_1:
-   \   000026   A2E0         MOV     C,0xE0 /* A   */.0
-   \   000028   5004         JNC     ??zclHA_isbit_2
-    146              return TRUE;
-   \   00002A   7901         MOV     R1,#0x1
-   \   00002C   8002         SJMP    ??zclHA_isbit_3
-    147            return FALSE;
+   \   000018   A2E0         MOV     C,0xE0 /* A   */.0
+   \   00001A   5003         JNC     ??zclHA_isbit_2
+    144              return TRUE;
+   \   00001C   D3           SETB    C
+   \   00001D   8001         SJMP    ??zclHA_isbit_3
+    145            return FALSE;
    \                     ??zclHA_isbit_2:
-   \   00002E   7900         MOV     R1,#0x0
+   \   00001F   C3           CLR     C
    \                     ??zclHA_isbit_3:
-   \   000030   80..         SJMP    ??Subroutine4_0
-    148          }
+   \   000020   80..         SJMP    ??Subroutine4_0
+    146          }
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ??Subroutine4_0:
    \   000000   D083         POP     DPH
    \   000002   D082         POP     DPL
    \   000004   02....       LJMP    ?BRET
-    149          
-    150          /*********************************************************************
-    151           * @fn      zclHA_setbit
-    152           *
-    153           * @brief   Sets a bit in a bit array
-    154           *
-    155           * @param   pArray   - array with bits in it
-    156           *          bitIndex - index into the array of bits
-    157           *
-    158           * @return  none
-    159           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    160          void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
+   \                     ??Subroutine5_0:
+   \   000000   E9           MOV     A,R1
+   \   000001   13           RRC     A
+   \   000002   13           RRC     A
+   \   000003   13           RRC     A
+   \   000004   541F         ANL     A,#0x1f
+   \   000006   FC           MOV     R4,A
+   \   000007   EA           MOV     A,R2
+   \   000008   2C           ADD     A,R4
+   \   000009   F582         MOV     DPL,A
+   \   00000B   E4           CLR     A
+   \   00000C   3B           ADDC    A,R3
+   \   00000D   F583         MOV     DPH,A
+   \   00000F   E0           MOVX    A,@DPTR
+   \   000010   22           RET
+    147          
+    148          /*********************************************************************
+    149           * @fn      zclHA_setbit
+    150           *
+    151           * @brief   Sets a bit in a bit array
+    152           *
+    153           * @param   pArray   - array with bits in it
+    154           *          bitIndex - index into the array of bits
+    155           *
+    156           * @return  none
+    157           */
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    158          void zclHA_setbit(uint8 *pArray, uint8 bitIndex)
    \                     zclHA_setbit:
-    161          {
+    159          {
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-    162            uint8 bit;
-    163            bit = ( 1 << ( bitIndex & 0x7 ) );
-    164            pArray[bitIndex >> 3] |= bit;
+    160            uint8 bit;
+    161            bit = ( 1 << ( bitIndex & 0x7 ) );
+    162            pArray[bitIndex >> 3] |= bit;
    \   000004   7407         MOV     A,#0x7
    \   000006   59           ANL     A,R1
    \   000007   F8           MOV     R0,A
@@ -425,11 +408,11 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000011   D8FC         DJNZ    R0,??zclHA_setbit_0
    \                     ??zclHA_setbit_1:
    \   000013   12....       LCALL   ?Subroutine1 & 0xFFFF
-   \                     ??CrossCallReturnLabel_0:
+   \                     ??CrossCallReturnLabel_6:
    \   000016   48           ORL     A,R0
    \   000017                REQUIRE ?Subroutine0
    \   000017                ; // Fall through to label ?Subroutine0
-    165          }
+    163          }
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine0:
@@ -440,43 +423,31 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine1:
    \   000000   F8           MOV     R0,A
-   \   000001   E9           MOV     A,R1
-   \   000002   13           RRC     A
-   \   000003   13           RRC     A
-   \   000004   13           RRC     A
-   \   000005   541F         ANL     A,#0x1f
-   \   000007   FC           MOV     R4,A
-   \   000008   EA           MOV     A,R2
-   \   000009   2C           ADD     A,R4
-   \   00000A   F582         MOV     DPL,A
-   \   00000C   E4           CLR     A
-   \   00000D   3B           ADDC    A,R3
-   \   00000E   F583         MOV     DPH,A
-   \   000010   E0           MOVX    A,@DPTR
-   \   000011   22           RET
-    166          
-    167          /*********************************************************************
-    168           * @fn      zclHA_clearbit
+   \   000001                REQUIRE ??Subroutine5_0
+   \   000001                ; // Fall through to label ??Subroutine5_0
+    164          
+    165          /*********************************************************************
+    166           * @fn      zclHA_clearbit
+    167           *
+    168           * @brief   clears a bit in a bit array
     169           *
-    170           * @brief   clears a bit in a bit array
-    171           *
-    172           * @param   pArray   - array with bits in it
-    173           *          bitIndex - index into the array of bits
-    174           *
-    175           * @return  none
-    176           */
+    170           * @param   pArray   - array with bits in it
+    171           *          bitIndex - index into the array of bits
+    172           *
+    173           * @return  none
+    174           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    177          void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
+    175          void zclHA_clearbit(uint8 *pArray, uint8 bitIndex)
    \                     zclHA_clearbit:
-    178          {
+    176          {
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-    179            uint8 bit;
-    180            bit = ( 1 << ( bitIndex & 0x7 ) );
-    181            pArray[bitIndex >> 3] &= (~(unsigned)bit);
+    177            uint8 bit;
+    178            bit = ( 1 << ( bitIndex & 0x7 ) );
+    179            pArray[bitIndex >> 3] &= (~(unsigned)bit);
    \   000004   7407         MOV     A,#0x7
    \   000006   59           ANL     A,R1
    \   000007   F8           MOV     R0,A
@@ -490,28 +461,28 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \                     ??zclHA_clearbit_1:
    \   000013   F4           CPL     A
    \   000014   12....       LCALL   ?Subroutine1 & 0xFFFF
-   \                     ??CrossCallReturnLabel_1:
+   \                     ??CrossCallReturnLabel_7:
    \   000017   58           ANL     A,R0
    \   000018   80..         SJMP    ?Subroutine0
-    182          }
-    183          
-    184          /*********************************************************************
-    185           * @fn      zclHA_uint16toa
-    186           *
-    187           * @brief   Converts from a uint16 to ascii hex string.
-    188           *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
-    189           *          NULL terminates the string.
-    190           *
-    191           * @param   u - Number to be converted
-    192           *          string - pointer to coverted string
-    193           *
-    194           * @return  none
-    195           */
+    180          }
+    181          
+    182          /*********************************************************************
+    183           * @fn      zclHA_uint16toa
+    184           *
+    185           * @brief   Converts from a uint16 to ascii hex string.
+    186           *          The # will be exactly 4 hex digits (e.g. 0x0000 or 0x1E3F).
+    187           *          NULL terminates the string.
+    188           *
+    189           * @param   u - Number to be converted
+    190           *          string - pointer to coverted string
+    191           *
+    192           * @return  none
+    193           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    196          void zclHA_uint16toa(uint16 u, char *string)
+    194          void zclHA_uint16toa(uint16 u, char *string)
    \                     zclHA_uint16toa:
-    197          {
+    195          {
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
    \   000000                REQUIRE ?V2
@@ -520,43 +491,43 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
    \   000005                ; Saved register size: 12
    \   000005                ; Auto size: 0
-    198            // add preceding zeros
-    199            if ( u < 0x1000 )
+    196            // add preceding zeros
+    197            if ( u < 0x1000 )
    \   000005   C3           CLR     C
    \   000006   EB           MOV     A,R3
    \   000007   9410         SUBB    A,#0x10
-   \   000009   5003         JNC     ??CrossCallReturnLabel_2
-    200            {
-    201              *string++ = '0';
+   \   000009   5003         JNC     ??CrossCallReturnLabel_0
+    198            {
+    199              *string++ = '0';
    \   00000B   12....       LCALL   ?Subroutine2 & 0xFFFF
-    202            }
-    203          
-    204            if ( u < 0x0100 )
-   \                     ??CrossCallReturnLabel_2:
+    200            }
+    201          
+    202            if ( u < 0x0100 )
+   \                     ??CrossCallReturnLabel_0:
    \   00000E   C3           CLR     C
    \   00000F   EB           MOV     A,R3
    \   000010   9401         SUBB    A,#0x1
-   \   000012   5003         JNC     ??CrossCallReturnLabel_3
-    205            {
-    206              *string++ = '0';
+   \   000012   5003         JNC     ??CrossCallReturnLabel_1
+    203            {
+    204              *string++ = '0';
    \   000014   12....       LCALL   ?Subroutine2 & 0xFFFF
-    207            }
-    208          
-    209            if ( u < 0x0010 )
-   \                     ??CrossCallReturnLabel_3:
+    205            }
+    206          
+    207            if ( u < 0x0010 )
+   \                     ??CrossCallReturnLabel_1:
    \   000017   C3           CLR     C
    \   000018   EA           MOV     A,R2
    \   000019   9410         SUBB    A,#0x10
    \   00001B   EB           MOV     A,R3
    \   00001C   9400         SUBB    A,#0x0
-   \   00001E   5003         JNC     ??CrossCallReturnLabel_4
-    210            {
-    211              *string++ = '0';
+   \   00001E   5003         JNC     ??CrossCallReturnLabel_2
+    208            {
+    209              *string++ = '0';
    \   000020   12....       LCALL   ?Subroutine2 & 0xFFFF
-    212            }
-    213          
-    214            _ltoa((unsigned long)u, (unsigned char *)string, 16);
-   \                     ??CrossCallReturnLabel_4:
+    210            }
+    211          
+    212            _ltoa((unsigned long)u, (unsigned char *)string, 16);
+   \                     ??CrossCallReturnLabel_2:
    \   000023                ; Setup parameters for call to function _ltoa
    \   000023   8C..         MOV     ?V0,R4
    \   000025   8D..         MOV     ?V1,R5
@@ -569,7 +540,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000031   12....       LCALL   ??_ltoa?relay        ; Banked call to: _ltoa
    \   000034   7402         MOV     A,#0x2
    \   000036   12....       LCALL   ?DEALLOC_XSTACK8
-    215          }
+    213          }
    \   000039   7F04         MOV     R7,#0x4
    \   00003B   02....       LJMP    ?BANKED_LEAVE_XDATA
 
@@ -583,32 +554,32 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000008   AC82         MOV     R4,DPL
    \   00000A   AD83         MOV     R5,DPH
    \   00000C   22           RET
-    216          
-    217          /*********************************************************************
-    218           * @fn      zclHA_uint8toa
-    219           *
-    220           * @brief   Converts from a uint8 to ascii decimal string.
-    221           *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
-    222           *          No null terminator.
-    223           *
-    224           * @param   b - Byte to be converted
-    225           *          string - pointer to coverted string
-    226           *
-    227           * @return  none
-    228           */
+    214          
+    215          /*********************************************************************
+    216           * @fn      zclHA_uint8toa
+    217           *
+    218           * @brief   Converts from a uint8 to ascii decimal string.
+    219           *          The # will be exactly 3 digits (e.g. "123", " 64", "  0"), preceded by spaces.
+    220           *          No null terminator.
+    221           *
+    222           * @param   b - Byte to be converted
+    223           *          string - pointer to coverted string
+    224           *
+    225           * @return  none
+    226           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    229          void zclHA_uint8toa(uint8 b, char *string)
+    227          void zclHA_uint8toa(uint8 b, char *string)
    \                     zclHA_uint8toa:
-    230          {
+    228          {
    \   000000   74F7         MOV     A,#-0x9
    \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
    \   000005                ; Saved register size: 9
    \   000005                ; Auto size: 0
    \   000005   E9           MOV     A,R1
    \   000006   FE           MOV     R6,A
-    231            // write the level (up to 3 digits, pre-padded with spaces)
-    232            string[0] = string[1] = string[2] = '0';
+    229            // write the level (up to 3 digits, pre-padded with spaces)
+    230            string[0] = string[1] = string[2] = '0';
    \   000007   EA           MOV     A,R2
    \   000008   2402         ADD     A,#0x2
    \   00000A   F8           MOV     R0,A
@@ -632,7 +603,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000023   8A82         MOV     DPL,R2
    \   000025   8B83         MOV     DPH,R3
    \   000027   F0           MOVX    @DPTR,A
-    233            string[2] = '0' + (b % 10);  // 1s
+    231            string[2] = '0' + (b % 10);  // 1s
    \   000028   EE           MOV     A,R6
    \   000029   75F00A       MOV     B,#0xa
    \   00002C   84           DIV     AB
@@ -641,15 +612,15 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000031   8C82         MOV     DPL,R4
    \   000033   8D83         MOV     DPH,R5
    \   000035   F0           MOVX    @DPTR,A
-    234            b = b / 10;
+    232            b = b / 10;
    \   000036   75F00A       MOV     B,#0xa
    \   000039   EE           MOV     A,R6
    \   00003A   84           DIV     AB
    \   00003B   FE           MOV     R6,A
-    235            if( b )
+    233            if( b )
    \   00003C   6021         JZ      ??zclHA_uint8toa_0
-    236            {
-    237              string[1] = '0' + (b % 10);  // 10s
+    234            {
+    235              string[1] = '0' + (b % 10);  // 10s
    \   00003E   75F00A       MOV     B,#0xa
    \   000041   84           DIV     AB
    \   000042   E5F0         MOV     A,B
@@ -657,15 +628,15 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   000046   8882         MOV     DPL,R0
    \   000048   8983         MOV     DPH,R1
    \   00004A   F0           MOVX    @DPTR,A
-    238              b = b / 10;
+    236              b = b / 10;
    \   00004B   75F00A       MOV     B,#0xa
    \   00004E   EE           MOV     A,R6
    \   00004F   84           DIV     AB
-    239            }
-    240            if( b )
+    237            }
+    238            if( b )
    \   000050   600D         JZ      ??zclHA_uint8toa_0
-    241            {
-    242             string[0] = '0' + (b % 10);  // 100s
+    239            {
+    240             string[0] = '0' + (b % 10);  // 100s
    \   000052   75F00A       MOV     B,#0xa
    \   000055   84           DIV     AB
    \   000056   E5F0         MOV     A,B
@@ -673,53 +644,53 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \   00005A   8A82         MOV     DPL,R2
    \   00005C   8B83         MOV     DPH,R3
    \   00005E   F0           MOVX    @DPTR,A
-    243            }
-    244          }
+    241            }
+    242          }
    \                     ??zclHA_uint8toa_0:
    \   00005F   7F01         MOV     R7,#0x1
    \   000061   02....       LJMP    ?BANKED_LEAVE_XDATA
-    245          
-    246          /*********************************************************************
-    247           * @fn      zclHA_LcdStatusLine1
-    248           *
-    249           * @brief   Display LCD line 1 with network status
-    250           *          only call after on network
-    251           *          ZC: PPPP CH ADDR
-    252           *          ZR: PPPP CH ADDR
-    253           *          ZE: PPPP CH ADDR
+    243          
+    244          /*********************************************************************
+    245           * @fn      zclHA_LcdStatusLine1
+    246           *
+    247           * @brief   Display LCD line 1 with network status
+    248           *          only call after on network
+    249           *          ZC: PPPP CH ADDR
+    250           *          ZR: PPPP CH ADDR
+    251           *          ZE: PPPP CH ADDR
+    252           *
+    253           * @param   kind (0=ZC, 1=ZR, 2=ZED)
     254           *
-    255           * @param   kind (0=ZC, 1=ZR, 2=ZED)
-    256           *
-    257           * @return  none
-    258           */
+    255           * @return  none
+    256           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    259          void zclHA_LcdStatusLine1( uint8 kind )
+    257          void zclHA_LcdStatusLine1( uint8 kind )
    \                     zclHA_LcdStatusLine1:
-    260          {
+    258          {
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
-    261          #if defined ( LCD_SUPPORTED )
-    262            char szLine[20];
-    263          
-    264            // copy in what node type it is
-    265            if ( kind > ZCL_HA_DEVICE_END_DEVICE )
-    266            {
-    267              return;
-    268            }
-    269          
-    270            // ZE: PANx CH ADDR
-    271            osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
-    272            zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
-    273            szLine[8] = ' ';
-    274          
-    275            _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
-    276            szLine[11] = ' ';
-    277          
-    278            zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
-    279            HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
-    280          #endif
-    281          }
+    259          #if defined ( LCD_SUPPORTED )
+    260            char szLine[20];
+    261          
+    262            // copy in what node type it is
+    263            if ( kind > ZCL_HA_DEVICE_END_DEVICE )
+    264            {
+    265              return;
+    266            }
+    267          
+    268            // ZE: PANx CH ADDR
+    269            osal_memcpy( szLine, NwkInfoStrs[kind], 4 );
+    270            zclHA_uint16toa( _NIB.nwkPanId, &szLine[4] );
+    271            szLine[8] = ' ';
+    272          
+    273            _ltoa( _NIB.nwkLogicalChannel, (void *)(&szLine[9]), 10 );
+    274            szLine[11] = ' ';
+    275          
+    276            zclHA_uint16toa( _NIB.nwkDevAddress, &szLine[12] );
+    277            HalLcdWriteString( (char*)szLine, HAL_LCD_LINE_1 );
+    278          #endif
+    279          }
    \   000000   02....       LJMP    ?BRET
 
    \                                 In  segment BANK_RELAYS, align 1
@@ -756,9 +727,9 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    \                     ??zclHA_LcdStatusLine1?relay:
    \   000000   12....       LCALL   ?BDISPATCH
    \   000003   ......       DC24    zclHA_LcdStatusLine1
-    282          
-    283          /*********************************************************************
-    284          *********************************************************************/
+    280          
+    281          /*********************************************************************
+    282          *********************************************************************/
 
    Maximum stack usage in bytes:
 
@@ -781,6 +752,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
    Bytes  Function/Label
    -----  --------------
        7  ??Subroutine4_0
+      17  ??Subroutine5_0
        6  ??zclHA_Init?relay
        6  ??zclHA_LcdStatusLine1?relay
        6  ??zclHA_clearbit?relay
@@ -789,28 +761,22 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\ha\zcl_ha.c
        6  ??zclHA_uint16toa?relay
        6  ??zclHA_uint8toa?relay
        1  ?Subroutine0
-      18  ?Subroutine1
+       1  ?Subroutine1
       13  ?Subroutine2
        9  ?Subroutine3
-       6  NwkInfoStrs
-       5  NwkInfoZcStr
-       5  NwkInfoZedStr
-       5  NwkInfoZrStr
       59  zclHA_Init
        3  zclHA_LcdStatusLine1
       26  zclHA_clearbit
-      50  zclHA_isbit
+      34  zclHA_isbit
       23  zclHA_setbit
       62  zclHA_uint16toa
      100  zclHA_uint8toa
 
  
- 371 bytes in segment BANKED_CODE
+ 355 bytes in segment BANKED_CODE
   42 bytes in segment BANK_RELAYS
-  21 bytes in segment XDATA_ROM_C
  
- 413 bytes of CODE  memory
-  21 bytes of CONST memory
+ 397 bytes of CODE memory
 
 Errors: none
-Warnings: none
+Warnings: 1

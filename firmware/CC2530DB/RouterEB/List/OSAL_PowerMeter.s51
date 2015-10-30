@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:17:23 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:22 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\OSAL_PowerMeter.c                      /
+//                          are\Source\OSAL_PowerMeter.cpp                    /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\OSAL_PowerMeter.c -D SECURE=0 -D       /
+//                          are\Source\OSAL_PowerMeter.cpp -D SECURE=0 -D     /
 //                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE   /
 //                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN    /
 //                          -D NV_INIT -D xNV_RESTORE -D                      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\OSAL_PowerMeter.s51    /
 //                                                                            /
@@ -132,6 +131,12 @@
         RSEG ISTACK:IDATA:NOROOT(0)
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
+
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
 
         EXTERN ?BDISPATCH
         EXTERN ?BRET
@@ -243,40 +248,40 @@ APS_Init            SYMBOL "APS_Init"
 ??APS_Init?relay    SYMBOL "?relay", APS_Init
 `?<Name APS_event_loop 6>` SYMBOL "APS_event_loop"
 ??APS_event_loop?relay SYMBOL "?relay", `?<Name APS_event_loop 6>`
-CS5463_Init         SYMBOL "CS5463_Init"
-??CS5463_Init?relay SYMBOL "?relay", CS5463_Init
+
+??CS5463_Init?relay SYMBOL "?relay", ??CS5463_Init
 Hal_Init            SYMBOL "Hal_Init"
 ??Hal_Init?relay    SYMBOL "?relay", Hal_Init
-`?<Name Hal_ProcessEvent 12>` SYMBOL "Hal_ProcessEvent"
-??Hal_ProcessEvent?relay SYMBOL "?relay", `?<Name Hal_ProcessEvent 12>`
+`?<Name Hal_ProcessEvent 13>` SYMBOL "Hal_ProcessEvent"
+??Hal_ProcessEvent?relay SYMBOL "?relay", `?<Name Hal_ProcessEvent 13>`
 ZDApp_Init          SYMBOL "ZDApp_Init"
 ??ZDApp_Init?relay  SYMBOL "?relay", ZDApp_Init
-`?<Name ZDApp_event_loop 16>` SYMBOL "ZDApp_event_loop"
-??ZDApp_event_loop?relay SYMBOL "?relay", `?<Name ZDApp_event_loop 16>`
+`?<Name ZDApp_event_loop 17>` SYMBOL "ZDApp_event_loop"
+??ZDApp_event_loop?relay SYMBOL "?relay", `?<Name ZDApp_event_loop 17>`
 ZDNwkMgr_Init       SYMBOL "ZDNwkMgr_Init"
 ??ZDNwkMgr_Init?relay SYMBOL "?relay", ZDNwkMgr_Init
-`?<Name ZDNwkMgr_event_loop 20>` SYMBOL "ZDNwkMgr_event_loop"
-??ZDNwkMgr_event_loop?relay SYMBOL "?relay", `?<Name ZDNwkMgr_event_loop 20>`
-`?<Name macEventLoop 22>` SYMBOL "macEventLoop"
-??macEventLoop?relay SYMBOL "?relay", `?<Name macEventLoop 22>`
+`?<Name ZDNwkMgr_event_loop 21>` SYMBOL "ZDNwkMgr_event_loop"
+??ZDNwkMgr_event_loop?relay SYMBOL "?relay", `?<Name ZDNwkMgr_event_loop 21>`
+`?<Name macEventLoop 23>` SYMBOL "macEventLoop"
+??macEventLoop?relay SYMBOL "?relay", `?<Name macEventLoop 23>`
 macTaskInit         SYMBOL "macTaskInit"
 ??macTaskInit?relay SYMBOL "?relay", macTaskInit
-`?<Name nwk_event_loop 26>` SYMBOL "nwk_event_loop"
-??nwk_event_loop?relay SYMBOL "?relay", `?<Name nwk_event_loop 26>`
+`?<Name nwk_event_loop 27>` SYMBOL "nwk_event_loop"
+??nwk_event_loop?relay SYMBOL "?relay", `?<Name nwk_event_loop 27>`
 nwk_init            SYMBOL "nwk_init"
 ??nwk_init?relay    SYMBOL "?relay", nwk_init
 osal_mem_alloc      SYMBOL "osal_mem_alloc"
 ??osal_mem_alloc?relay SYMBOL "?relay", osal_mem_alloc
 osal_memset         SYMBOL "osal_memset"
 ??osal_memset?relay SYMBOL "?relay", osal_memset
-`?<Name powerMeterEventLoop 34>` SYMBOL "powerMeterEventLoop"
-??powerMeterEventLoop?relay SYMBOL "?relay", `?<Name powerMeterEventLoop 34>`
+`?<Name powerMeterEventLoop 35>` SYMBOL "powerMeterEventLoop"
+??powerMeterEventLoop?relay SYMBOL "?relay", `?<Name powerMeterEventLoop 35>`
 powerMeter_Init     SYMBOL "powerMeter_Init"
 ??powerMeter_Init?relay SYMBOL "?relay", powerMeter_Init
 zcl_Init            SYMBOL "zcl_Init"
 ??zcl_Init?relay    SYMBOL "?relay", zcl_Init
-`?<Name zcl_event_loop 40>` SYMBOL "zcl_event_loop"
-??zcl_event_loop?relay SYMBOL "?relay", `?<Name zcl_event_loop 40>`
+`?<Name zcl_event_loop 41>` SYMBOL "zcl_event_loop"
+??zcl_event_loop?relay SYMBOL "?relay", `?<Name zcl_event_loop 41>`
 osalInitTasks       SYMBOL "osalInitTasks"
 ??osalInitTasks?relay SYMBOL "?relay", osalInitTasks
 
@@ -288,6 +293,13 @@ osalInitTasks       SYMBOL "osalInitTasks"
         FUNCTION ??APS_Init?relay,00H
         EXTERN ??APS_event_loop?relay
         FUNCTION ??APS_event_loop?relay,00H
+        EXTERN ??CS5463_Init
+        FUNCTION ??CS5463_Init,0202H
+        ARGFRAME ISTACK, 2, STACK
+        ARGFRAME PSTACK, 0, STACK
+        ARGFRAME XSTACK, 0, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
         EXTERN ??CS5463_Init?relay
         FUNCTION ??CS5463_Init?relay,00H
         EXTERN ??Hal_Init?relay
@@ -331,13 +343,6 @@ osalInitTasks       SYMBOL "osalInitTasks"
         ARGFRAME DOVERLAY, 0, STATIC
         EXTERN APS_Init
         FUNCTION APS_Init,0202H
-        ARGFRAME ISTACK, 2, STACK
-        ARGFRAME PSTACK, 0, STACK
-        ARGFRAME XSTACK, 0, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        EXTERN CS5463_Init
-        FUNCTION CS5463_Init,0202H
         ARGFRAME ISTACK, 2, STACK
         ARGFRAME PSTACK, 0, STACK
         ARGFRAME XSTACK, 0, STACK
@@ -407,7 +412,7 @@ osalInitTasks       SYMBOL "osalInitTasks"
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.c
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\OSAL_PowerMeter.cpp
 //    1 
 //    2 /**************************************************************************************************
 //    3 
@@ -635,7 +640,7 @@ osalInitTasks:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL osalInitTasks, CS5463_Init
+        FUNCALL osalInitTasks, ??CS5463_Init
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -715,8 +720,8 @@ osalInitTasks:
         MOV     R1,#0x8
         LCALL   ??powerMeter_Init?relay; Banked call to: powerMeter_Init
 //   94   CS5463_Init();
-        ; Setup parameters for call to function CS5463_Init
-        LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init
+        ; Setup parameters for call to function CS5463_Init()
+        LCALL   ??CS5463_Init?relay  ; Banked call to: CS5463_Init()
 //   95 }
         POP     DPH
           CFI DPH0 SameValue

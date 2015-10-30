@@ -326,8 +326,7 @@ void *osal_mem_alloc( uint16 size )
   size += OSALMEM_HDRSZ;
 
   // Calculate required bytes to add to 'size' to align to halDataAlign_t.
-  if ( sizeof( halDataAlign_t ) == 2 )
-  {
+  if ( sizeof( halDataAlign_t ) == 2 ) {
     size += (size & 0x01);
   }
   else if ( sizeof( halDataAlign_t ) != 1 )

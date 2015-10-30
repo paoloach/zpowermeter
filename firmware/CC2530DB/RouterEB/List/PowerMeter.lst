@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:18:25 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:22 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\PowerMeter.c                             #
+#                          re\Source\PowerMeter.cpp                           #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,7 +45,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\PowerMeter.c -D SECURE=0 -D              #
+#                          re\Source\PowerMeter.cpp -D SECURE=0 -D            #
 #                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
 #                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
 #                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\PowerMeter.lst           #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.cpp
       1          /**************************************************************************************************
       2          
       3           DESCRIPTION:
@@ -210,10 +209,10 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   000024   12....       LCALL   ??zcl_registerPlugin?relay; Banked call to: zcl_registerPlugin
    \   000027   7402         MOV     A,#0x2
    \   000029   12....       LCALL   ?DEALLOC_XSTACK8
-     57           	zcl_registerAttrList(ENDPOINT_ONOFF, powerMeterAttrs );
+     57           	zcl_registerAttrList(ENDPOINT_ONOFF, onOffAttrs );
    \   00002C                ; Setup parameters for call to function zcl_registerAttrList
-   \   00002C   7A..         MOV     R2,#powerMeterAttrs & 0xff
-   \   00002E   7B..         MOV     R3,#(powerMeterAttrs >> 8) & 0xff
+   \   00002C   7A..         MOV     R2,#onOffAttrs & 0xff
+   \   00002E   7B..         MOV     R3,#(onOffAttrs >> 8) & 0xff
    \   000030   790D         MOV     R1,#0xd
    \   000032   12....       LCALL   ??zcl_registerAttrList?relay; Banked call to: zcl_registerAttrList
      58            	zcl_registerForMsg( zPowerMeterTaskID );
@@ -222,40 +221,52 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   000038   E0           MOVX    A,@DPTR
    \   000039   F9           MOV     R1,A
    \   00003A   12....       LCALL   ??zcl_registerForMsg?relay; Banked call to: zcl_registerForMsg
-     59            
-     60            	EA=1;
-   \   00003D   D2AF         SETB    0xa8.7
-     61           	identifyInit(zPowerMeterTaskID);
-   \   00003F                ; Setup parameters for call to function identifyInit
-   \   00003F   90....       MOV     DPTR,#zPowerMeterTaskID
-   \   000042   E0           MOVX    A,@DPTR
-   \   000043   F9           MOV     R1,A
-   \   000044   12....       LCALL   ??identifyInit?relay ; Banked call to: identifyInit
-     62          	onOffInit();
-   \   000047                ; Setup parameters for call to function onOffInit
-   \   000047   12....       LCALL   ??onOffInit?relay    ; Banked call to: onOffInit
-     63          }
-   \   00004A                REQUIRE ?Subroutine0
-   \   00004A                REQUIRE _A_IEN0
-   \   00004A                ; // Fall through to label ?Subroutine0
+     59          	
+     60          	zclHA_Init( &SmartPlug_SimpleDesc );
+   \   00003D                ; Setup parameters for call to function zclHA_Init
+   \   00003D   7A..         MOV     R2,#SmartPlug_SimpleDesc & 0xff
+   \   00003F   7B..         MOV     R3,#(SmartPlug_SimpleDesc >> 8) & 0xff
+   \   000041   12....       LCALL   ??zclHA_Init?relay   ; Banked call to: zclHA_Init
+     61           	zcl_registerAttrList(ENDPOINT_SMART_PLUG, smartPlugAttrs );
+   \   000044                ; Setup parameters for call to function zcl_registerAttrList
+   \   000044   7A..         MOV     R2,#smartPlugAttrs & 0xff
+   \   000046   7B..         MOV     R3,#(smartPlugAttrs >> 8) & 0xff
+   \   000048   790F         MOV     R1,#0xf
+   \   00004A   12....       LCALL   ??zcl_registerAttrList?relay; Banked call to: zcl_registerAttrList
+     62            
+     63            	EA=1;
+   \   00004D   D2AF         SETB    0xa8.7
+     64           	identifyInit(zPowerMeterTaskID);
+   \   00004F                ; Setup parameters for call to function identifyInit(byte)
+   \   00004F   90....       MOV     DPTR,#zPowerMeterTaskID
+   \   000052   E0           MOVX    A,@DPTR
+   \   000053   F9           MOV     R1,A
+   \   000054   12....       LCALL   ??identifyInit?relay ; Banked call to: identifyInit(byte)
+     65          	onOffInit();
+   \   000057                ; Setup parameters for call to function onOffInit()
+   \   000057   12....       LCALL   ??onOffInit?relay    ; Banked call to: onOffInit()
+     66          }
+   \   00005A                REQUIRE ?Subroutine0
+   \   00005A                REQUIRE _A_IEN0
+   \   00005A                ; // Fall through to label ?Subroutine0
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine0:
    \   000000   7F02         MOV     R7,#0x2
    \   000002   02....       LJMP    ?BANKED_LEAVE_XDATA
-     64          
-     65          /*********************************************************************
-     66           * @fn          zclSample_event_loop
-     67           *
-     68           * @brief       Event Loop Processor for zclGeneral.
-     69           *
-     70           * @param       none
-     71           *
-     72           * @return      none
-     73           */
+     67          
+     68          /*********************************************************************
+     69           * @fn          zclSample_event_loop
+     70           *
+     71           * @brief       Event Loop Processor for zclGeneral.
+     72           *
+     73           * @param       none
+     74           *
+     75           * @return      none
+     76           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     74          uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
+     77          uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
    \                     powerMeterEventLoop:
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
@@ -267,38 +278,38 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   000005                ; Auto size: 0
    \   000005   8A..         MOV     ?V0,R2
    \   000007   8B..         MOV     ?V1,R3
-     75          	afIncomingMSGPacket_t *MSGpkt;
-     76            
-     77          	  (void)task_id;  // Intentionally unreferenced parameter
-     78          	 if ( events & SYS_EVENT_MSG ){
+     78          	afIncomingMSGPacket_t *MSGpkt;
+     79            
+     80          	  (void)task_id;  // Intentionally unreferenced parameter
+     81          	 if ( events & SYS_EVENT_MSG ){
    \   000009   EB           MOV     A,R3
    \   00000A   5480         ANL     A,#0x80
    \   00000C   7029         JNZ     ??powerMeterEventLoop_0
-     79          		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( zPowerMeterTaskID )) )  {
-     80          			switch ( MSGpkt->hdr.event ) {
-     81          				case ZCL_INCOMING_MSG:
-     82                    			// Incoming ZCL Foundation command/response messages
-     83                    			zPowerMeter_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
-     84                    			break;
-     85          		       default:
-     86                  		  break;
-     87                		}
-     88          
-     89                  osal_msg_deallocate( (uint8 *)MSGpkt );
-     90              	}
+     82          		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( zPowerMeterTaskID )) )  {
+     83          			switch ( MSGpkt->hdr.event ) {
+     84          				case ZCL_INCOMING_MSG:
+     85                    			// Incoming ZCL Foundation command/response messages
+     86                    			zPowerMeter_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
+     87                    			break;
+     88          		       default:
+     89                  		  break;
+     90                		}
      91          
-     92              	return (events ^ SYS_EVENT_MSG);
-     93          	}
-     94          	
-     95          	if ( events & IDENTIFY_TIMEOUT_EVT ) {
+     92                  osal_msg_deallocate( (uint8 *)MSGpkt );
+     93              	}
+     94          
+     95              	return (events ^ SYS_EVENT_MSG);
+     96          	}
+     97          	
+     98          	if ( events & IDENTIFY_TIMEOUT_EVT ) {
    \   00000E   EA           MOV     A,R2
    \   00000F   A2E0         MOV     C,0xE0 /* A   */.0
    \   000011   5076         JNC     ??powerMeterEventLoop_1
-     96          		return identifyLoop(events);
-   \   000013                ; Setup parameters for call to function identifyLoop
-   \   000013   12....       LCALL   ??identifyLoop?relay ; Banked call to: identifyLoop
+     99          		return identifyLoop(events);
+   \   000013                ; Setup parameters for call to function identifyLoop(uint16)
+   \   000013   12....       LCALL   ??identifyLoop?relay ; Banked call to: identifyLoop(uint16)
    \   000016   8075         SJMP    ??powerMeterEventLoop_2
-     97          	}
+    100          	}
    \                     ??powerMeterEventLoop_3:
    \   000018   09           INC     R1
    \                     ??powerMeterEventLoop_4:
@@ -388,15 +399,15 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   000084   6480         XRL     A,#0x80
    \   000086   FB           MOV     R3,A
    \   000087   8004         SJMP    ??powerMeterEventLoop_2
-     98          	
-     99           	return 0;
+    101          	
+    102           	return 0;
    \                     ??powerMeterEventLoop_1:
    \   000089   7A00         MOV     R2,#0x0
    \   00008B   7B00         MOV     R3,#0x0
    \                     ??powerMeterEventLoop_2:
    \   00008D   7F04         MOV     R7,#0x4
    \   00008F   02....       LJMP    ?BANKED_LEAVE_XDATA
-    100          }
+    103          }
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine1:
@@ -411,162 +422,162 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   00000B   8983         MOV     DPH,R1
    \   00000D   7900         MOV     R1,#0x0
    \   00000F   22           RET
-    101          
-    102          /****************************************************************************** 
-    103           * 
-    104           *  Functions for processing ZCL Foundation incoming Command/Response messages
-    105           *
-    106           *****************************************************************************/
-    107          
-    108          /*********************************************************************
-    109           * @fn      zPowerMeter_ProcessIncomingMsg
-    110           *
-    111           * @brief   Process ZCL Foundation incoming message
-    112           *
-    113           * @param   pInMsg - pointer to the received message
-    114           *
-    115           * @return  none
-    116           */
-    117          static void zPowerMeter_ProcessIncomingMsg( zclIncomingMsg_t *pInMsg){
-    118          	switch ( pInMsg->zclHdr.commandID ){
-    119          		case ZCL_CMD_READ_RSP:
-    120          			zPowerMeter_ProcessInReadRspCmd( pInMsg );
-    121          			break;
-    122          		case ZCL_CMD_WRITE_RSP:
-    123          			zPowerMeter_ProcessInWriteRspCmd( pInMsg );
+    104          
+    105          /****************************************************************************** 
+    106           * 
+    107           *  Functions for processing ZCL Foundation incoming Command/Response messages
+    108           *
+    109           *****************************************************************************/
+    110          
+    111          /*********************************************************************
+    112           * @fn      zPowerMeter_ProcessIncomingMsg
+    113           *
+    114           * @brief   Process ZCL Foundation incoming message
+    115           *
+    116           * @param   pInMsg - pointer to the received message
+    117           *
+    118           * @return  none
+    119           */
+    120          static void zPowerMeter_ProcessIncomingMsg( zclIncomingMsg_t *pInMsg){
+    121          	switch ( pInMsg->zclHdr.commandID ){
+    122          		case ZCL_CMD_READ_RSP:
+    123          			zPowerMeter_ProcessInReadRspCmd( pInMsg );
     124          			break;
-    125          #ifdef ZCL_REPORT
-    126              // See ZCL Test Applicaiton (zcl_testapp.c) for sample code on Attribute Reporting
-    127          		case ZCL_CMD_CONFIG_REPORT:
-    128                	//zclSampleLight_ProcessInConfigReportCmd( pInMsg );
-    129          			break;
-    130              
-    131          		case ZCL_CMD_CONFIG_REPORT_RSP:
-    132                //zclSampleLight_ProcessInConfigReportRspCmd( pInMsg );
-    133          			break;
-    134              
-    135          		case ZCL_CMD_READ_REPORT_CFG:
-    136                //zclSampleLight_ProcessInReadReportCfgCmd( pInMsg );
-    137          			break;
-    138              
-    139          		case ZCL_CMD_READ_REPORT_CFG_RSP:
-    140                //zclSampleLight_ProcessInReadReportCfgRspCmd( pInMsg );
-    141          			break;
-    142              
-    143          		case ZCL_CMD_REPORT:
-    144                	//zclSampleLight_ProcessInReportCmd( pInMsg );
-    145          			break;
-    146          #endif   
-    147          		case ZCL_CMD_DEFAULT_RSP:
-    148          			zPowerMeter_ProcessInDefaultRspCmd( pInMsg );
-    149          			break;
-    150          #ifdef ZCL_DISCOVER     
-    151          		case ZCL_CMD_DISCOVER_RSP:
-    152          			zPowerMeter_ProcessInDiscRspCmd( pInMsg );
-    153          			break;
-    154          #endif  
-    155          		default:
+    125          		case ZCL_CMD_WRITE_RSP:
+    126          			zPowerMeter_ProcessInWriteRspCmd( pInMsg );
+    127          			break;
+    128          #ifdef ZCL_REPORT
+    129              // See ZCL Test Applicaiton (zcl_testapp.c) for sample code on Attribute Reporting
+    130          		case ZCL_CMD_CONFIG_REPORT:
+    131                	//zclSampleLight_ProcessInConfigReportCmd( pInMsg );
+    132          			break;
+    133              
+    134          		case ZCL_CMD_CONFIG_REPORT_RSP:
+    135                //zclSampleLight_ProcessInConfigReportRspCmd( pInMsg );
+    136          			break;
+    137              
+    138          		case ZCL_CMD_READ_REPORT_CFG:
+    139                //zclSampleLight_ProcessInReadReportCfgCmd( pInMsg );
+    140          			break;
+    141              
+    142          		case ZCL_CMD_READ_REPORT_CFG_RSP:
+    143                //zclSampleLight_ProcessInReadReportCfgRspCmd( pInMsg );
+    144          			break;
+    145              
+    146          		case ZCL_CMD_REPORT:
+    147                	//zclSampleLight_ProcessInReportCmd( pInMsg );
+    148          			break;
+    149          #endif   
+    150          		case ZCL_CMD_DEFAULT_RSP:
+    151          			zPowerMeter_ProcessInDefaultRspCmd( pInMsg );
+    152          			break;
+    153          #ifdef ZCL_DISCOVER     
+    154          		case ZCL_CMD_DISCOVER_RSP:
+    155          			zPowerMeter_ProcessInDiscRspCmd( pInMsg );
     156          			break;
-    157          	}
-    158            
-    159          	if ( pInMsg->attrCmd )
-    160              	osal_mem_free( pInMsg->attrCmd );
-    161          }
-    162          
-    163          /*********************************************************************
-    164           * @fn      zPowerMeter_ProcessInReadRspCmd
-    165           *
-    166           * @brief   Process the "Profile" Read Response Command
-    167           *
-    168           * @param   pInMsg - incoming message to process
-    169           *
-    170           * @return  none
-    171           */
-    172          static uint8 zPowerMeter_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg ){
-    173          	zclReadRspCmd_t *readRspCmd;
-    174          	uint8 i;
-    175          
-    176          	readRspCmd = (zclReadRspCmd_t *)pInMsg->attrCmd;
-    177          	for (i = 0; i < readRspCmd->numAttr; i++){
-    178          		// Notify the originator of the results of the original read attributes attempt and, for each successfull request, the value of the requested attribute
-    179          	}
-    180          
-    181          	return TRUE; 
-    182          }
+    157          #endif  
+    158          		default:
+    159          			break;
+    160          	}
+    161            
+    162          	if ( pInMsg->attrCmd )
+    163              	osal_mem_free( pInMsg->attrCmd );
+    164          }
+    165          
+    166          /*********************************************************************
+    167           * @fn      zPowerMeter_ProcessInReadRspCmd
+    168           *
+    169           * @brief   Process the "Profile" Read Response Command
+    170           *
+    171           * @param   pInMsg - incoming message to process
+    172           *
+    173           * @return  none
+    174           */
+    175          static uint8 zPowerMeter_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg ){
+    176          	zclReadRspCmd_t *readRspCmd;
+    177          	uint8 i;
+    178          
+    179          	readRspCmd = (zclReadRspCmd_t *)pInMsg->attrCmd;
+    180          	for (i = 0; i < readRspCmd->numAttr; i++){
+    181          		// Notify the originator of the results of the original read attributes attempt and, for each successfull request, the value of the requested attribute
+    182          	}
     183          
-    184          /*********************************************************************
-    185           * @fn      zPowerMeter_ProcessInWriteRspCmd
-    186           *
-    187           * @brief   Process the "Profile" Write Response Command
-    188           *
-    189           * @param   pInMsg - incoming message to process
-    190           *
-    191           * @return  none
-    192           */
-    193          static uint8 zPowerMeter_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg ){
-    194           	zclWriteRspCmd_t *writeRspCmd;
-    195           	uint8 i;
-    196          
-    197           	writeRspCmd = (zclWriteRspCmd_t *)pInMsg->attrCmd;
-    198           	for (i = 0; i < writeRspCmd->numAttr; i++) {
-    199          		// Notify the device of the results of the its original write attributes command.
-    200           	}
-    201          
-    202           	return TRUE; 
-    203          }
+    184          	return TRUE; 
+    185          }
+    186          
+    187          /*********************************************************************
+    188           * @fn      zPowerMeter_ProcessInWriteRspCmd
+    189           *
+    190           * @brief   Process the "Profile" Write Response Command
+    191           *
+    192           * @param   pInMsg - incoming message to process
+    193           *
+    194           * @return  none
+    195           */
+    196          static uint8 zPowerMeter_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg ){
+    197           	ZclWriteRspCmd *writeRspCmd;
+    198           	uint8 i;
+    199          
+    200           	writeRspCmd = (ZclWriteRspCmd *)pInMsg->attrCmd;
+    201           	for (i = 0; i < writeRspCmd->numAttr; i++) {
+    202          		// Notify the device of the results of the its original write attributes command.
+    203           	}
     204          
-    205          /*********************************************************************
-    206           * @fn      zPowerMeter_ProcessInDefaultRspCmd
-    207           *
-    208           * @brief   Process the "Profile" Default Response Command
-    209           *
-    210           * @param   pInMsg - incoming message to process
-    211           *
-    212           * @return  none
-    213           */
-    214          static uint8 zPowerMeter_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg ){
-    215          	// zclDefaultRspCmd_t *defaultRspCmd = (zclDefaultRspCmd_t *)pInMsg->attrCmd;
-    216             
-    217          	// Device is notified of the Default Response command.
-    218            	(void)pInMsg;
-    219            
-    220            	return TRUE; 
-    221          }
-    222          
-    223          #ifdef ZCL_DISCOVER
-    224          /*********************************************************************
-    225           * @fn      zPowerMeter_ProcessInDiscRspCmd
-    226           *
-    227           * @brief   Process the "Profile" Discover Response Command
-    228           *
-    229           * @param   pInMsg - incoming message to process
-    230           *
-    231           * @return  none
-    232           */
-    233          static uint8 zPowerMeter_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg ){
-    234          	zclDiscoverRspCmd_t *discoverRspCmd;
-    235           	uint8 i;
-    236            
-    237           	discoverRspCmd = (zclDiscoverRspCmd_t *)pInMsg->attrCmd;
-    238            	for ( i = 0; i < discoverRspCmd->numAttr; i++ ) {
-    239          		// Device is notified of the result of its attribute discovery command.
-    240            	}
-    241            
-    242           	return TRUE;
-    243          }
-    244          #endif // ZCL_DISCOVER
-    245          
-    246          /*********************************************************************
-    247           * @brief      dispatch the cluster command to the right callback function
-    248           *
-    249           * @param   pInMsg - incoming message to process
-    250           *
-    251           * @return  none
-    252           */
+    205           	return TRUE; 
+    206          }
+    207          
+    208          /*********************************************************************
+    209           * @fn      zPowerMeter_ProcessInDefaultRspCmd
+    210           *
+    211           * @brief   Process the "Profile" Default Response Command
+    212           *
+    213           * @param   pInMsg - incoming message to process
+    214           *
+    215           * @return  none
+    216           */
+    217          static uint8 zPowerMeter_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg ){
+    218          	// zclDefaultRspCmd_t *defaultRspCmd = (zclDefaultRspCmd_t *)pInMsg->attrCmd;
+    219             
+    220          	// Device is notified of the Default Response command.
+    221            	(void)pInMsg;
+    222            
+    223            	return TRUE; 
+    224          }
+    225          
+    226          #ifdef ZCL_DISCOVER
+    227          /*********************************************************************
+    228           * @fn      zPowerMeter_ProcessInDiscRspCmd
+    229           *
+    230           * @brief   Process the "Profile" Discover Response Command
+    231           *
+    232           * @param   pInMsg - incoming message to process
+    233           *
+    234           * @return  none
+    235           */
+    236          static uint8 zPowerMeter_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg ){
+    237          	zclDiscoverRspCmd_t *discoverRspCmd;
+    238           	uint8 i;
+    239            
+    240           	discoverRspCmd = (zclDiscoverRspCmd_t *)pInMsg->attrCmd;
+    241            	for ( i = 0; i < discoverRspCmd->numAttr; i++ ) {
+    242          		// Device is notified of the result of its attribute discovery command.
+    243            	}
+    244            
+    245           	return TRUE;
+    246          }
+    247          #endif // ZCL_DISCOVER
+    248          
+    249          /*********************************************************************
+    250           * @brief      dispatch the cluster command to the right callback function
+    251           *
+    252           * @param   pInMsg - incoming message to process
+    253           *
+    254           * @return  none
+    255           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    253          static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
-   \                     handleClusterCommands:
+    256          static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
+   \                     ??handleClusterCommands:
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
    \   000000   74F6         MOV     A,#-0xa
@@ -596,72 +607,72 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \   000021   A3           INC     DPTR
    \   000022   E0           MOVX    A,@DPTR
    \   000023   5408         ANL     A,#0x8
-   \   000025   701C         JNZ     ??handleClusterCommands_0
-    254          	ZStatus_t stat = ZFailure;
-    255          
-    256          	if (zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
-    257          		switch ( pInMsg->msg->clusterId ){
+   \   000025   701C         JNZ     ??handleClusterCommands_1
+    257          	ZStatus_t stat = ZFailure;
+    258          
+    259          	if (zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
+    260          		switch ( pInMsg->msg->clusterId ){
    \   000027   78..         MOV     R0,#?V0
    \   000029   12....       LCALL   ?US_SWITCH_DENSE
    \                     `?<Jumptable for handleClusterCommands>_0`:
    \   00002C   0000         DW        0
    \   00002E   03           DB        3
-   \   00002F   ....         DW        ??handleClusterCommands_1
-   \   000031   ....         DW        ??handleClusterCommands_2
-   \   000033   ....         DW        ??handleClusterCommands_1
-   \   000035   ....         DW        ??handleClusterCommands_1
-   \   000037   ....         DW        ??handleClusterCommands_3
-    258          		    case ZCL_CLUSTER_ID_GEN_BASIC:
-    259              		return processBasicClusterCommands(pInMsg);
-   \                     ??handleClusterCommands_2:
-   \   000039                ; Setup parameters for call to function processBasicClusterCommands
-   \   000039   12....       LCALL   ??processBasicClusterCommands?relay; Banked call to: processBasicClusterCommands
-   \   00003C   8014         SJMP    ??handleClusterCommands_4
-    260          	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
-    261          			return processIdentifyClusterServerCommands( pInMsg );
+   \   00002F   ....         DW        ??handleClusterCommands_2
+   \   000031   ....         DW        ??handleClusterCommands_3
+   \   000033   ....         DW        ??handleClusterCommands_2
+   \   000035   ....         DW        ??handleClusterCommands_2
+   \   000037   ....         DW        ??handleClusterCommands_4
+    261          		    case ZCL_CLUSTER_ID_GEN_BASIC:
+    262              		return processBasicClusterCommands(pInMsg);
    \                     ??handleClusterCommands_3:
-   \   00003E                ; Setup parameters for call to function processIdentifyClusterServerCommands
-   \   00003E   12....       LCALL   ??processIdentifyClusterServerCommands?relay; Banked call to: processIdentifyClusterServerCommands
-   \   000041   800F         SJMP    ??handleClusterCommands_4
-    262          	    case ZCL_CLUSTER_ID_GEN_GROUPS:
-    263              	case ZCL_CLUSTER_ID_GEN_SCENES:
-    264          	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
-    265              	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
-    266          	    case ZCL_CLUSTER_ID_GEN_ALARMS:
-    267              	case ZCL_CLUSTER_ID_GEN_LOCATION:
-    268          	    case ZCL_CLUSTER_ID_GEN_POWER_CFG:
-    269              	case ZCL_CLUSTER_ID_GEN_DEVICE_TEMP_CONFIG:
-    270          	    case ZCL_CLUSTER_ID_GEN_ON_OFF_SWITCH_CONFIG:
-    271              	case ZCL_CLUSTER_ID_GEN_TIME:
-    272          	    default:
-    273              	  stat = ZFailure;
-    274          	      break;
-    275            		}
-    276          	} else {
-    277          		switch ( pInMsg->msg->clusterId ){
-   \                     ??handleClusterCommands_0:
+   \   000039                ; Setup parameters for call to function processBasicClusterCommands(zclIncoming_t *)
+   \   000039   12....       LCALL   ??processBasicClusterCommands?relay; Banked call to: processBasicClusterCommands(zclIncoming_t *)
+   \   00003C   8014         SJMP    ??handleClusterCommands_5
+    263          	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
+    264          			return processIdentifyClusterServerCommands( pInMsg );
+   \                     ??handleClusterCommands_4:
+   \   00003E                ; Setup parameters for call to function processIdentifyClusterServerCommands(zclIncoming_t *)
+   \   00003E   12....       LCALL   ??processIdentifyClusterServerCommands?relay; Banked call to: processIdentifyClusterServerCommands(zclIncoming_t *)
+   \   000041   800F         SJMP    ??handleClusterCommands_5
+    265          	    case ZCL_CLUSTER_ID_GEN_GROUPS:
+    266              	case ZCL_CLUSTER_ID_GEN_SCENES:
+    267          	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
+    268              	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
+    269          	    case ZCL_CLUSTER_ID_GEN_ALARMS:
+    270              	case ZCL_CLUSTER_ID_GEN_LOCATION:
+    271          	    case ZCL_CLUSTER_ID_GEN_POWER_CFG:
+    272              	case ZCL_CLUSTER_ID_GEN_DEVICE_TEMP_CONFIG:
+    273          	    case ZCL_CLUSTER_ID_GEN_ON_OFF_SWITCH_CONFIG:
+    274              	case ZCL_CLUSTER_ID_GEN_TIME:
+    275          	    default:
+    276              	  stat = ZFailure;
+    277          	      break;
+    278            		}
+    279          	} else {
+    280          		switch ( pInMsg->msg->clusterId ){
+   \                     ??handleClusterCommands_1:
    \   000043   7403         MOV     A,#0x3
    \   000045   65..         XRL     A,?V0
    \   000047   45..         ORL     A,?V1
-   \   000049   7005         JNZ     ??handleClusterCommands_1
-    278          	
-    279            	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
-    280          			return processIdentifyClusterClientCommands( pInMsg );
-   \   00004B                ; Setup parameters for call to function processIdentifyClusterClientCommands
-   \   00004B   12....       LCALL   ??processIdentifyClusterClientCommands?relay; Banked call to: processIdentifyClusterClientCommands
-   \   00004E   8002         SJMP    ??handleClusterCommands_4
-    281          	    default:
-    282              	  stat = ZFailure;
-    283          	      break;
-    284            		}
-    285          	}
-    286          
-    287            return ( stat );
-   \                     ??handleClusterCommands_1:
+   \   000049   7005         JNZ     ??handleClusterCommands_2
+    281          	
+    282            	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
+    283          			return processIdentifyClusterClientCommands( pInMsg );
+   \   00004B                ; Setup parameters for call to function processIdentifyClusterClientCommands(zclIncoming_t *)
+   \   00004B   12....       LCALL   ??processIdentifyClusterClientCommands?relay; Banked call to: processIdentifyClusterClientCommands(zclIncoming_t *)
+   \   00004E   8002         SJMP    ??handleClusterCommands_5
+    284          	    default:
+    285              	  stat = ZFailure;
+    286          	      break;
+    287            		}
+    288          	}
+    289          
+    290            return ( stat );
+   \                     ??handleClusterCommands_2:
    \   000050   7901         MOV     R1,#0x1
-   \                     ??handleClusterCommands_4:
+   \                     ??handleClusterCommands_5:
    \   000052   02....       LJMP    ?Subroutine0 & 0xFFFF
-    288          }
+    291          }
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??powerMeter_Init?relay:
@@ -676,31 +687,31 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??handleClusterCommands?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    handleClusterCommands
-    289          
-    290          
-    291          
-    292          /****************************************************************************
-    293          ****************************************************************************/
+   \   000003   ......       DC24    ??handleClusterCommands
+    292          
+    293          
     294          
-    295          
+    295          /****************************************************************************
+    296          ****************************************************************************/
+    297          
+    298          
 
    Maximum stack usage in bytes:
 
    XSTACK Function
    ------ --------
-     10   handleClusterCommands
-       10   -> processBasicClusterCommands
-       10   -> processIdentifyClusterClientCommands
-       10   -> processIdentifyClusterServerCommands
+     10   handleClusterCommands(zclIncoming_t *)
+       10   -> processBasicClusterCommands(zclIncoming_t *)
+       10   -> processIdentifyClusterClientCommands(zclIncoming_t *)
+       10   -> processIdentifyClusterServerCommands(zclIncoming_t *)
      12   powerMeterEventLoop
-       12   -> identifyLoop
+       12   -> identifyLoop(uint16)
        12   -> osal_mem_free
        12   -> osal_msg_deallocate
        12   -> osal_msg_receive
      12   powerMeter_Init
-       10   -> identifyInit
-       10   -> onOffInit
+       10   -> identifyInit(byte)
+       10   -> onOffInit()
        10   -> zclHA_Init
        10   -> zcl_registerAttrList
        10   -> zcl_registerForMsg
@@ -717,18 +728,18 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter.c
        5  ?Subroutine0
       16  ?Subroutine1
        1  _A_IEN0
-      85  handleClusterCommands
+      85  handleClusterCommands(zclIncoming_t *)
      146  powerMeterEventLoop
-      74  powerMeter_Init
+      90  powerMeter_Init
        1  zPowerMeterTaskID
 
  
- 326 bytes in segment BANKED_CODE
+ 342 bytes in segment BANKED_CODE
   18 bytes in segment BANK_RELAYS
    1 byte  in segment SFR_AN
    1 byte  in segment XDATA_Z
  
- 344 bytes of CODE  memory
+ 360 bytes of CODE  memory
    0 bytes of DATA  memory (+ 1 byte shared)
    1 byte  of XDATA memory
 

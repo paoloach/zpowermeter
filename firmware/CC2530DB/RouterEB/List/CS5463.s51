@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:45 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            27/Oct/2015  21:12:23 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\CS5463.c                               /
+//                          are\Source\CS5463.cpp                             /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\CS5463.c -D SECURE=0 -D                /
+//                          are\Source\CS5463.cpp -D SECURE=0 -D              /
 //                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE   /
 //                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN    /
 //                          -D NV_INIT -D xNV_RESTORE -D                      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\CS5463.s51             /
 //                                                                            /
@@ -133,22 +132,28 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN ?BDISPATCH
         EXTERN ?BRET
 
-        PUBLIC ??CS5463_Init?relay
-        FUNCTION ??CS5463_Init?relay,0203H
-        PUBLIC ??CS5463_startConversion?relay
-        FUNCTION ??CS5463_startConversion?relay,0203H
-        PUBLIC CS5463_Init
-        FUNCTION CS5463_Init,021203H
+        PUBLIC ??CS5463_Init
+        FUNCTION ??CS5463_Init,021203H
         ARGFRAME XSTACK, 0, STACK
         LOCFRAME ISTACK, 2, STACK
-        PUBLIC CS5463_startConversion
-        FUNCTION CS5463_startConversion,080203H
+        PUBLIC ??CS5463_Init?relay
+        FUNCTION ??CS5463_Init?relay,0203H
+        PUBLIC ??CS5463_startConversion
+        FUNCTION ??CS5463_startConversion,080203H
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
+        PUBLIC ??CS5463_startConversion?relay
+        FUNCTION ??CS5463_startConversion?relay,0203H
         PUBWEAK U0BAUD
         PUBWEAK U0DBUF
         PUBWEAK _A_DIR0_7
@@ -245,12 +250,12 @@
           CFI ?RET_LOW Frame(CFA_SP, 1)
           CFI EndCommon cfiCommon0
         
-CS5463_Init         SYMBOL "CS5463_Init"
-??CS5463_Init?relay SYMBOL "?relay", CS5463_Init
-CS5463_startConversion SYMBOL "CS5463_startConversion"
-??CS5463_startConversion?relay SYMBOL "?relay", CS5463_startConversion
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
+??CS5463_Init?relay SYMBOL "?relay", ??CS5463_Init
+
+??CS5463_startConversion?relay SYMBOL "?relay", ??CS5463_startConversion
+
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.cpp
 //    1 /**************************************************************************************************
 //    2 
 //    3  DESCRIPTION:
@@ -349,11 +354,11 @@ _A_P0SEL_7:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   58 void CS5463_Init(void ){
-CS5463_Init:
+??CS5463_Init:
           CFI Block cfiBlock0 Using cfiCommon0
-          CFI Function CS5463_Init
+          CFI Function ??CS5463_Init
         CODE
-        FUNCALL CS5463_Init, CS5463_startConversion
+        FUNCALL ??CS5463_Init, ??CS5463_startConversion
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -408,8 +413,8 @@ CS5463_Init:
         SETB    0x80.7
 //   76 	
 //   77 	CS5463_startConversion();
-        ; Setup parameters for call to function CS5463_startConversion
-        LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion
+        ; Setup parameters for call to function CS5463_startConversion()
+        LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion()
 //   78 }
         POP     DPH
           CFI DPH0 SameValue
@@ -429,9 +434,9 @@ CS5463_Init:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   80 void CS5463_startConversion(void) {
-CS5463_startConversion:
+??CS5463_startConversion:
           CFI Block cfiBlock1 Using cfiCommon0
-          CFI Function CS5463_startConversion
+          CFI Function ??CS5463_startConversion
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -444,10 +449,10 @@ CS5463_startConversion:
 //   84 	U0DBUF=0xE8;
         MOV     0xc1,#-0x18
 //   85 	while(U0_TX_BYTE==0);
-??CS5463_startConversion_0:
+??CS5463_startConversion_1:
         MOV     A,0x86
         MOV     C,0xE0 /* A   */.6
-        JNC     ??CS5463_startConversion_0
+        JNC     ??CS5463_startConversion_1
 //   86 	asm("NOP");
         NOP
 //   87 	asm("NOP");
@@ -466,14 +471,14 @@ CS5463_startConversion:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    CS5463_Init
+        DC24    ??CS5463_Init
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??CS5463_startConversion?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    CS5463_startConversion
+        DC24    ??CS5463_startConversion
 
         END
 //   90 

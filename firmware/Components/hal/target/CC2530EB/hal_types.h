@@ -55,7 +55,9 @@ typedef unsigned short  uint16;
 typedef signed   long   int32;
 typedef unsigned long   uint32;
 
+#ifndef __cplusplus
 typedef unsigned char   bool;
+#endif
 
 typedef uint8           halDataAlign_t;
 

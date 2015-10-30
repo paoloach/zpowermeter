@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:45 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:21 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterIdentify.c             /
+//                          are\Source\clusters\ClusterIdentify.cpp           /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterIdentify.c -D          /
+//                          are\Source\clusters\ClusterIdentify.cpp -D        /
 //                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D     /
 //                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D      /
 //                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\ClusterIdentify.s51    /
 //                                                                            /
@@ -133,6 +132,12 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN ?V0
         EXTERN ?V1
         EXTERN ?BANKED_ENTER_XDATA
@@ -145,14 +150,36 @@
         EXTERN ?PUSH_XSTACK_I_TWO
         EXTERN __INIT_XDATA_Z
 
+        PUBLIC ??identifyInit
+        FUNCTION ??identifyInit,0203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME ISTACK, 2, STACK
         PUBLIC ??identifyInit?relay
         FUNCTION ??identifyInit?relay,0203H
+        PUBLIC ??identifyLoop
+        FUNCTION ??identifyLoop,021203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME XSTACK, 13, STACK
         PUBLIC ??identifyLoop?relay
         FUNCTION ??identifyLoop?relay,0203H
+        PUBLIC ??processIdentifyClusterClientCommands
+        FUNCTION ??processIdentifyClusterClientCommands,0203H
+        ARGFRAME XSTACK, 0, STACK
         PUBLIC ??processIdentifyClusterClientCommands?relay
         FUNCTION ??processIdentifyClusterClientCommands?relay,0203H
+        PUBLIC ??processIdentifyClusterServerCommands
+        FUNCTION ??processIdentifyClusterServerCommands,0a1203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME XSTACK, 21, STACK
         PUBLIC ??processIdentifyClusterServerCommands?relay
         FUNCTION ??processIdentifyClusterServerCommands?relay,0203H
+        PUBLIC ??processIdentifyTimeChange
+        FUNCTION ??processIdentifyTimeChange,021203H
+        ARGFRAME XSTACK, 10, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        LOCFRAME ISTACK, 2, STACK
+        LOCFRAME XSTACK, 4, STACK
         PUBLIC ??processIdentifyTimeChange?relay
         FUNCTION ??processIdentifyTimeChange?relay,0203H
         PUBWEAK _A_DIR0_7
@@ -160,29 +187,7 @@
         PUBWEAK _A_P0SEL_7
         PUBWEAK __Constant_190
         PUBWEAK __Constant_258
-        PUBLIC identifyInit
-        FUNCTION identifyInit,0203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME ISTACK, 2, STACK
-        PUBLIC identifyLoop
-        FUNCTION identifyLoop,021203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME XSTACK, 13, STACK
         PUBLIC identifyTime
-        PUBLIC processIdentifyClusterClientCommands
-        FUNCTION processIdentifyClusterClientCommands,0203H
-        ARGFRAME XSTACK, 0, STACK
-        PUBLIC processIdentifyClusterServerCommands
-        FUNCTION processIdentifyClusterServerCommands,0a1203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME XSTACK, 21, STACK
-        PUBLIC processIdentifyTimeChange
-        FUNCTION processIdentifyTimeChange,021203H
-        ARGFRAME XSTACK, 10, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        LOCFRAME ISTACK, 2, STACK
-        LOCFRAME XSTACK, 4, STACK
         
           CFI Names cfiNames0
           CFI StackFrame CFA_SP SP IDATA
@@ -347,16 +352,16 @@ osal_stop_timerEx   SYMBOL "osal_stop_timerEx"
 ??osal_stop_timerEx?relay SYMBOL "?relay", osal_stop_timerEx
 zcl_SendCommand     SYMBOL "zcl_SendCommand"
 ??zcl_SendCommand?relay SYMBOL "?relay", zcl_SendCommand
-identifyInit        SYMBOL "identifyInit"
-??identifyInit?relay SYMBOL "?relay", identifyInit
-identifyLoop        SYMBOL "identifyLoop"
-??identifyLoop?relay SYMBOL "?relay", identifyLoop
-processIdentifyClusterClientCommands SYMBOL "processIdentifyClusterClientCommands"
-??processIdentifyClusterClientCommands?relay SYMBOL "?relay", processIdentifyClusterClientCommands
-processIdentifyClusterServerCommands SYMBOL "processIdentifyClusterServerCommands"
-??processIdentifyClusterServerCommands?relay SYMBOL "?relay", processIdentifyClusterServerCommands
-processIdentifyTimeChange SYMBOL "processIdentifyTimeChange"
-??processIdentifyTimeChange?relay SYMBOL "?relay", processIdentifyTimeChange
+
+??identifyInit?relay SYMBOL "?relay", ??identifyInit
+
+??identifyLoop?relay SYMBOL "?relay", ??identifyLoop
+
+??processIdentifyClusterClientCommands?relay SYMBOL "?relay", ??processIdentifyClusterClientCommands
+
+??processIdentifyClusterServerCommands?relay SYMBOL "?relay", ??processIdentifyClusterServerCommands
+
+??processIdentifyTimeChange?relay SYMBOL "?relay", ??processIdentifyTimeChange
 
         EXTERN ??osal_pwrmgr_task_state?relay
         FUNCTION ??osal_pwrmgr_task_state?relay,00H
@@ -395,7 +400,7 @@ processIdentifyTimeChange SYMBOL "processIdentifyTimeChange"
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIdentify.c
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIdentify.cpp
 //    1 /**************************************************************************************************
 //    2   Filename:       ClusterIdentify.cpp
 //    3 
@@ -478,9 +483,9 @@ _A_P0SEL_7:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   46 void identifyInit(byte taskId){
-identifyInit:
+??identifyInit:
           CFI Block cfiBlock0 Using cfiCommon0
-          CFI Function identifyInit
+          CFI Function ??identifyInit
         CODE
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
@@ -527,11 +532,11 @@ identifyInit:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   53 uint16 identifyLoop(uint16 events){
-identifyLoop:
+??identifyLoop:
           CFI Block cfiBlock2 Using cfiCommon0
-          CFI Function identifyLoop
+          CFI Function ??identifyLoop
         CODE
-        FUNCALL identifyLoop, osal_start_timerEx
+        FUNCALL ??identifyLoop, osal_start_timerEx
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 13, STACK
@@ -542,7 +547,7 @@ identifyLoop:
         ARGFRAME XSTACK, 13, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL identifyLoop, osal_start_timerEx
+        FUNCALL ??identifyLoop, osal_start_timerEx
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 13, STACK
@@ -553,7 +558,7 @@ identifyLoop:
         ARGFRAME XSTACK, 13, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL identifyLoop, osal_pwrmgr_task_state
+        FUNCALL ??identifyLoop, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 9, STACK
@@ -564,7 +569,7 @@ identifyLoop:
         ARGFRAME XSTACK, 9, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL identifyLoop, osal_pwrmgr_task_state
+        FUNCALL ??identifyLoop, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 9, STACK
@@ -597,7 +602,7 @@ identifyLoop:
 //   54 	if (onOff){
         MOV     DPTR,#onOff
         MOVX    A,@DPTR
-        JZ      ??identifyLoop_0
+        JZ      ??identifyLoop_1
 //   55 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
         ; Setup parameters for call to function osal_start_timerEx
         MOV     DPTR,#__Constant_190
@@ -618,16 +623,16 @@ identifyLoop:
         MOVX    @DPTR,A
 //   57 		P0_0 = 1;
         SETB    0x80.0
-        SJMP    ??identifyLoop_1
+        SJMP    ??identifyLoop_2
 //   58 	} else {
 //   59 		onOff=1;
-??identifyLoop_0:
+??identifyLoop_1:
         MOV     A,#0x1
         MOVX    @DPTR,A
 //   60 		if ( identifyTime > 0 ){
         LCALL   ?Subroutine1 & 0xFFFF
 ??CrossCallReturnLabel_0:
-        JZ      ??identifyLoop_2
+        JZ      ??identifyLoop_3
 //   61     		identifyTime--;
 //   62 		}
 //   63     	if (identifyTime>0){
@@ -643,7 +648,7 @@ identifyLoop:
         MOV     R1,A
         MOV     A,R0
         ORL     A,R1
-        JZ      ??identifyLoop_2
+        JZ      ??identifyLoop_3
 //   64 			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
         ; Setup parameters for call to function osal_start_timerEx
         MOV     DPTR,#__Constant_258
@@ -661,14 +666,14 @@ identifyLoop:
 //   65 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
         ; Setup parameters for call to function osal_pwrmgr_task_state
         MOV     R2,#0x1
-        SJMP    ??identifyLoop_3
+        SJMP    ??identifyLoop_4
 //   66 			P0_0 = 0;
 //   67 		} else{
 //   68 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-??identifyLoop_2:
+??identifyLoop_3:
         ; Setup parameters for call to function osal_pwrmgr_task_state
         MOV     R2,#0x0
-??identifyLoop_3:
+??identifyLoop_4:
         MOV     DPTR,#mainAppTaskId
         MOVX    A,@DPTR
         MOV     R1,A
@@ -678,7 +683,7 @@ identifyLoop:
 //   70 		}
 //   71 	}
 //   72     return ( events ^ IDENTIFY_TIMEOUT_EVT );
-??identifyLoop_1:
+??identifyLoop_2:
         MOV     A,R6
         XRL     A,#0x1
         MOV     R2,A
@@ -703,11 +708,11 @@ identifyLoop:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   85 void processIdentifyTimeChange( void ){
-processIdentifyTimeChange:
+??processIdentifyTimeChange:
           CFI Block cfiBlock3 Using cfiCommon0
-          CFI Function processIdentifyTimeChange
+          CFI Function ??processIdentifyTimeChange
         CODE
-        FUNCALL processIdentifyTimeChange, osal_start_timerEx
+        FUNCALL ??processIdentifyTimeChange, osal_start_timerEx
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 4, STACK
@@ -718,7 +723,7 @@ processIdentifyTimeChange:
         ARGFRAME XSTACK, 4, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL processIdentifyTimeChange, osal_pwrmgr_task_state
+        FUNCALL ??processIdentifyTimeChange, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -729,7 +734,7 @@ processIdentifyTimeChange:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL processIdentifyTimeChange, osal_stop_timerEx
+        FUNCALL ??processIdentifyTimeChange, osal_stop_timerEx
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -740,7 +745,7 @@ processIdentifyTimeChange:
         ARGFRAME XSTACK, 0, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL processIdentifyTimeChange, osal_pwrmgr_task_state
+        FUNCALL ??processIdentifyTimeChange, osal_pwrmgr_task_state
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -762,7 +767,7 @@ processIdentifyTimeChange:
 //   86 	if ( identifyTime > 0 ) {
         LCALL   ?Subroutine1 & 0xFFFF
 ??CrossCallReturnLabel_1:
-        JZ      ??processIdentifyTimeChange_0
+        JZ      ??processIdentifyTimeChange_1
 //   87 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
         ; Setup parameters for call to function osal_start_timerEx
         MOV     DPTR,#__Constant_258
@@ -786,10 +791,10 @@ processIdentifyTimeChange:
 //   90 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
         ; Setup parameters for call to function osal_pwrmgr_task_state
         MOV     R2,A
-        SJMP    ??processIdentifyTimeChange_1
+        SJMP    ??processIdentifyTimeChange_2
 //   91 	}  else {
 //   92 		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
-??processIdentifyTimeChange_0:
+??processIdentifyTimeChange_1:
         ; Setup parameters for call to function osal_stop_timerEx
         MOV     R2,#0x1
         MOV     R3,#0x0
@@ -800,7 +805,7 @@ processIdentifyTimeChange:
 //   93 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
         ; Setup parameters for call to function osal_pwrmgr_task_state
         MOV     R2,#0x0
-??processIdentifyTimeChange_1:
+??processIdentifyTimeChange_2:
         MOV     DPTR,#mainAppTaskId
         MOVX    A,@DPTR
         MOV     R1,A
@@ -814,7 +819,7 @@ processIdentifyTimeChange:
         RSEG BANKED_CODE:CODE:NOROOT(0)
 ?Subroutine1:
           CFI Block cfiCond4 Using cfiCommon0
-          CFI Function identifyLoop
+          CFI Function ??identifyLoop
           CFI Conditional ??CrossCallReturnLabel_0
           CFI R6 load(1, XDATA, add(CFA_XSP16, literal(-9)))
           CFI VB load(1, XDATA, add(CFA_XSP16, literal(-8)))
@@ -828,13 +833,13 @@ processIdentifyTimeChange:
           CFI CFA_SP SP+-2
           CFI CFA_XSP16 add(XSP16, 9)
           CFI Block cfiCond5 Using cfiCommon0
-          CFI (cfiCond5) Function processIdentifyTimeChange
+          CFI (cfiCond5) Function ??processIdentifyTimeChange
           CFI (cfiCond5) Conditional ??CrossCallReturnLabel_1
           CFI (cfiCond5) DPL0 Frame(CFA_SP, 4)
           CFI (cfiCond5) DPH0 Frame(CFA_SP, 5)
           CFI (cfiCond5) CFA_SP SP+-7
           CFI Block cfiCond6 Using cfiCommon0
-          CFI (cfiCond6) Function processIdentifyClusterServerCommands
+          CFI (cfiCond6) Function ??processIdentifyClusterServerCommands
           CFI (cfiCond6) Conditional ??CrossCallReturnLabel_2
           CFI (cfiCond6) R6 load(1, XDATA, add(CFA_XSP16, literal(-10)))
           CFI (cfiCond6) VB load(1, XDATA, add(CFA_XSP16, literal(-9)))
@@ -868,11 +873,11 @@ processIdentifyTimeChange:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   97 ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg ){
-processIdentifyClusterServerCommands:
+??processIdentifyClusterServerCommands:
           CFI Block cfiBlock8 Using cfiCommon0
-          CFI Function processIdentifyClusterServerCommands
+          CFI Function ??processIdentifyClusterServerCommands
         CODE
-        FUNCALL processIdentifyClusterServerCommands, processIdentifyTimeChange
+        FUNCALL ??processIdentifyClusterServerCommands, ??processIdentifyTimeChange
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 10, STACK
@@ -883,7 +888,7 @@ processIdentifyClusterServerCommands:
         ARGFRAME XSTACK, 10, STACK
         ARGFRAME IOVERLAY, 0, STATIC
         ARGFRAME DOVERLAY, 0, STATIC
-        FUNCALL processIdentifyClusterServerCommands, zcl_SendCommand
+        FUNCALL ??processIdentifyClusterServerCommands, zcl_SendCommand
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 21, STACK
@@ -924,13 +929,13 @@ processIdentifyClusterServerCommands:
         INC     DPTR
         INC     DPTR
         MOVX    A,@DPTR
-        JZ      ??processIdentifyClusterServerCommands_0
-        DEC     A
         JZ      ??processIdentifyClusterServerCommands_1
-        LJMP    ??processIdentifyClusterServerCommands_2 & 0xFFFF
+        DEC     A
+        JZ      ??processIdentifyClusterServerCommands_2
+        LJMP    ??processIdentifyClusterServerCommands_3 & 0xFFFF
 //  100 	case COMMAND_IDENTIFY:
 //  101 		identifyTime = BUILD_UINT16( pInMsg->pData[0], pInMsg->pData[1] );
-??processIdentifyClusterServerCommands_0:
+??processIdentifyClusterServerCommands_1:
         MOV     DPL,R2
         MOV     DPH,R3
         INC     DPTR
@@ -960,16 +965,16 @@ processIdentifyClusterServerCommands:
         MOV     A,R1
         MOVX    @DPTR,A
 //  102 		processIdentifyTimeChange();
-        ; Setup parameters for call to function processIdentifyTimeChange
-        LCALL   ??processIdentifyTimeChange?relay; Banked call to: processIdentifyTimeChange
+        ; Setup parameters for call to function processIdentifyTimeChange()
+        LCALL   ??processIdentifyTimeChange?relay; Banked call to: processIdentifyTimeChange()
 //  103 		return ZSuccess;
-        SJMP    ??processIdentifyClusterServerCommands_3
+        SJMP    ??processIdentifyClusterServerCommands_4
 //  104 	case COMMAND_IDENTIFY_QUERY:
 //  105 		if ( identifyTime > 0 ) {
-??processIdentifyClusterServerCommands_1:
+??processIdentifyClusterServerCommands_2:
         LCALL   ?Subroutine1 & 0xFFFF
 ??CrossCallReturnLabel_2:
-        JZ      ??processIdentifyClusterServerCommands_3
+        JZ      ??processIdentifyClusterServerCommands_4
 //  106 			zcl_SendCommand( pInMsg->msg->endPoint, &pInMsg->msg->srcAddr, ZCL_CLUSTER_ID_GEN_IDENTIFY,
 //  107                          COMMAND_IDENTIFY_QUERY_RSP, TRUE,
 //  108                          ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, pInMsg->hdr.transSeqNum, 2, (uint8 *) &identifyTime );
@@ -1045,18 +1050,18 @@ processIdentifyClusterServerCommands:
           CFI CFA_XSP16 add(XSP16, 10)
 //  109 			return  ZCL_STATUS_CMD_HAS_RSP;
         MOV     R1,#-0x1
-        SJMP    ??processIdentifyClusterServerCommands_4
+        SJMP    ??processIdentifyClusterServerCommands_5
 //  110 	    } else {
 //  111 			return ZSuccess;
-??processIdentifyClusterServerCommands_3:
+??processIdentifyClusterServerCommands_4:
         MOV     R1,#0x0
-        SJMP    ??processIdentifyClusterServerCommands_4
+        SJMP    ??processIdentifyClusterServerCommands_5
 //  112 		}
 //  113 	default:
 //  114     	return ZFailure;   // Error ignore the command
-??processIdentifyClusterServerCommands_2:
+??processIdentifyClusterServerCommands_3:
         MOV     R1,#0x1
-??processIdentifyClusterServerCommands_4:
+??processIdentifyClusterServerCommands_5:
         MOV     R7,#0x2
         LJMP    ?BANKED_LEAVE_XDATA
           CFI EndBlock cfiBlock8
@@ -1066,9 +1071,9 @@ processIdentifyClusterServerCommands:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //  118 ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg ){
-processIdentifyClusterClientCommands:
+??processIdentifyClusterClientCommands:
           CFI Block cfiBlock9 Using cfiCommon0
-          CFI Function processIdentifyClusterClientCommands
+          CFI Function ??processIdentifyClusterClientCommands
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -1096,35 +1101,35 @@ __Constant_258:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    identifyInit
+        DC24    ??identifyInit
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??identifyLoop?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    identifyLoop
+        DC24    ??identifyLoop
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??processIdentifyTimeChange?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    processIdentifyTimeChange
+        DC24    ??processIdentifyTimeChange
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??processIdentifyClusterServerCommands?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    processIdentifyClusterServerCommands
+        DC24    ??processIdentifyClusterServerCommands
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??processIdentifyClusterClientCommands?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    processIdentifyClusterClientCommands
+        DC24    ??processIdentifyClusterClientCommands
 
         END
 //  124 

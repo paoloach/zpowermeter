@@ -1,0 +1,911 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:14:24 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\ZclWriteCmd.cpp            #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\ZclWriteCmd.cpp -D         #
+#                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D      #
+#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
+#                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
+#                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ZclWriteCmd.lst          #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\ZclWriteCmd.r51           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\ZclWriteCmd.cpp
+      1          #include "ZclWriteCmd.h"
+      2          #include "AttributeUtils.h"
+      3          #include "hal_defs.h"
+      4          #include "osal.h"
+      5          
+      6          #define PADDING_NEEDED( bufLen )    ( (bufLen) % 2 )
+      7          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+      8          ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *pCmd ){
+   \                     ??ZclWriteCmd:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000                REQUIRE ?V6
+   \   000000                REQUIRE ?V7
+   \   000000                REQUIRE ?V8
+   \   000000                REQUIRE ?V10
+   \   000000                REQUIRE ?V11
+   \   000000                REQUIRE ?V12
+   \   000000                REQUIRE ?V13
+   \   000000   74EA         MOV     A,#-0x16
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 22
+   \   000005                ; Auto size: 0
+   \   000005   8A..         MOV     ?V10,R2
+   \   000007   8B..         MOV     ?V11,R3
+   \   000009   8C..         MOV     ?V0,R4
+   \   00000B   8D..         MOV     ?V1,R5
+      9          	uint8 *pBuf = pCmd->pData;
+   \   00000D   EC           MOV     A,R4
+   \   00000E   2403         ADD     A,#0x3
+   \   000010   F5..         MOV     ?V2,A
+   \   000012   E4           CLR     A
+   \   000013   35..         ADDC    A,?V1
+   \   000015   F5..         MOV     ?V3,A
+   \   000017   85..82       MOV     DPL,?V2
+   \   00001A   F583         MOV     DPH,A
+   \   00001C   E0           MOVX    A,@DPTR
+   \   00001D   FE           MOV     R6,A
+   \   00001E   A3           INC     DPTR
+   \   00001F   E0           MOVX    A,@DPTR
+   \   000020   FF           MOV     R7,A
+     10          	uint16 attrDataLen;
+     11          	uint8 numAttr = 0;
+   \   000021   75..00       MOV     ?V7,#0x0
+   \   000024   8024         SJMP    ??ZclWriteCmd_1
+     12          	ZclWriteRec * attributes;
+     13          
+     14            // find out the number of attributes and the length of attribute data
+     15          	while ( pBuf < ( pCmd->pData + pCmd->dataLen ) ){
+     16          		uint8 dataType;
+     17          
+     18          		numAttr++;
+   \                     ??ZclWriteCmd_2:
+   \   000026   05..         INC     ?V7
+     19          		pBuf += 2; 
+   \   000028   EE           MOV     A,R6
+   \   000029   2402         ADD     A,#0x2
+   \   00002B   FE           MOV     R6,A
+   \   00002C   5001         JNC     ??ZclWriteCmd_3
+   \   00002E   0F           INC     R7
+     20          		dataType = *pBuf++;
+   \                     ??ZclWriteCmd_3:
+   \   00002F   8E82         MOV     DPL,R6
+   \   000031   8F83         MOV     DPH,R7
+   \   000033   E0           MOVX    A,@DPTR
+   \   000034   F9           MOV     R1,A
+   \   000035   A3           INC     DPTR
+   \   000036   AE82         MOV     R6,DPL
+   \   000038   AF83         MOV     R7,DPH
+     21          		attrDataLen = zclGetAttrDataLength( dataType, pBuf );
+     22          		pBuf += attrDataLen; // move pass attribute data
+   \   00003A                ; Setup parameters for call to function zclGetAttrDataLength
+   \   00003A   EE           MOV     A,R6
+   \   00003B   FA           MOV     R2,A
+   \   00003C   EF           MOV     A,R7
+   \   00003D   FB           MOV     R3,A
+   \   00003E   12....       LCALL   ??zclGetAttrDataLength?relay; Banked call to: zclGetAttrDataLength
+   \   000041   8B..         MOV     ?V5,R3
+   \   000043   EE           MOV     A,R6
+   \   000044   2A           ADD     A,R2
+   \   000045   FE           MOV     R6,A
+   \   000046   EF           MOV     A,R7
+   \   000047   35..         ADDC    A,?V5
+   \   000049   FF           MOV     R7,A
+     23          
+     24          		// add padding if needed
+     25          		if ( PADDING_NEEDED( attrDataLen ) ){
+     26          			attrDataLen++;
+     27          		}
+     28          	}
+   \                     ??ZclWriteCmd_1:
+   \   00004A   85..82       MOV     DPL,?V0
+   \   00004D   85..83       MOV     DPH,?V1
+   \   000050   A3           INC     DPTR
+   \   000051   E0           MOVX    A,@DPTR
+   \   000052   F8           MOV     R0,A
+   \   000053   A3           INC     DPTR
+   \   000054   E0           MOVX    A,@DPTR
+   \   000055   F9           MOV     R1,A
+   \   000056   85..82       MOV     DPL,?V2
+   \   000059   85..83       MOV     DPH,?V3
+   \   00005C   E0           MOVX    A,@DPTR
+   \   00005D   28           ADD     A,R0
+   \   00005E   F8           MOV     R0,A
+   \   00005F   A3           INC     DPTR
+   \   000060   E0           MOVX    A,@DPTR
+   \   000061   39           ADDC    A,R1
+   \   000062   F9           MOV     R1,A
+   \   000063   C3           CLR     C
+   \   000064   EE           MOV     A,R6
+   \   000065   98           SUBB    A,R0
+   \   000066   EF           MOV     A,R7
+   \   000067   99           SUBB    A,R1
+   \   000068   40BC         JC      ??ZclWriteCmd_2
+     29          
+     30          	attributes = new ZclWriteRec[numAttr];
+   \   00006A                ; Setup parameters for call to function operator new[](unsigned int)
+   \   00006A   E5..         MOV     A,?V7
+   \   00006C   75F005       MOV     B,#0x5
+   \   00006F   A4           MUL     AB
+   \   000070   FA           MOV     R2,A
+   \   000071   ABF0         MOV     R3,B
+   \   000073   12....       LCALL   `??operator new[]?relay`; Banked call to: operator new[](unsigned int)
+   \   000076   8A..         MOV     ?V0,R2
+   \   000078   8B..         MOV     ?V1,R3
+     31          	attrList = attributes;
+   \   00007A   85..82       MOV     DPL,?V10
+   \   00007D   85..83       MOV     DPH,?V11
+   \   000080   A3           INC     DPTR
+   \   000081   A882         MOV     R0,DPL
+   \   000083   A983         MOV     R1,DPH
+   \   000085   EA           MOV     A,R2
+   \   000086   F0           MOVX    @DPTR,A
+   \   000087   A3           INC     DPTR
+   \   000088   EB           MOV     A,R3
+   \   000089   F0           MOVX    @DPTR,A
+     32          
+     33          	if ( attrList != NULL ){
+   \   00008A   8882         MOV     DPL,R0
+   \   00008C   8983         MOV     DPH,R1
+   \   00008E   12....       LCALL   ?Subroutine3 & 0xFFFF
+   \                     ??CrossCallReturnLabel_4:
+   \   000091   49           ORL     A,R1
+   \   000092   7003         JNZ     $+5
+   \   000094   02....       LJMP    ??ZclWriteCmd_4 & 0xFFFF
+     34          		uint8 i;
+     35          		pBuf = pCmd->pData;
+   \   000097   85..82       MOV     DPL,?V2
+   \   00009A   85..83       MOV     DPH,?V3
+   \   00009D   E0           MOVX    A,@DPTR
+   \   00009E   FE           MOV     R6,A
+   \   00009F   A3           INC     DPTR
+   \   0000A0   E0           MOVX    A,@DPTR
+   \   0000A1   FF           MOV     R7,A
+     36          	    this->numAttr = numAttr;
+   \   0000A2   85..82       MOV     DPL,?V10
+   \   0000A5   85..83       MOV     DPH,?V11
+   \   0000A8   E5..         MOV     A,?V7
+   \   0000AA   F0           MOVX    @DPTR,A
+     37              	for ( i = 0; i < numAttr; i++ ) {
+   \   0000AB   75..00       MOV     ?V8,#0x0
+   \   0000AE   02....       LJMP    ??ZclWriteCmd_5 & 0xFFFF
+     38               		attributes->attrID = BUILD_UINT16( pBuf[0], pBuf[1] );
+   \                     ??ZclWriteCmd_6:
+   \   0000B1   8E82         MOV     DPL,R6
+   \   0000B3   8F83         MOV     DPH,R7
+   \   0000B5   E0           MOVX    A,@DPTR
+   \   0000B6   FA           MOV     R2,A
+   \   0000B7   A3           INC     DPTR
+   \   0000B8   E0           MOVX    A,@DPTR
+   \   0000B9   F9           MOV     R1,A
+   \   0000BA   EA           MOV     A,R2
+   \   0000BB   85..82       MOV     DPL,?V0
+   \   0000BE   85..83       MOV     DPH,?V1
+   \   0000C1   F0           MOVX    @DPTR,A
+   \   0000C2   A3           INC     DPTR
+   \   0000C3   E9           MOV     A,R1
+   \   0000C4   F0           MOVX    @DPTR,A
+     39                		pBuf += 2;
+   \   0000C5   EE           MOV     A,R6
+   \   0000C6   2402         ADD     A,#0x2
+   \   0000C8   FE           MOV     R6,A
+   \   0000C9   5001         JNC     ??ZclWriteCmd_7
+   \   0000CB   0F           INC     R7
+     40                		attributes->dataType = *pBuf++;
+   \                     ??ZclWriteCmd_7:
+   \   0000CC   8E82         MOV     DPL,R6
+   \   0000CE   8F83         MOV     DPH,R7
+   \   0000D0   E0           MOVX    A,@DPTR
+   \   0000D1   F9           MOV     R1,A
+   \   0000D2   85..82       MOV     DPL,?V0
+   \   0000D5   85..83       MOV     DPH,?V1
+   \   0000D8   A3           INC     DPTR
+   \   0000D9   A3           INC     DPTR
+   \   0000DA   F0           MOVX    @DPTR,A
+   \   0000DB   8E82         MOV     DPL,R6
+   \   0000DD   8F83         MOV     DPH,R7
+   \   0000DF   A3           INC     DPTR
+   \   0000E0   AE82         MOV     R6,DPL
+   \   0000E2   AF83         MOV     R7,DPH
+     41          
+     42                		attrDataLen = zclGetAttrDataLength( attributes->dataType, pBuf );
+   \   0000E4                ; Setup parameters for call to function zclGetAttrDataLength
+   \   0000E4   EE           MOV     A,R6
+   \   0000E5   FA           MOV     R2,A
+   \   0000E6   EF           MOV     A,R7
+   \   0000E7   FB           MOV     R3,A
+   \   0000E8   12....       LCALL   ??zclGetAttrDataLength?relay; Banked call to: zclGetAttrDataLength
+   \   0000EB   8A..         MOV     ?V2,R2
+   \   0000ED   8B..         MOV     ?V3,R3
+     43          			uint8 * dataPtr = new uint8[attrDataLen];
+   \   0000EF                ; Setup parameters for call to function operator new[](unsigned int)
+   \   0000EF   12....       LCALL   `??operator new[]?relay`; Banked call to: operator new[](unsigned int)
+   \   0000F2   8A..         MOV     ?V12,R2
+   \   0000F4   8B..         MOV     ?V13,R3
+     44                		osal_memcpy( dataPtr, pBuf, attrDataLen);
+   \   0000F6                ; Setup parameters for call to function osal_memcpy
+   \   0000F6   8E..         MOV     ?V4,R6
+   \   0000F8   8F..         MOV     ?V5,R7
+   \   0000FA   75..00       MOV     ?V6,#0x0
+   \   0000FD   78..         MOV     R0,#?V4
+   \   0000FF   12....       LCALL   ?PUSH_XSTACK_I_THREE
+   \   000102   AC..         MOV     R4,?V2
+   \   000104   AD..         MOV     R5,?V3
+   \   000106   12....       LCALL   ??osal_memcpy?relay  ; Banked call to: osal_memcpy
+   \   000109   7403         MOV     A,#0x3
+   \   00010B   12....       LCALL   ?DEALLOC_XSTACK8
+     45                		attributes->attrData = dataPtr;
+   \   00010E   85..82       MOV     DPL,?V0
+   \   000111   85..83       MOV     DPH,?V1
+   \   000114   A3           INC     DPTR
+   \   000115   A3           INC     DPTR
+   \   000116   A3           INC     DPTR
+   \   000117   E5..         MOV     A,?V12
+   \   000119   F0           MOVX    @DPTR,A
+   \   00011A   A3           INC     DPTR
+   \   00011B   E5..         MOV     A,?V13
+   \   00011D   F0           MOVX    @DPTR,A
+     46          
+     47                		pBuf += attrDataLen; 
+   \   00011E   EE           MOV     A,R6
+   \   00011F   25..         ADD     A,?V2
+   \   000121   FE           MOV     R6,A
+   \   000122   EF           MOV     A,R7
+   \   000123   35..         ADDC    A,?V3
+   \   000125   FF           MOV     R7,A
+     48          
+     49                		// advance attribute data pointer
+     50                		if ( PADDING_NEEDED( attrDataLen ) ) {
+     51                  		attrDataLen++;
+     52                		}
+     53          			attributes++;
+   \   000126   E5..         MOV     A,?V0
+   \   000128   2405         ADD     A,#0x5
+   \   00012A   F5..         MOV     ?V0,A
+   \   00012C   5002         JNC     ??ZclWriteCmd_8
+   \   00012E   05..         INC     ?V1
+     54              	}
+   \                     ??ZclWriteCmd_8:
+   \   000130   05..         INC     ?V8
+   \                     ??ZclWriteCmd_5:
+   \   000132   E5..         MOV     A,?V8
+   \   000134   C3           CLR     C
+   \   000135   95..         SUBB    A,?V7
+   \   000137   5003         JNC     $+5
+   \   000139   02....       LJMP    ??ZclWriteCmd_6 & 0xFFFF
+     55            	}
+     56          }
+   \                     ??ZclWriteCmd_4:
+   \   00013C   AA..         MOV     R2,?V10
+   \   00013E   AB..         MOV     R3,?V11
+   \   000140   7F0E         MOV     R7,#0xe
+   \   000142   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine3:
+   \   000000   E0           MOVX    A,@DPTR
+   \   000001   F8           MOV     R0,A
+   \   000002   A3           INC     DPTR
+   \   000003   E0           MOVX    A,@DPTR
+   \   000004   F9           MOV     R1,A
+   \   000005   E8           MOV     A,R0
+   \   000006   22           RET
+     57          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     58          ZclWriteCmd::~ZclWriteCmd(){
+   \                     `?~ZclWriteCmd`:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000   74F2         MOV     A,#-0xe
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 14
+   \   000005                ; Auto size: 0
+   \   000005   EA           MOV     A,R2
+   \   000006   FE           MOV     R6,A
+   \   000007   EB           MOV     A,R3
+   \   000008   FF           MOV     R7,A
+     59          	if (attrList != NULL){
+   \   000009   8E82         MOV     DPL,R6
+   \   00000B   8F83         MOV     DPH,R7
+   \   00000D   A3           INC     DPTR
+   \   00000E   8582..       MOV     ?V0,DPL
+   \   000011   8583..       MOV     ?V1,DPH
+   \   000014   12....       LCALL   ?Subroutine3 & 0xFFFF
+   \                     ??CrossCallReturnLabel_5:
+   \   000017   49           ORL     A,R1
+   \   000018   603F         JZ      `?~ZclWriteCmd_1`
+     60          		ZclWriteRec * attributes = attrList;
+   \   00001A   88..         MOV     ?V2,R0
+   \   00001C   89..         MOV     ?V3,R1
+     61          		for(int i=0; i< numAttr; i++){
+   \   00001E   75..00       MOV     ?V4,#0x0
+   \   000021   75..00       MOV     ?V5,#0x0
+   \   000024   801E         SJMP    `?~ZclWriteCmd_2`
+     62          			delete attributes->attrData;
+   \                     `?~ZclWriteCmd_3`:
+   \   000026                ; Setup parameters for call to function operator delete(void *)
+   \   000026   85..82       MOV     DPL,?V2
+   \   000029   85..83       MOV     DPH,?V3
+   \   00002C   12....       LCALL   ??Subroutine5_0 & 0xFFFF
+   \                     ??CrossCallReturnLabel_8:
+   \   00002F   12....       LCALL   `??operator delete?relay`; Banked call to: operator delete(void *)
+     63          			attributes++;
+   \   000032   E5..         MOV     A,?V2
+   \   000034   2405         ADD     A,#0x5
+   \   000036   F5..         MOV     ?V2,A
+   \   000038   5002         JNC     `?~ZclWriteCmd_4`
+   \   00003A   05..         INC     ?V3
+     64          		}
+   \                     `?~ZclWriteCmd_4`:
+   \   00003C   05..         INC     ?V4
+   \   00003E   E5..         MOV     A,?V4
+   \   000040   7002         JNZ     `?~ZclWriteCmd_2`
+   \   000042   05..         INC     ?V5
+   \                     `?~ZclWriteCmd_2`:
+   \   000044   8E82         MOV     DPL,R6
+   \   000046   8F83         MOV     DPH,R7
+   \   000048   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_0:
+   \   00004B   40D9         JC      `?~ZclWriteCmd_3`
+     65          		delete attrList;
+   \   00004D                ; Setup parameters for call to function operator delete(void *)
+   \   00004D   85..82       MOV     DPL,?V0
+   \   000050   85..83       MOV     DPH,?V1
+   \   000053   12....       LCALL   ??Subroutine6_0 & 0xFFFF
+     66          	}
+   \                     ??CrossCallReturnLabel_7:
+   \   000056   12....       LCALL   `??operator delete?relay`; Banked call to: operator delete(void *)
+     67          }
+   \                     `?~ZclWriteCmd_1`:
+   \   000059   7F06         MOV     R7,#0x6
+   \   00005B   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ??Subroutine5_0:
+   \   000000   A3           INC     DPTR
+   \   000001   A3           INC     DPTR
+   \   000002   A3           INC     DPTR
+   \   000003                REQUIRE ??Subroutine6_0
+   \   000003                ; // Fall through to label ??Subroutine6_0
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ??Subroutine6_0:
+   \   000000   E0           MOVX    A,@DPTR
+   \   000001   FA           MOV     R2,A
+   \   000002   A3           INC     DPTR
+   \   000003   E0           MOVX    A,@DPTR
+   \   000004   FB           MOV     R3,A
+   \   000005   22           RET
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine1:
+   \   000000   E0           MOVX    A,@DPTR
+   \   000001   F8           MOV     R0,A
+   \   000002   C3           CLR     C
+   \   000003   E5..         MOV     A,?V4
+   \   000005   98           SUBB    A,R0
+   \   000006   E5..         MOV     A,?V5
+   \   000008   9400         SUBB    A,#0x0
+   \   00000A   A2D2         MOV     C,0xD0 /* PSW */.2
+   \   00000C   65D0         XRL     A,PSW
+   \   00000E   33           RLC     A
+   \   00000F   22           RET
+     68          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     69          uint16 ZclWriteCmd::getDataLen() {
+   \                     ??getDataLen:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000                REQUIRE ?V6
+   \   000000                REQUIRE ?V7
+   \   000000   74F0         MOV     A,#-0x10
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 16
+   \   000005                ; Auto size: 0
+   \   000005   8A..         MOV     ?V0,R2
+   \   000007   8B..         MOV     ?V1,R3
+     70          	ZclWriteRec * attributes = attrList;
+   \   000009   8A82         MOV     DPL,R2
+   \   00000B   8B83         MOV     DPH,R3
+   \   00000D   A3           INC     DPTR
+   \   00000E   12....       LCALL   ?Subroutine3 & 0xFFFF
+   \                     ??CrossCallReturnLabel_6:
+   \   000011   FE           MOV     R6,A
+   \   000012   E9           MOV     A,R1
+   \   000013   FF           MOV     R7,A
+     71          	uint16 dataLen=0;
+   \   000014   75..00       MOV     ?V2,#0x0
+   \   000017   75..00       MOV     ?V3,#0x0
+     72          	for(int i=0; i< numAttr; i++){
+   \   00001A   75..00       MOV     ?V4,#0x0
+   \   00001D   75..00       MOV     ?V5,#0x0
+   \   000020   8031         SJMP    ??getDataLen_1
+     73          		dataLen += attributes->getDataLen();
+   \                     ??getDataLen_2:
+   \   000022                ; Setup parameters for call to function zclGetAttrDataLength
+   \   000022   12....       LCALL   ?Subroutine4 & 0xFFFF
+   \                     ??CrossCallReturnLabel_9:
+   \   000025   8E82         MOV     DPL,R6
+   \   000027   8F83         MOV     DPH,R7
+   \   000029   A3           INC     DPTR
+   \   00002A   A3           INC     DPTR
+   \   00002B   E0           MOVX    A,@DPTR
+   \   00002C   F9           MOV     R1,A
+   \   00002D   12....       LCALL   ??zclGetAttrDataLength?relay; Banked call to: zclGetAttrDataLength
+   \   000030   8B..         MOV     ?V7,R3
+   \   000032   EA           MOV     A,R2
+   \   000033   2403         ADD     A,#0x3
+   \   000035   F8           MOV     R0,A
+   \   000036   E4           CLR     A
+   \   000037   35..         ADDC    A,?V7
+   \   000039   F9           MOV     R1,A
+   \   00003A   E5..         MOV     A,?V2
+   \   00003C   28           ADD     A,R0
+   \   00003D   F5..         MOV     ?V2,A
+   \   00003F   E5..         MOV     A,?V3
+   \   000041   39           ADDC    A,R1
+   \   000042   F5..         MOV     ?V3,A
+     74          		attributes++;
+   \   000044   EE           MOV     A,R6
+   \   000045   2405         ADD     A,#0x5
+   \   000047   FE           MOV     R6,A
+   \   000048   5001         JNC     ??getDataLen_3
+   \   00004A   0F           INC     R7
+     75          	}
+   \                     ??getDataLen_3:
+   \   00004B   05..         INC     ?V4
+   \   00004D   E5..         MOV     A,?V4
+   \   00004F   7002         JNZ     ??getDataLen_1
+   \   000051   05..         INC     ?V5
+   \                     ??getDataLen_1:
+   \   000053   85..82       MOV     DPL,?V0
+   \   000056   85..83       MOV     DPH,?V1
+   \   000059   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_1:
+   \   00005C   40C4         JC      ??getDataLen_2
+     76          	return dataLen;
+   \   00005E   AA..         MOV     R2,?V2
+   \   000060   AB..         MOV     R3,?V3
+   \   000062                REQUIRE ?Subroutine0
+   \   000062                ; // Fall through to label ?Subroutine0
+     77          }
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000   7F08         MOV     R7,#0x8
+   \   000002   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine4:
+   \   000000   8E82         MOV     DPL,R6
+   \   000002   8F83         MOV     DPH,R7
+   \   000004                REQUIRE ??Subroutine5_0
+   \   000004                ; // Fall through to label ??Subroutine5_0
+     78          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     79          BufferData ZclWriteCmd::getBufferFromAttribute(){
+   \                     ??getBufferFromAttribute:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000                REQUIRE ?V6
+   \   000000                REQUIRE ?V7
+   \   000000   74F0         MOV     A,#-0x10
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 16
+   \   000005                ; Auto size: 0
+   \   000005   8A..         MOV     ?V2,R2
+   \   000007   8B..         MOV     ?V3,R3
+   \   000009   EC           MOV     A,R4
+   \   00000A   FE           MOV     R6,A
+   \   00000B   ED           MOV     A,R5
+   \   00000C   FF           MOV     R7,A
+     80          	uint16 dataLen = getDataLen();
+   \   00000D                ; Setup parameters for call to function ZclWriteCmd::getDataLen()
+   \   00000D   12....       LCALL   ??getDataLen?relay   ; Banked call to: ZclWriteCmd::getDataLen()
+   \   000010   8A..         MOV     ?V0,R2
+   \   000012   8B..         MOV     ?V1,R3
+     81          	BufferData buffer(dataLen);
+   \   000014   EE           MOV     A,R6
+   \   000015   2402         ADD     A,#0x2
+   \   000017   F8           MOV     R0,A
+   \   000018   E4           CLR     A
+   \   000019   3F           ADDC    A,R7
+   \   00001A   F9           MOV     R1,A
+   \   00001B   88..         MOV     ?V4,R0
+   \   00001D   89..         MOV     ?V5,R1
+   \   00001F                ; Setup parameters for call to function operator new[](unsigned int)
+   \   00001F   12....       LCALL   `??operator new[]?relay`; Banked call to: operator new[](unsigned int)
+   \   000022   85..82       MOV     DPL,?V4
+   \   000025   85..83       MOV     DPH,?V5
+   \   000028   EA           MOV     A,R2
+   \   000029   F0           MOVX    @DPTR,A
+   \   00002A   A3           INC     DPTR
+   \   00002B   EB           MOV     A,R3
+   \   00002C   F0           MOVX    @DPTR,A
+   \   00002D   8E82         MOV     DPL,R6
+   \   00002F   8F83         MOV     DPH,R7
+   \   000031   E5..         MOV     A,?V0
+   \   000033   F0           MOVX    @DPTR,A
+   \   000034   A3           INC     DPTR
+   \   000035   E5..         MOV     A,?V1
+   \   000037   F0           MOVX    @DPTR,A
+     82          	
+     83          	 // Load the buffer - serially
+     84              
+     85          	if (buffer.isValid()){
+   \   000038   85..82       MOV     DPL,?V4
+   \   00003B   85..83       MOV     DPH,?V5
+   \   00003E   E0           MOVX    A,@DPTR
+   \   00003F   FC           MOV     R4,A
+   \   000040   A3           INC     DPTR
+   \   000041   E0           MOVX    A,@DPTR
+   \   000042   FD           MOV     R5,A
+   \   000043   EC           MOV     A,R4
+   \   000044   4D           ORL     A,R5
+   \   000045   6072         JZ      ??getBufferFromAttribute_1
+     86          		ZclWriteRec * attributes = attrList;
+   \   000047   85..82       MOV     DPL,?V2
+   \   00004A   85..83       MOV     DPH,?V3
+   \   00004D   A3           INC     DPTR
+   \   00004E   E0           MOVX    A,@DPTR
+   \   00004F   FE           MOV     R6,A
+   \   000050   A3           INC     DPTR
+   \   000051   E0           MOVX    A,@DPTR
+   \   000052   FF           MOV     R7,A
+     87          		uint8 *pBuf = buffer.data;
+     88              	for ( int i = 0; i < numAttr; i++ ){
+   \   000053   75..00       MOV     ?V0,#0x0
+   \   000056   75..00       MOV     ?V1,#0x0
+   \   000059   EE           MOV     A,R6
+   \   00005A   2402         ADD     A,#0x2
+   \   00005C   F5..         MOV     ?V4,A
+   \   00005E   E4           CLR     A
+   \   00005F   3F           ADDC    A,R7
+   \   000060   F5..         MOV     ?V5,A
+   \   000062   803E         SJMP    ??getBufferFromAttribute_2
+     89          	    	*pBuf++ = LO_UINT16( attributes->attrID );
+   \                     ??getBufferFromAttribute_3:
+   \   000064   8E82         MOV     DPL,R6
+   \   000066   8F83         MOV     DPH,R7
+   \   000068   E0           MOVX    A,@DPTR
+   \   000069   8C82         MOV     DPL,R4
+   \   00006B   8D83         MOV     DPH,R5
+   \   00006D   F0           MOVX    @DPTR,A
+   \   00006E   A3           INC     DPTR
+   \   00006F   AC82         MOV     R4,DPL
+   \   000071   AD83         MOV     R5,DPH
+     90                		*pBuf++ = HI_UINT16( attributes->attrID );
+   \   000073   8E82         MOV     DPL,R6
+   \   000075   8F83         MOV     DPH,R7
+   \   000077   A3           INC     DPTR
+   \   000078   12....       LCALL   ?Subroutine2 & 0xFFFF
+     91                		*pBuf++ = attributes->dataType;
+   \                     ??CrossCallReturnLabel_2:
+   \   00007B   85..82       MOV     DPL,?V4
+   \   00007E   85..83       MOV     DPH,?V5
+   \   000081   12....       LCALL   ?Subroutine2 & 0xFFFF
+     92          		    pBuf = zclSerializeData( attributes->dataType, attributes->attrData, pBuf );
+   \                     ??CrossCallReturnLabel_3:
+   \   000084                ; Setup parameters for call to function zclSerializeData
+   \   000084   12....       LCALL   ?Subroutine4 & 0xFFFF
+     93          		}
+   \                     ??CrossCallReturnLabel_10:
+   \   000087   85..82       MOV     DPL,?V4
+   \   00008A   85..83       MOV     DPH,?V5
+   \   00008D   E0           MOVX    A,@DPTR
+   \   00008E   F9           MOV     R1,A
+   \   00008F   12....       LCALL   ??zclSerializeData?relay; Banked call to: zclSerializeData
+   \   000092   8A..         MOV     ?V6,R2
+   \   000094   8B..         MOV     ?V7,R3
+   \   000096   AC..         MOV     R4,?V6
+   \   000098   AD..         MOV     R5,?V7
+   \   00009A   05..         INC     ?V0
+   \   00009C   E5..         MOV     A,?V0
+   \   00009E   7002         JNZ     ??getBufferFromAttribute_2
+   \   0000A0   05..         INC     ?V1
+   \                     ??getBufferFromAttribute_2:
+   \   0000A2   85..82       MOV     DPL,?V2
+   \   0000A5   85..83       MOV     DPH,?V3
+   \   0000A8   E0           MOVX    A,@DPTR
+   \   0000A9   F8           MOV     R0,A
+   \   0000AA   C3           CLR     C
+   \   0000AB   E5..         MOV     A,?V0
+   \   0000AD   98           SUBB    A,R0
+   \   0000AE   E5..         MOV     A,?V1
+   \   0000B0   9400         SUBB    A,#0x0
+   \   0000B2   A2D2         MOV     C,0xD0 /* PSW */.2
+   \   0000B4   65D0         XRL     A,PSW
+   \   0000B6   33           RLC     A
+   \   0000B7   40AB         JC      ??getBufferFromAttribute_3
+     94              }
+     95          
+     96          	return buffer;
+   \                     ??getBufferFromAttribute_1:
+   \   0000B9   02....       LJMP    ?Subroutine0 & 0xFFFF
+     97          }
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine2:
+   \   000000   E0           MOVX    A,@DPTR
+   \   000001   8C82         MOV     DPL,R4
+   \   000003   8D83         MOV     DPH,R5
+   \   000005   F0           MOVX    @DPTR,A
+   \   000006   A3           INC     DPTR
+   \   000007   0C           INC     R4
+   \   000008   AD83         MOV     R5,DPH
+   \   00000A   22           RET
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     `??new ZclWriteCmd?relay`:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `??new ZclWriteCmd`
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     `??delete ~ZclWriteCmd?relay`:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `??delete ~ZclWriteCmd`
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??ZclWriteCmd?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??ZclWriteCmd
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     `?~ZclWriteCmd?relay`:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    `?~ZclWriteCmd`
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??getDataLen?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??getDataLen
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??getBufferFromAttribute?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    ??getBufferFromAttribute
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \   __banked_func __xdata_reentrant ZclWriteCmd &ZclWriteCmd::new ZclWriteCmd(zclParseCmd_t *)
+   \                     `??new ZclWriteCmd`:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000   74F6         MOV     A,#-0xa
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 10
+   \   000005                ; Auto size: 0
+   \   000005   EA           MOV     A,R2
+   \   000006   FE           MOV     R6,A
+   \   000007   EB           MOV     A,R3
+   \   000008   FF           MOV     R7,A
+   \   000009                ; Setup parameters for call to function operator new(unsigned int)
+   \   000009   7A03         MOV     R2,#0x3
+   \   00000B   7B00         MOV     R3,#0x0
+   \   00000D   12....       LCALL   `??operator new?relay`; Banked call to: operator new(unsigned int)
+   \   000010   EA           MOV     A,R2
+   \   000011   4B           ORL     A,R3
+   \   000012   6009         JZ      `??new ZclWriteCmd_1`
+   \   000014                ; Setup parameters for call to function ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *)
+   \   000014   EE           MOV     A,R6
+   \   000015   FC           MOV     R4,A
+   \   000016   EF           MOV     A,R7
+   \   000017   FD           MOV     R5,A
+   \   000018   12....       LCALL   ??ZclWriteCmd?relay  ; Banked call to: ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *)
+   \   00001B   8004         SJMP    `??new ZclWriteCmd_2`
+   \                     `??new ZclWriteCmd_1`:
+   \   00001D   7A00         MOV     R2,#0x0
+   \   00001F   7B00         MOV     R3,#0x0
+   \                     `??new ZclWriteCmd_2`:
+   \   000021   7F02         MOV     R7,#0x2
+   \   000023   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \   __banked_func __xdata_reentrant void ZclWriteCmd::delete ~ZclWriteCmd(ZclWriteCmd *)
+   \                     `??delete ~ZclWriteCmd`:
+   \   000000   74F7         MOV     A,#-0x9
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 9
+   \   000005                ; Auto size: 0
+   \   000005   EA           MOV     A,R2
+   \   000006   FE           MOV     R6,A
+   \   000007   EB           MOV     A,R3
+   \   000008   FF           MOV     R7,A
+   \   000009   EE           MOV     A,R6
+   \   00000A   4F           ORL     A,R7
+   \   00000B   600A         JZ      `??delete ~ZclWriteCmd_1`
+   \   00000D                ; Setup parameters for call to function ZclWriteCmd::~ZclWriteCmd()
+   \   00000D   12....       LCALL   `?~ZclWriteCmd?relay`; Banked call to: ZclWriteCmd::~ZclWriteCmd()
+   \   000010                ; Setup parameters for call to function operator delete(void *)
+   \   000010   EE           MOV     A,R6
+   \   000011   FA           MOV     R2,A
+   \   000012   EF           MOV     A,R7
+   \   000013   FB           MOV     R3,A
+   \   000014   12....       LCALL   `??operator delete?relay`; Banked call to: operator delete(void *)
+   \                     `??delete ~ZclWriteCmd_1`:
+   \   000017   7F01         MOV     R7,#0x1
+   \   000019   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   Maximum stack usage in bytes:
+
+   ISTACK XSTACK Function
+   ------ ------ --------
+      1     35   ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *)
+        0     22   -> operator new[](unsigned int)
+        0     25   -> osal_memcpy
+        0     22   -> zclGetAttrDataLength
+      0      9   ZclWriteCmd::delete ~ZclWriteCmd(ZclWriteCmd *)
+        0      9   -> ZclWriteCmd::~ZclWriteCmd()
+        0      9   -> operator delete(void *)
+      1     16   ZclWriteCmd::getBufferFromAttribute()
+        0     16   -> ZclWriteCmd::getDataLen()
+        0     16   -> operator new[](unsigned int)
+        0     16   -> zclSerializeData
+      0     32   ZclWriteCmd::getDataLen()
+        0     16   -> zclGetAttrDataLength
+      0     10   ZclWriteCmd::new ZclWriteCmd(zclParseCmd_t *)
+        0     10   -> ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *)
+        0     10   -> operator new(unsigned int)
+      0     23   ZclWriteCmd::~ZclWriteCmd()
+        0     14   -> operator delete(void *)
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       3  ??Subroutine5_0
+       6  ??Subroutine6_0
+       6  ??ZclWriteCmd?relay
+       6  ??delete ~ZclWriteCmd?relay
+       6  ??getBufferFromAttribute?relay
+       6  ??getDataLen?relay
+       6  ??new ZclWriteCmd?relay
+       5  ?Subroutine0
+      16  ?Subroutine1
+      11  ?Subroutine2
+       7  ?Subroutine3
+       4  ?Subroutine4
+       6  ?~ZclWriteCmd?relay
+     325  ZclWriteCmd::ZclWriteCmd(zclParseCmd_t *)
+      28  ZclWriteCmd::delete ~ZclWriteCmd(ZclWriteCmd *)
+     188  ZclWriteCmd::getBufferFromAttribute()
+      98  ZclWriteCmd::getDataLen()
+      38  ZclWriteCmd::new ZclWriteCmd(zclParseCmd_t *)
+      94  ZclWriteCmd::~ZclWriteCmd()
+
+ 
+ 823 bytes in segment BANKED_CODE
+  36 bytes in segment BANK_RELAYS
+ 
+ 859 bytes of CODE memory
+
+Errors: none
+Warnings: none

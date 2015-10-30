@@ -48,133 +48,28 @@ extern "C"
 /*********************************************************************
  * INCLUDES
  */
-#if !defined ( ZCL_STANDALONE )
-  #include "OSAL.h"
-  #include "OSAL_Nv.h"
-  #include "OSAL_Tasks.h"
-#endif
+#include "OSAL.h"
+#include "OSAL_Nv.h"
+#include "OSAL_Tasks.h"
 
 #include "AF.h"
 #include "aps_groups.h"
+#include "zclListAttribute.h"
+#include "zcl_clusterDef.h"
+#include "hal_types.h"
+	
+#include "AttributeUtils.h"
+#include "zclReadCmd_t.h"
+#include "zclParseCmd.h"
+#include "ZclWriteRspCmd.h"
+#include "ZclWriteCmd.h"	
+#include "ZCL_StatusCode.h"
+	 
+typedef unsigned short  uint16;
 
 /*********************************************************************
  * CONSTANTS
  */
-
-// General Clusters
-#define ZCL_CLUSTER_ID_GEN_BASIC                             0x0000
-#define ZCL_CLUSTER_ID_GEN_POWER_CFG                         0x0001
-#define ZCL_CLUSTER_ID_GEN_DEVICE_TEMP_CONFIG                0x0002
-#define ZCL_CLUSTER_ID_GEN_IDENTIFY                          0x0003
-#define ZCL_CLUSTER_ID_GEN_GROUPS                            0x0004
-#define ZCL_CLUSTER_ID_GEN_SCENES                            0x0005
-#define ZCL_CLUSTER_ID_GEN_ON_OFF                            0x0006
-#define ZCL_CLUSTER_ID_GEN_ON_OFF_SWITCH_CONFIG              0x0007
-#define ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL                     0x0008
-#define ZCL_CLUSTER_ID_GEN_ALARMS                            0x0009
-#define ZCL_CLUSTER_ID_GEN_TIME                              0x000A
-#define ZCL_CLUSTER_ID_GEN_LOCATION                          0x000B
-#define ZCL_CLUSTER_ID_GEN_ANALOG_INPUT_BASIC                0x000C
-#define ZCL_CLUSTER_ID_GEN_ANALOG_OUTPUT_BASIC               0x000D
-#define ZCL_CLUSTER_ID_GEN_ANALOG_VALUE_BASIC                0x000E
-#define ZCL_CLUSTER_ID_GEN_BINARY_INPUT_BASIC                0x000F
-#define ZCL_CLUSTER_ID_GEN_BINARY_OUTPUT_BASIC               0x0010
-#define ZCL_CLUSTER_ID_GEN_BINARY_VALUE_BASIC                0x0011
-#define ZCL_CLUSTER_ID_GEN_MULTISTATE_INPUT_BASIC            0x0012
-#define ZCL_CLUSTER_ID_GEN_MULTISTATE_OUTPUT_BASIC           0x0013
-#define ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC            0x0014
-#define ZCL_CLUSTER_ID_GEN_COMMISSIONING                     0x0015
-#define ZCL_CLUSTER_ID_GEN_PARTITION                         0x0016
-
-#define ZCL_CLUSTER_ID_OTA                                   0x0019
-
-#define ZCL_CLUSTER_ID_GEN_POWER_PROFILE                     0x001A
-#define ZCL_CLUSTER_ID_GEN_APPLIANCE_CONTROL                 0x001B
-
-#define ZCL_CLUSTER_ID_GEN_POLL_CONTROL                      0x0020
-
-#define ZCL_CLUSTER_ID_GREEN_POWER_PROXY                     0x0021
-
-// Closures Clusters
-#define ZCL_CLUSTER_ID_CLOSURES_SHADE_CONFIG                 0x0100
-#define ZCL_CLUSTER_ID_CLOSURES_DOOR_LOCK                    0x0101
-#define ZCL_CLUSTER_ID_CLOSURES_WINDOW_COVERING              0x0102
-
-// HVAC Clusters
-#define ZCL_CLUSTER_ID_HVAC_PUMP_CONFIG_CONTROL              0x0200
-#define ZCL_CLUSTER_ID_HVAC_THERMOSTAT                       0x0201
-#define ZCL_CLUSTER_ID_HVAC_FAN_CONTROL                      0x0202
-#define ZCL_CLUSTER_ID_HVAC_DIHUMIDIFICATION_CONTROL         0x0203
-#define ZCL_CLUSTER_ID_HVAC_USER_INTERFACE_CONFIG            0x0204
-
-// Lighting Clusters
-#define ZCL_CLUSTER_ID_LIGHTING_COLOR_CONTROL                0x0300
-#define ZCL_CLUSTER_ID_LIGHTING_BALLAST_CONFIG               0x0301
-
-// Measurement and Sensing Clusters
-#define ZCL_CLUSTER_ID_MS_ILLUMINANCE_MEASUREMENT            0x0400
-#define ZCL_CLUSTER_ID_MS_ILLUMINANCE_LEVEL_SENSING_CONFIG   0x0401
-
-#define ZCL_CLUSTER_ID_MS_PRESSURE_MEASUREMENT               0x0403
-#define ZCL_CLUSTER_ID_MS_FLOW_MEASUREMENT                   0x0404
-#define ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY                  0x0405
-#define ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING                  0x0406
-
-// Security and Safety (SS) Clusters
-#define ZCL_CLUSTER_ID_SS_IAS_ZONE                           0x0500
-#define ZCL_CLUSTER_ID_SS_IAS_ACE                            0x0501
-#define ZCL_CLUSTER_ID_SS_IAS_WD                             0x0502
-
-// Protocol Interfaces
-#define ZCL_CLUSTER_ID_PI_GENERIC_TUNNEL                     0x0600
-#define ZCL_CLUSTER_ID_PI_BACNET_PROTOCOL_TUNNEL             0x0601
-#define ZCL_CLUSTER_ID_PI_ANALOG_INPUT_BACNET_REG            0x0602
-#define ZCL_CLUSTER_ID_PI_ANALOG_INPUT_BACNET_EXT            0x0603
-#define ZCL_CLUSTER_ID_PI_ANALOG_OUTPUT_BACNET_REG           0x0604
-#define ZCL_CLUSTER_ID_PI_ANALOG_OUTPUT_BACNET_EXT           0x0605
-#define ZCL_CLUSTER_ID_PI_ANALOG_VALUE_BACNET_REG            0x0606
-#define ZCL_CLUSTER_ID_PI_ANALOG_VALUE_BACNET_EXT            0x0607
-#define ZCL_CLUSTER_ID_PI_BINARY_INPUT_BACNET_REG            0x0608
-#define ZCL_CLUSTER_ID_PI_BINARY_INPUT_BACNET_EXT            0x0609
-#define ZCL_CLUSTER_ID_PI_BINARY_OUTPUT_BACNET_REG           0x060A
-#define ZCL_CLUSTER_ID_PI_BINARY_OUTPUT_BACNET_EXT           0x060B
-#define ZCL_CLUSTER_ID_PI_BINARY_VALUE_BACNET_REG            0x060C
-#define ZCL_CLUSTER_ID_PI_BINARY_VALUE_BACNET_EXT            0x060D
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_INPUT_BACNET_REG        0x060E
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_INPUT_BACNET_EXT        0x060F
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_OUTPUT_BACNET_REG       0x0610
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_OUTPUT_BACNET_EXT       0x0611
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_VALUE_BACNET_REG        0x0612
-#define ZCL_CLUSTER_ID_PI_MULTISTATE_VALUE_BACNET_EXT        0x0613
-#define ZCL_CLUSTER_ID_PI_11073_PROTOCOL_TUNNEL              0x0614
-
-// Advanced Metering Initiative (SE) Clusters
-#define ZCL_CLUSTER_ID_SE_PRICING                            0x0700
-#define ZCL_CLUSTER_ID_SE_LOAD_CONTROL                       0x0701
-#define ZCL_CLUSTER_ID_SE_SIMPLE_METERING                    0x0702
-#define ZCL_CLUSTER_ID_SE_MESSAGE                            0x0703
-#define ZCL_CLUSTER_ID_SE_SE_TUNNELING                       0x0704
-#define ZCL_CLUSTER_ID_SE_PREPAYMENT                         0x0705
-#define ZCL_CLUSTER_ID_SE_ENERGY_MGMT                        0x0706
-#define ZCL_CLUSTER_ID_SE_TOU_CALENDAR                       0x0707
-#define ZCL_CLUSTER_ID_SE_DEVICE_MGMT                        0x0708
-#define ZCL_CLUSTER_ID_SE_EVENTS                             0x0709
-#define ZCL_CLUSTER_ID_SE_MDU_PAIRING                        0x070A
-
-#define ZCL_CLUSTER_ID_GEN_KEY_ESTABLISHMENT                 0x0800
-
-#define ZCL_CLUSTER_ID_HA_APPLIANCE_IDENTIFICATION           0x0B00
-#define ZCL_CLUSTER_ID_HA_METER_IDENTIFICATION               0x0B01
-#define ZCL_CLUSTER_ID_HA_APPLIANCE_EVENTS_ALERTS            0x0B02
-#define ZCL_CLUSTER_ID_HA_APPLIANCE_STATISTICS               0x0B03
-#define ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT             0x0B04
-#define ZCL_CLUSTER_ID_HA_DIAGNOSTIC                         0x0B05
-	
-#define ACHDJIAN_LAST_CLUSTER								 0xFFFF
-
-// Light Link cluster
-#define ZCL_CLUSTER_ID_LIGHT_LINK                           0x1000
-
 /*** Frame Control bit mask ***/
 #define ZCL_FRAME_CONTROL_TYPE                          0x03
 #define ZCL_FRAME_CONTROL_MANU_SPECIFIC                 0x04
@@ -225,102 +120,8 @@ extern "C"
 #define CMD_DIR_SERVER_RECEIVED           0x04
 #define CMD_DIR_CLIENT_RECEIVED           0x08
 
-/*** Data Types ***/
-#define ZCL_DATATYPE_NO_DATA                            0x00
-#define ZCL_DATATYPE_DATA8                              0x08
-#define ZCL_DATATYPE_DATA16                             0x09
-#define ZCL_DATATYPE_DATA24                             0x0a
-#define ZCL_DATATYPE_DATA32                             0x0b
-#define ZCL_DATATYPE_DATA40                             0x0c
-#define ZCL_DATATYPE_DATA48                             0x0d
-#define ZCL_DATATYPE_DATA56                             0x0e
-#define ZCL_DATATYPE_DATA64                             0x0f
-#define ZCL_DATATYPE_BOOLEAN                            0x10
-#define ZCL_DATATYPE_BITMAP8                            0x18
-#define ZCL_DATATYPE_BITMAP16                           0x19
-#define ZCL_DATATYPE_BITMAP24                           0x1a
-#define ZCL_DATATYPE_BITMAP32                           0x1b
-#define ZCL_DATATYPE_BITMAP40                           0x1c
-#define ZCL_DATATYPE_BITMAP48                           0x1d
-#define ZCL_DATATYPE_BITMAP56                           0x1e
-#define ZCL_DATATYPE_BITMAP64                           0x1f
-#define ZCL_DATATYPE_UINT8                              0x20
-#define ZCL_DATATYPE_UINT16                             0x21
-#define ZCL_DATATYPE_UINT24                             0x22
-#define ZCL_DATATYPE_UINT32                             0x23
-#define ZCL_DATATYPE_UINT40                             0x24
-#define ZCL_DATATYPE_UINT48                             0x25
-#define ZCL_DATATYPE_UINT56                             0x26
-#define ZCL_DATATYPE_UINT64                             0x27
-#define ZCL_DATATYPE_INT8                               0x28
-#define ZCL_DATATYPE_INT16                              0x29
-#define ZCL_DATATYPE_INT24                              0x2a
-#define ZCL_DATATYPE_INT32                              0x2b
-#define ZCL_DATATYPE_INT40                              0x2c
-#define ZCL_DATATYPE_INT48                              0x2d
-#define ZCL_DATATYPE_INT56                              0x2e
-#define ZCL_DATATYPE_INT64                              0x2f
-#define ZCL_DATATYPE_ENUM8                              0x30
-#define ZCL_DATATYPE_ENUM16                             0x31
-#define ZCL_DATATYPE_SEMI_PREC                          0x38
-#define ZCL_DATATYPE_SINGLE_PREC                        0x39
-#define ZCL_DATATYPE_DOUBLE_PREC                        0x3a
-#define ZCL_DATATYPE_OCTET_STR                          0x41
-#define ZCL_DATATYPE_CHAR_STR                           0x42
-#define ZCL_DATATYPE_LONG_OCTET_STR                     0x43
-#define ZCL_DATATYPE_LONG_CHAR_STR                      0x44
-#define ZCL_DATATYPE_ARRAY                              0x48
-#define ZCL_DATATYPE_STRUCT                             0x4c
-#define ZCL_DATATYPE_SET                                0x50
-#define ZCL_DATATYPE_BAG                                0x51
-#define ZCL_DATATYPE_TOD                                0xe0
-#define ZCL_DATATYPE_DATE                               0xe1
-#define ZCL_DATATYPE_UTC                                0xe2
-#define ZCL_DATATYPE_CLUSTER_ID                         0xe8
-#define ZCL_DATATYPE_ATTR_ID                            0xe9
-#define ZCL_DATATYPE_BAC_OID                            0xea
-#define ZCL_DATATYPE_IEEE_ADDR                          0xf0
-#define ZCL_DATATYPE_128_BIT_SEC_KEY                    0xf1
-#define ZCL_DATATYPE_UNKNOWN                            0xff
 
-/*** Error Status Codes ***/
-#define ZCL_STATUS_SUCCESS                              0x00
-#define ZCL_STATUS_FAILURE                              0x01
-// 0x02-0x7D are reserved.
-#define ZCL_STATUS_NOT_AUTHORIZED                       0x7E
-#define ZCL_STATUS_MALFORMED_COMMAND                    0x80
-#define ZCL_STATUS_UNSUP_CLUSTER_COMMAND                0x81
-#define ZCL_STATUS_UNSUP_GENERAL_COMMAND                0x82
-#define ZCL_STATUS_UNSUP_MANU_CLUSTER_COMMAND           0x83
-#define ZCL_STATUS_UNSUP_MANU_GENERAL_COMMAND           0x84
-#define ZCL_STATUS_INVALID_FIELD                        0x85
-#define ZCL_STATUS_UNSUPPORTED_ATTRIBUTE                0x86
-#define ZCL_STATUS_INVALID_VALUE                        0x87
-#define ZCL_STATUS_READ_ONLY                            0x88
-#define ZCL_STATUS_INSUFFICIENT_SPACE                   0x89
-#define ZCL_STATUS_DUPLICATE_EXISTS                     0x8a
-#define ZCL_STATUS_NOT_FOUND                            0x8b
-#define ZCL_STATUS_UNREPORTABLE_ATTRIBUTE               0x8c
-#define ZCL_STATUS_INVALID_DATA_TYPE                    0x8d
-#define ZCL_STATUS_INVALID_SELECTOR                     0x8e
-#define ZCL_STATUS_WRITE_ONLY                           0x8f
-#define ZCL_STATUS_INCONSISTENT_STARTUP_STATE           0x90
-#define ZCL_STATUS_DEFINED_OUT_OF_BAND                  0x91
-#define ZCL_STATUS_INCONSISTENT                         0x92
-#define ZCL_STATUS_ACTION_DENIED                        0x93
-#define ZCL_STATUS_TIMEOUT                              0x94
-#define ZCL_STATUS_ABORT                                0x95
-#define ZCL_STATUS_INVALID_IMAGE                        0x96
-#define ZCL_STATUS_WAIT_FOR_DATA                        0x97
-#define ZCL_STATUS_NO_IMAGE_AVAILABLE                   0x98
-#define ZCL_STATUS_REQUIRE_MORE_IMAGE                   0x99
 
-// 0xbd-bf are reserved.
-#define ZCL_STATUS_HARDWARE_FAILURE                     0xc0
-#define ZCL_STATUS_SOFTWARE_FAILURE                     0xc1
-#define ZCL_STATUS_CALIBRATION_ERROR                    0xc2
-// 0xc3-0xff are reserved.
-#define ZCL_STATUS_CMD_HAS_RSP                          0xFF // Non-standard status (used for Default Rsp)
 
 /*** Attribute Access Control - bit masks ***/
 #define ACCESS_CONTROL_READ                             0x01  // attribute can be read
@@ -445,62 +246,6 @@ typedef struct
   uint8             commandID;
 } zclFrameHdr_t;
 
-#ifdef ZCL_READ
-// Read Attribute Command format
-typedef struct
-{
-  uint8  numAttr;            // number of attributes in the list
-  uint16 attrID[];           // supported attributes list - this structure should
-                             // be allocated with the appropriate number of attributes.
-} zclReadCmd_t;
-
-// Read Attribute Response Status record
-typedef struct
-{
-  uint16 attrID;            // attribute ID
-  uint8  status;            // should be ZCL_STATUS_SUCCESS or error
-  uint8  dataType;          // attribute data type
-  uint8  *data;             // this structure is allocated, so the data is HERE
-                            // - the size depends on the attribute data type
-} zclReadRspStatus_t;
-
-// Read Attribute Response Command format
-typedef struct
-{
-  uint8              numAttr;     // number of attributes in the list
-  zclReadRspStatus_t attrList[];  // attribute status list
-} zclReadRspCmd_t;
-#endif // ZCL_READ
-
-// Write Attribute record
-typedef struct
-{
-  uint16 attrID;             // attribute ID
-  uint8  dataType;           // attribute data type
-  uint8  *attrData;          // this structure is allocated, so the data is HERE
-                             //  - the size depends on the attribute data type
-} zclWriteRec_t;
-
-// Write Attribute Command format
-typedef struct
-{
-  uint8         numAttr;     // number of attribute records in the list
-  zclWriteRec_t attrList[];  // attribute records
-} zclWriteCmd_t;
-
-// Write Attribute Status record
-typedef struct
-{
-  uint8  status;             // should be ZCL_STATUS_SUCCESS or error
-  uint16 attrID;             // attribute ID
-} zclWriteRspStatus_t;
-
-// Write Attribute Response Command format
-typedef struct
-{
-  uint8               numAttr;     // number of attribute status in the list
-  zclWriteRspStatus_t attrList[];  // attribute status records
-} zclWriteRspCmd_t;
 
 // Configure Reporting Command format
 typedef struct
@@ -518,7 +263,7 @@ typedef struct
 typedef struct
 {
   uint8             numAttr;    // number of attribute IDs in the list
-  zclCfgReportRec_t attrList[]; // attribute ID list
+  zclCfgReportRec_t attrList[1]; // attribute ID list
 } zclCfgReportCmd_t;
 
 // Attribute Status record
@@ -533,7 +278,7 @@ typedef struct
 typedef struct
 {
   uint8                numAttr;    // number of attribute status in the list
-  zclCfgReportStatus_t attrList[]; // attribute status records
+  zclCfgReportStatus_t attrList[1]; // attribute status records
 } zclCfgReportRspCmd_t;
 
 // Read Reporting Configuration Command format
@@ -546,7 +291,7 @@ typedef struct
 typedef struct
 {
   uint8                 numAttr;    // number of attributes in the list
-  zclReadReportCfgRec_t attrList[]; // attribute ID list
+  zclReadReportCfgRec_t attrList[1]; // attribute ID list
 } zclReadReportCfgCmd_t;
 
 // Attribute Reporting Configuration record
@@ -567,7 +312,7 @@ typedef struct
 typedef struct
 {
   uint8                numAttr;    // number of records in the list
-  zclReportCfgRspRec_t attrList[]; // attribute reporting configuration list
+  zclReportCfgRspRec_t attrList[1]; // attribute reporting configuration list
 } zclReadReportCfgRspCmd_t;
 
 // Attribute Report
@@ -583,7 +328,7 @@ typedef struct
 typedef struct
 {
   uint8       numAttr;       // number of reports in the list
-  zclReport_t attrList[];    // attribute report list
+  zclReport_t attrList[1];    // attribute report list
 } zclReportCmd_t;
 
 // Default Response Command format
@@ -614,7 +359,7 @@ typedef struct
 {
   uint8             discComplete; // whether or not there're more attributes to be discovered
   uint8             numAttr;      // number of attributes in the list
-  zclDiscoverAttrInfo_t attrList[];   // supported attributes list
+  zclDiscoverAttrInfo_t attrList[1];   // supported attributes list
 } zclDiscoverAttrsRspCmd_t;
 
 // String Data Type
@@ -654,7 +399,7 @@ typedef struct
 {
   uint8 discComplete;
   uint8 numAttr;                  // number of attributes provided
-  zclExtAttrInfo_t  aExtAttrInfo[];    // variable length array
+  zclExtAttrInfo_t  aExtAttrInfo[1];    // variable length array
 } zclDiscoverAttrsExtRsp_t;
 
 /*********************************************************************
@@ -707,7 +452,7 @@ typedef ZStatus_t (*zclInHdlr_t)( zclIncoming_t *pInHdlrMsg );
 //   msg - incoming message
 //   logicalClusterID - logical cluster ID
 //   writeRec - received data to be written
-typedef ZStatus_t (*zclInWrtHdlr_t)( zclIncoming_t *msg, uint16 logicalClusterID, zclWriteRec_t *writeRec );
+typedef ZStatus_t (*zclInWrtHdlr_t)( zclIncoming_t *msg, uint16 logicalClusterID, ZclWriteRec *writeRec );
 
 // Command record
 typedef struct
@@ -717,23 +462,7 @@ typedef struct
   uint8    flag;  // one of CMD_DIR_CLIENT_GENERATED, CMD_DIR_CLIENT_RECEIVED, CMD_DIR_SERVER_GENERATED, CMD_DIR_SERVER_RECEIVED
 } zclCommandRec_t;
 
-typedef void (*AttributeWriteCB)(void);
 
-// Attribute record
-typedef struct
-{
-  uint16  attrId;         // Attribute ID
-  uint8   dataType;       // Data Type - defined in AF.h
-  uint8   accessControl;  // Read/write - bit field
-  void    *dataPtr;       // Pointer to data field
-  AttributeWriteCB writeCB; // The callback called when write attribute command is received for that attribute
-} zclAttribute_t;
-
-typedef struct
-{
-  uint16          clusterID;    // Real cluster ID
-  zclAttribute_t  attr;
-} zclAttrRec_t;
 
 // Function pointer type to validate attribute data.
 //
@@ -741,31 +470,9 @@ typedef struct
 //   pAttrInfo - pointer to attribute info
 //
 //   return  TRUE if data valid. FALSE, otherwise.
-typedef uint8 (*zclValidateAttrData_t)( zclAttrRec_t *pAttr, zclWriteRec_t *pAttrInfo );
+typedef uint8 (*zclValidateAttrData_t)(struct zclAttrRec_t *pAttr, ZclWriteRec *pAttrInfo );
 
-// Function pointer type to read/write attribute data.
-//
-//   clusterId - cluster that attribute belongs to
-//   attrId - attribute to be read or written
-//   oper - ZCL_OPER_LEN, ZCL_OPER_READ, or ZCL_OPER_WRITE
-//   pValue - pointer to attribute (length) value
-//   pLen - length of attribute value read
-//
-//   return  ZCL_STATUS_SUCCESS: Operation successful
-//           ZCL Error Status: Operation not successful
-typedef ZStatus_t (*zclReadWriteCB_t)( uint16 clusterId, uint16 attrId, uint8 oper,
-                                       uint8 *pValue, uint16 *pLen );
 
-// Callback function prototype to authorize a Read or Write operation
-//   on a given attribute.
-//
-//   srcAddr - source Address
-//   pAttr - pointer to attribute
-//   oper - ZCL_OPER_READ, or ZCL_OPER_WRITE
-//
-//   return  ZCL_STATUS_SUCCESS: Operation authorized
-//           ZCL_STATUS_NOT_AUTHORIZED: Operation not authorized
-typedef ZStatus_t (*zclAuthorizeCB_t)( afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper );
 
 typedef struct
 {
@@ -773,13 +480,7 @@ typedef struct
   uint8   option;
 } zclOptionRec_t;
 
-// Parse received command
-typedef struct
-{
-  uint8  endpoint;
-  uint16 dataLen;
-  uint8  *pData;
-} zclParseCmd_t;
+
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -795,48 +496,35 @@ extern uint8 zcl_TransID;
 /*
  *  Send a Write Command - ZCL_CMD_WRITE
  *  Use like:
- *      ZStatus_t zcl_SendWrite( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, zclWriteCmd_t *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
+ *      ZStatus_t zcl_SendWrite( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, ZclWriteCmd *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
  */
 #define zcl_SendWrite(a,b,c,d,e,f,g) (zcl_SendWriteRequest( (a), (b), (c), (d), ZCL_CMD_WRITE, (e), (f), (g) ))
 
 /*
  *  Send a Write Undivided Command - ZCL_CMD_WRITE_UNDIVIDED
  *  Use like:
- *      ZStatus_t zcl_SendWriteUndivided( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, zclWriteCmd_t *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
+ *      ZStatus_t zcl_SendWriteUndivided( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, ZclWriteCmd *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
  */
 #define zcl_SendWriteUndivided(a,b,c,d,e,f,g) (zcl_SendWriteRequest( (a), (b), (c), (d), ZCL_CMD_WRITE_UNDIVIDED, (e), (f), (g) ))
 
 /*
  *  Send a Write No Response Command - ZCL_CMD_WRITE_NO_RSP
  *  Use like:
- *      ZStatus_t zcl_SendWriteNoRsp( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, zclWriteCmd_t *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
+ *      ZStatus_t zcl_SendWriteNoRsp( uint8 srcEP, afAddrType_t *dstAddr, uint16 realClusterID, ZclWriteCmd *writeCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
  */
 #define zcl_SendWriteNoRsp(a,b,c,d,e,f,g) (zcl_SendWriteRequest( (a), (b), (c), (d), ZCL_CMD_WRITE_NO_RSP, (e), (f), (g) ))
 #endif // ZCL_WRITE
 
-#if !defined ( ZCL_STANDALONE )
-  #define zcl_mem_alloc      osal_mem_alloc
-  #define zcl_memset         osal_memset
-  #define zcl_memcpy         osal_memcpy
-  #define zcl_mem_free       osal_mem_free
-  #define zcl_buffer_uint32  osal_buffer_uint32
-  #define zcl_nv_item_init   osal_nv_item_init
-  #define zcl_nv_write       osal_nv_write
-  #define zcl_nv_read        osal_nv_read
-  #define zcl_build_uint32   osal_build_uint32
-  #define zcl_cpyExtAddr     osal_cpyExtAddr
-#else
-  extern void *zcl_mem_alloc( uint16 size );
-  extern void *zcl_memset( void *dest, uint8 value, int len );
-  extern void *zcl_memcpy( void *dst, void *src, unsigned int len );
-  extern void zcl_mem_free(void *ptr);
-  extern uint8* zcl_buffer_uint32( uint8 *buf, uint32 val );
-  extern uint8 zcl_nv_item_init( uint16 id, uint16 len, void *buf );
-  extern uint8 zcl_nv_write( uint16 id, uint16 ndx, uint16 len, void *buf );
-  extern uint8 zcl_nv_read( uint16 id, uint16 ndx, uint16 len, void *buf );
-  extern uint32 zcl_build_uint32( uint8 *swapped, uint8 len );
-  extern void *zcl_cpyExtAddr(uint8 * pDest, const uint8 * pSrc);
-#endif
+#define zcl_mem_alloc      osal_mem_alloc
+#define zcl_memset         osal_memset
+#define zcl_memcpy         osal_memcpy
+#define zcl_mem_free       osal_mem_free
+#define zcl_buffer_uint32  osal_buffer_uint32
+#define zcl_nv_item_init   osal_nv_item_init
+#define zcl_nv_write       osal_nv_write
+#define zcl_nv_read        osal_nv_read
+#define zcl_build_uint32   osal_build_uint32
+#define zcl_cpyExtAddr     osal_cpyExtAddr
 
 /*********************************************************************
  * FUNCTIONS
@@ -846,44 +534,19 @@ extern uint8 zcl_TransID;
   * callback function to handle messages externally
   */
 extern uint8 zcl_HandleExternal( zclIncoming_t *pInMsg );
-
-
-#if !defined ( ZCL_STANDALONE )
- /*
-  * Initialization for the task
-  */
 extern void zcl_Init( byte task_id );
-#endif
-
-#if !defined ( ZCL_STANDALONE )
-/*
- *  Event Process for the task
- */
 extern UINT16 zcl_event_loop( byte task_id, UINT16 events );
-#endif
-
-#if !defined ( ZCL_STANDALONE )
-/*
- *  Register the Application to receive the unprocessed Foundation command/response messages
- */
 extern uint8 zcl_registerForMsg( uint8 taskId );
-#endif
 
 /*
  *  Function for Plugins' to register for incoming messages
  */
-extern ZStatus_t zcl_registerPlugin( uint16 startLogCluster, uint16 endLogCluster,
-                                     zclInHdlr_t pfnIncomingHdlr );
+extern ZStatus_t zcl_registerPlugin( uint16 startLogCluster, uint16 endLogCluster, zclInHdlr_t pfnIncomingHdlr );
 
 /*
  *  Register Application's Command table
  */
 extern ZStatus_t zcl_registerCmdList( uint8 endpoint, CONST uint8 cmdListSize, CONST zclCommandRec_t newCmdList[] );
-
-/*
- *  Register Application's Attribute table
- */
-extern ZStatus_t zcl_registerAttrList( uint8 endpoint, CONST zclAttrRec_t attrList[] );
 
 /*
  *  Register Application's Cluster Option table
@@ -896,12 +559,6 @@ extern ZStatus_t zcl_registerClusterOptionList( uint8 endpoint, uint8 numOption,
 extern ZStatus_t zcl_registerValidateAttrData( zclValidateAttrData_t pfnValidateAttrData );
 
 /*
- *  Register the application's callback function to read/write attribute data.
- */
-extern ZStatus_t zcl_registerReadWriteCB( uint8 endpoint, zclReadWriteCB_t pfnReadWriteCB,
-                                          zclAuthorizeCB_t pfnAuthorizeCB );
-
-/*
  *  Process incoming ZCL messages
  */
 extern zclProcMsgStatus_t zcl_ProcessMessageMSG( afIncomingMSGPacket_t *pkt );
@@ -909,18 +566,14 @@ extern zclProcMsgStatus_t zcl_ProcessMessageMSG( afIncomingMSGPacket_t *pkt );
 /*
  *  Function for Sending a Command
  */
-extern ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *dstAddr,
-                                  uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction,
-                                  uint8 disableDefaultRsp, uint16 manuCode, uint8 seqNum,
-                                  uint16 cmdFormatLen, uint8 *cmdFormat );
+extern ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *dstAddr, uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction, uint8 disableDefaultRsp, uint16 manuCode, uint8 seqNum, uint16 cmdFormatLen, uint8 *cmdFormat );
+extern ZStatus_t zclSendCommand( uint8 srcEP, afAddrType_t *dstAddr, uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction, uint8 disableDefaultRsp, uint16 manuCode, uint8 seqNum, BufferData & bufferData );
 
-#ifdef ZCL_READ
+
 /*
  *  Function for Reading an Attribute
  */
-extern ZStatus_t zcl_SendRead( uint8 srcEP, afAddrType_t *dstAddr,
-                               uint16 realClusterID, zclReadCmd_t *readCmd,
-                               uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
+extern ZStatus_t zcl_SendRead( uint8 srcEP, afAddrType_t *dstAddr,  uint16 realClusterID, zclReadCmd_t *readCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
 
 /*
  *  Function for sending a Read response command
@@ -935,21 +588,20 @@ extern ZStatus_t zcl_SendReadRsp( uint8 srcEP, afAddrType_t *dstAddr,
 extern ZStatus_t zcl_ReadAttrData( uint8 endpoint, uint16 clusterId, uint16 attrId,
                                    uint8 *pAttrData, uint16 *pDataLen );
 
-#endif // ZCL_READ
 
 #ifdef ZCL_WRITE
 /*
  *  Function for Writing an Attribute
  */
 extern ZStatus_t zcl_SendWriteRequest( uint8 srcEP, afAddrType_t *dstAddr,
-                                       uint16 realClusterID, zclWriteCmd_t *writeCmd,
+                                       uint16 realClusterID, ZclWriteCmd *writeCmd,
                                        uint8 cmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
 
 /*
  *  Function for sending a Write response command
  */
 extern ZStatus_t zcl_SendWriteRsp( uint8 srcEP, afAddrType_t *dstAddr,
-                                   uint16 realClusterID, zclWriteRspCmd_t *writeRspCmd,
+                                   uint16 realClusterID, ZclWriteRspCmd *writeRspCmd,
                                    uint8 direction, uint8 disableDefaultRsp, uint8 seqNum );
 #endif // ZCL_WRITE
 
@@ -1098,30 +750,20 @@ extern uint8 zclFindCmdRec( uint8 endpoint, uint16 clusterID, uint8 cmdID, zclCo
  */
 extern uint8 *zclParseHdr( zclFrameHdr_t *hdr, uint8 *pData );
 
-/*
- * Function to find the attribute record that matchs the parameters
- */
-extern uint8 zclFindAttrRec( uint8 endpoint, uint16 realClusterID, uint16 attrId, zclAttrRec_t *pAttr );
+
 
 /*
  * Function to read the attribute's current value
  */
-extern ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataLen );
+extern ZStatus_t zclReadAttrData( uint8 *pAttrData,struct zclAttrRec_t *pAttr, uint16 *pDataLen );
 
-/*
- * Function to return the length of the datatype in length.
- */
-extern uint8 zclGetDataTypeLength( uint8 dataType );
+
 
 /*
  * Function to serialize attribute data.
  */
 extern uint8 *zclSerializeData( uint8 dataType, void *attrData, uint8 *buf );
 
-/*
- * Function to return the length of the attribute.
- */
-extern uint16 zclGetAttrDataLength( uint8 dataType, uint8 *pData);
 
 /*
  * Call to get original unprocessed AF message (not parsed by ZCL).

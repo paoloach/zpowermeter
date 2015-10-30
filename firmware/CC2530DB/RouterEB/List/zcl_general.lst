@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:44 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             27/Oct/2015  21:48:28 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Components\stack\zcl\zcl_general.c              #
+#                          re\Components\stack\zcl\zcl_general.cpp            #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,8 +45,8 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Components\stack\zcl\zcl_general.c -D SECURE=0  #
-#                          -D OSC32K_CRYSTAL_INSTALLED=FALSE -D               #
+#                          re\Components\stack\zcl\zcl_general.cpp -D         #
+#                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D      #
 #                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
 #                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
 #                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\zcl_general.lst          #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_general.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_general.cpp
       1          /**************************************************************************************************
       2            Filename:       zcl_general.c
       3            Revised:        $Date: 2014-06-06 07:08:25 -0700 (Fri, 06 Jun 2014) $
@@ -376,7 +375,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
     215            }
     216          
     217            // Fill in the new profile list
-    218            pNewItem = zcl_mem_alloc( sizeof( zclGenCBRec_t ) );
+    218            pNewItem = (zclGenCBRec_t*)zcl_mem_alloc( sizeof( zclGenCBRec_t ) );
    \                     ??zclGeneral_RegisterCmdCallbacks_0:
    \   000032                ; Setup parameters for call to function osal_mem_alloc
    \   000032   7A05         MOV     R2,#0x5
@@ -1820,7 +1819,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    1579          static ZStatus_t zclGeneral_HdlIncoming( zclIncoming_t *pInMsg )
-   \                     zclGeneral_HdlIncoming:
+   \                     ??zclGeneral_HdlIncoming:
    1580          {
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
@@ -1840,7 +1839,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
    \   00000A   E0           MOVX    A,@DPTR
    \   00000B   5407         ANL     A,#0x7
    \   00000D   6401         XRL     A,#0x1
-   \   00000F   702F         JNZ     ??zclGeneral_HdlIncoming_0
+   \   00000F   702F         JNZ     ??zclGeneral_HdlIncoming_1
    1588            {
    1589              // Is this a manufacturer specific command?
    1590              if ( pInMsg->hdr.fc.manuSpecific == 0 )
@@ -1861,11 +1860,11 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
    \   000022   E0           MOVX    A,@DPTR
    \   000023   FA           MOV     R2,A
    \   000024   90....       MOV     DPTR,#zclGenCBs
-   \   000027   8004         SJMP    ??zclGeneral_HdlIncoming_1
-   \                     ??zclGeneral_HdlIncoming_2:
+   \   000027   8004         SJMP    ??zclGeneral_HdlIncoming_2
+   \                     ??zclGeneral_HdlIncoming_3:
    \   000029   8882         MOV     DPL,R0
    \   00002B   8983         MOV     DPH,R1
-   \                     ??zclGeneral_HdlIncoming_1:
+   \                     ??zclGeneral_HdlIncoming_2:
    \   00002D   E0           MOVX    A,@DPTR
    \   00002E   F8           MOV     R0,A
    \   00002F   A3           INC     DPTR
@@ -1873,14 +1872,14 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
    \   000031   F9           MOV     R1,A
    \   000032   E8           MOV     A,R0
    \   000033   49           ORL     A,R1
-   \   000034   600A         JZ      ??zclGeneral_HdlIncoming_0
+   \   000034   600A         JZ      ??zclGeneral_HdlIncoming_1
    \   000036   8882         MOV     DPL,R0
    \   000038   8983         MOV     DPH,R1
    \   00003A   A3           INC     DPTR
    \   00003B   A3           INC     DPTR
    \   00003C   E0           MOVX    A,@DPTR
    \   00003D   6A           XRL     A,R2
-   \   00003E   70E9         JNZ     ??zclGeneral_HdlIncoming_2
+   \   00003E   70E9         JNZ     ??zclGeneral_HdlIncoming_3
    1593              }
    1594              else
    1595              {
@@ -1894,7 +1893,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
    1603              stat = ZFailure;
    1604            }
    1605            return ( stat );
-   \                     ??zclGeneral_HdlIncoming_0:
+   \                     ??zclGeneral_HdlIncoming_1:
    \   000040   7901         MOV     R1,#0x1
    \   000042   D083         POP     DPH
    \   000044   D082         POP     DPL
@@ -1909,7 +1908,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??zclGeneral_HdlIncoming?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    zclGeneral_HdlIncoming
+   \   000003   ......       DC24    ??zclGeneral_HdlIncoming
    1607          
    1608          /*********************************************************************
    1609           * @fn      zclGeneral_HdlInSpecificCommands
@@ -4397,7 +4396,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
 
    ISTACK XSTACK Function
    ------ ------ --------
-      2      0   zclGeneral_HdlIncoming
+      2      0   zclGeneral_HdlIncoming(zclIncoming_t *)
       1     14   zclGeneral_RegisterCmdCallbacks
         0     12   -> osal_mem_alloc
         0     14   -> zcl_registerPlugin
@@ -4411,7 +4410,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zcl_ge
        6  ??zclGeneral_RegisterCmdCallbacks?relay
        2  zclGenCBs
        1  zclGenPluginRegisted
-      73  zclGeneral_HdlIncoming
+      73  zclGeneral_HdlIncoming(zclIncoming_t *)
      156  zclGeneral_RegisterCmdCallbacks
 
  

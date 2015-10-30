@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:46 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:22 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -12,6 +12,7 @@
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\Source\clusters\ClusterTemperatureMeasurement.c #
+#                          pp                                                 #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -46,8 +47,8 @@
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\Source\clusters\ClusterTemperatureMeasurement.c #
-#                           -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D  #
-#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          pp -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE   #
+#                          -D HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D    #
 #                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
 #                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
 #                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
@@ -105,8 +106,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\ClusterTemperatureMeasur #
 #                          ement.lst                                          #
@@ -117,7 +117,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.cpp
       1          /**************************************************************************************************
       2          
       3           DESCRIPTION:
@@ -325,7 +325,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     108          void clusterTemperatureMeasurementeInit(void) {
-   \                     clusterTemperatureMeasurementeInit:
+   \                     ??clusterTemperatureMeasurementeInit:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
@@ -342,8 +342,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     117          //	P0=0;
     118          	readTemperature();
    \                     ??CrossCallReturnLabel_2:
-   \   000007                ; Setup parameters for call to function readTemperature
-   \   000007   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature
+   \   000007                ; Setup parameters for call to function readTemperature()
+   \   000007   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature()
     119          	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
    \   00000A                ; Setup parameters for call to function osal_start_timerEx
    \   00000A                REQUIRE ?Subroutine0
@@ -384,7 +384,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     122          uint16 readTemperatureLoop(uint16 events) {
-   \                     readTemperatureLoop:
+   \                     ??readTemperatureLoop:
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
    \   000000                REQUIRE ?V2
@@ -400,36 +400,36 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     123          	if (events & READ_TEMP_EVT){
    \   000009   EE           MOV     A,R6
    \   00000A   5404         ANL     A,#0x4
-   \   00000C   6009         JZ      ??readTemperatureLoop_0
+   \   00000C   6009         JZ      ??readTemperatureLoop_1
     124          		readTemperature();
-   \   00000E                ; Setup parameters for call to function readTemperature
-   \   00000E   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature
+   \   00000E                ; Setup parameters for call to function readTemperature()
+   \   00000E   12....       LCALL   ??readTemperature?relay; Banked call to: readTemperature()
     125          		return ( events ^ READ_TEMP_EVT );
    \   000011   EE           MOV     A,R6
    \   000012   6404         XRL     A,#0x4
-   \   000014   02....       LJMP    ??readTemperatureLoop_1 & 0xFFFF
+   \   000014   02....       LJMP    ??readTemperatureLoop_2 & 0xFFFF
     126          	};
     127          	if (events & END_READ_TEMP_EVT){
-   \                     ??readTemperatureLoop_0:
+   \                     ??readTemperatureLoop_1:
    \   000017   EE           MOV     A,R6
    \   000018   5408         ANL     A,#0x8
    \   00001A   7003         JNZ     $+5
-   \   00001C   02....       LJMP    ??readTemperatureLoop_2 & 0xFFFF
+   \   00001C   02....       LJMP    ??readTemperatureLoop_3 & 0xFFFF
     128          		finalizeReadTemp();
-   \   00001F                ; Setup parameters for call to function reset
-   \   00001F   12....       LCALL   ??reset?relay        ; Banked call to: reset
-   \   000022                ; Setup parameters for call to function write
+   \   00001F                ; Setup parameters for call to function reset()
+   \   00001F   12....       LCALL   ??reset?relay        ; Banked call to: reset()
+   \   000022                ; Setup parameters for call to function write(unsigned char)
    \   000022   79CC         MOV     R1,#-0x34
-   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write
-   \   000027                ; Setup parameters for call to function write
+   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write(unsigned char)
+   \   000027                ; Setup parameters for call to function write(unsigned char)
    \   000027   79BE         MOV     R1,#-0x42
-   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write
-   \   00002C                ; Setup parameters for call to function read
-   \   00002C   12....       LCALL   ??read?relay         ; Banked call to: read
+   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write(unsigned char)
+   \   00002C                ; Setup parameters for call to function read()
+   \   00002C   12....       LCALL   ??read?relay         ; Banked call to: read()
    \   00002F   E9           MOV     A,R1
    \   000030   F5..         MOV     ?V0,A
-   \   000032                ; Setup parameters for call to function read
-   \   000032   12....       LCALL   ??read?relay         ; Banked call to: read
+   \   000032                ; Setup parameters for call to function read()
+   \   000032   12....       LCALL   ??read?relay         ; Banked call to: read()
    \   000035   E5..         MOV     A,?V0
    \   000037   90....       MOV     DPTR,#tempTemperatureValue
    \   00003A   F0           MOVX    @DPTR,A
@@ -492,13 +492,13 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     129          		return ( events ^ END_READ_TEMP_EVT );
    \   00009D   EE           MOV     A,R6
    \   00009E   6408         XRL     A,#0x8
-   \                     ??readTemperatureLoop_1:
+   \                     ??readTemperatureLoop_2:
    \   0000A0   FA           MOV     R2,A
    \   0000A1   EF           MOV     A,R7
    \   0000A2   FB           MOV     R3,A
     130          	}
     131          	return events;
-   \                     ??readTemperatureLoop_2:
+   \                     ??readTemperatureLoop_3:
    \   0000A3   7F04         MOV     R7,#0x4
    \   0000A5   02....       LJMP    ?BANKED_LEAVE_XDATA
     132          }
@@ -506,7 +506,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     134          void readTemperature(void) {
-   \                     readTemperature:
+   \                     ??readTemperature:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
@@ -520,8 +520,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
    \   00000B   12....       LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
     136          #if 1
     137          	readSyncronus();
-   \   00000E                ; Setup parameters for call to function readSyncronus
-   \   00000E   12....       LCALL   ??readSyncronus?relay; Banked call to: readSyncronus
+   \   00000E                ; Setup parameters for call to function readSyncronus()
+   \   00000E   12....       LCALL   ??readSyncronus?relay; Banked call to: readSyncronus()
     138          //	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
     139          #else
     140          	readAsyncronus();
@@ -534,7 +534,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     145          void readSyncronus(void) {
-   \                     readSyncronus:
+   \                     ??readSyncronus:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
@@ -564,20 +564,20 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     159          	st(T3IE=0;);
    \   00001A   C2BB         CLR     0xb8.3
     160          	if (reset()==0)
-   \   00001C                ; Setup parameters for call to function reset
-   \   00001C   12....       LCALL   ??reset?relay        ; Banked call to: reset
+   \   00001C                ; Setup parameters for call to function reset()
+   \   00001C   12....       LCALL   ??reset?relay        ; Banked call to: reset()
    \   00001F   E9           MOV     A,R1
-   \   000020   6021         JZ      ??readSyncronus_0
+   \   000020   6021         JZ      ??readSyncronus_1
     161          		return;
     162          	
     163          	write(0xCC);
-   \   000022                ; Setup parameters for call to function write
+   \   000022                ; Setup parameters for call to function write(unsigned char)
    \   000022   79CC         MOV     R1,#-0x34
-   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write
+   \   000024   12....       LCALL   ??write?relay        ; Banked call to: write(unsigned char)
     164          	write(0x44);
-   \   000027                ; Setup parameters for call to function write
+   \   000027                ; Setup parameters for call to function write(unsigned char)
    \   000027   7944         MOV     R1,#0x44
-   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write
+   \   000029   12....       LCALL   ??write?relay        ; Banked call to: write(unsigned char)
     165          	
     166          	osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 750 );
    \   00002C                ; Setup parameters for call to function osal_start_timerEx
@@ -602,7 +602,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     175          	finalizeReadTemp();
     176          	*/
     177          }
-   \                     ??readSyncronus_0:
+   \                     ??readSyncronus_1:
    \   000043   02....       LJMP    ??Subroutine3_0 & 0xFFFF
    \   000046                REQUIRE P1SEL
    \   000046                REQUIRE P1DIR
@@ -636,7 +636,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     196          uint8 reset() {
-   \                     reset:
+   \                     ??reset:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
     197          	P1_LOW;
@@ -651,47 +651,47 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     200          	T3_start=1;
    \   00000E   43CB10       ORL     0xcb,#0x10
     201          	while(T3CNT < 244);
-   \                     ??reset_0:
+   \                     ??reset_1:
    \   000011   E5CA         MOV     A,0xca
    \   000013   C3           CLR     C
    \   000014   94F4         SUBB    A,#-0xc
-   \   000016   40F9         JC      ??reset_0
+   \   000016   40F9         JC      ??reset_1
     202          	P1_HIGH;
    \   000018   53FEFB       ANL     0xfe,#0xfb
     203          	T3_clear=1;
    \   00001B   43CB04       ORL     0xcb,#0x4
     204          	while(T3CNT < 30);
-   \                     ??reset_1:
+   \                     ??reset_2:
    \   00001E   E5CA         MOV     A,0xca
    \   000020   C3           CLR     C
    \   000021   941E         SUBB    A,#0x1e
-   \   000023   40F9         JC      ??reset_1
+   \   000023   40F9         JC      ??reset_2
     205          	T3_clear=1;
    \   000025   43CB04       ORL     0xcb,#0x4
     206          	while(T3CNT < 240  && P1_2 == 1);
-   \                     ??reset_2:
+   \                     ??reset_3:
    \   000028   E5CA         MOV     A,0xca
    \   00002A   C3           CLR     C
    \   00002B   94F0         SUBB    A,#-0x10
-   \   00002D   5004         JNC     ??reset_3
+   \   00002D   5004         JNC     ??reset_4
    \   00002F   A292         MOV     C,0x90.2
-   \   000031   40F5         JC      ??reset_2
+   \   000031   40F5         JC      ??reset_3
     207          	
     208          	if (P1_2 == 1){
-   \                     ??reset_3:
+   \                     ??reset_4:
    \   000033   A292         MOV     C,0x90.2
-   \   000035   5004         JNC     ??reset_4
+   \   000035   5004         JNC     ??reset_5
     209          		return 0;
    \   000037   7900         MOV     R1,#0x0
-   \   000039   8006         SJMP    ??reset_5
+   \   000039   8006         SJMP    ??reset_6
     210          	}
     211          	while(P1_2==0);
-   \                     ??reset_4:
+   \                     ??reset_5:
    \   00003B   A292         MOV     C,0x90.2
-   \   00003D   50FC         JNC     ??reset_4
+   \   00003D   50FC         JNC     ??reset_5
     212          	return 1;
    \   00003F   7901         MOV     R1,#0x1
-   \                     ??reset_5:
+   \                     ??reset_6:
    \   000041   02....       LJMP    ?BRET
    \   000044                REQUIRE P1DIR
    \   000044                REQUIRE _A_T3_mode
@@ -702,7 +702,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     215          void write(unsigned char byte){
-   \                     `write`:
+   \                     ??write:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
     216          	uint8 bit=8;
@@ -721,39 +721,39 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     222          
     223          	while(bit > 0){
     224          		P1_LOW;
-   \                     ??write_0:
+   \                     ??write_1:
    \   00000C   43FE04       ORL     0xfe,#0x4
     225          		T3_clear=1;
    \   00000F   43CB04       ORL     0xcb,#0x4
     226          		if (byte & 0x1){
    \   000012   E9           MOV     A,R1
    \   000013   A2E0         MOV     C,0xE0 /* A   */.0
-   \   000015   5009         JNC     ??write_1
+   \   000015   5009         JNC     ??write_2
     227          			while(T3CNT < 10);
-   \                     ??write_2:
+   \                     ??write_3:
    \   000017   E5CA         MOV     A,0xca
    \   000019   C3           CLR     C
    \   00001A   940A         SUBB    A,#0xa
-   \   00001C   5009         JNC     ??write_3
-   \   00001E   80F7         SJMP    ??write_2
+   \   00001C   5009         JNC     ??write_4
+   \   00001E   80F7         SJMP    ??write_3
     228          		} else {
     229          			while(T3CNT < 60);
-   \                     ??write_1:
+   \                     ??write_2:
    \   000020   E5CA         MOV     A,0xca
    \   000022   C3           CLR     C
    \   000023   943C         SUBB    A,#0x3c
-   \   000025   40F9         JC      ??write_1
+   \   000025   40F9         JC      ??write_2
     230          		}
     231          		
     232          		P1_HIGH;
-   \                     ??write_3:
+   \                     ??write_4:
    \   000027   53FEFB       ANL     0xfe,#0xfb
     233          		while(T3CNT < 62);
-   \                     ??write_4:
+   \                     ??write_5:
    \   00002A   E5CA         MOV     A,0xca
    \   00002C   C3           CLR     C
    \   00002D   943E         SUBB    A,#0x3e
-   \   00002F   40F9         JC      ??write_4
+   \   00002F   40F9         JC      ??write_5
     234          		byte = byte >> 1;
    \   000031   E9           MOV     A,R1
    \   000032   C3           CLR     C
@@ -763,7 +763,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
     236          	}
    \   000035   18           DEC     R0
    \   000036   E8           MOV     A,R0
-   \   000037   70D3         JNZ     ??write_0
+   \   000037   70D3         JNZ     ??write_1
     237          	
     238          }
    \   000039   02....       LJMP    ?BRET
@@ -785,7 +785,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
     240          uint8  read(void) {
-   \                     `read`:
+   \                     ??read:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
     241          	uint8 bit=8;
@@ -807,26 +807,26 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
    \   00000C   40F9         JC      ??CrossCallReturnLabel_1
     250          	while(bit > 0){
     251          		P1_LOW;
-   \                     ??read_0:
+   \                     ??read_1:
    \   00000E   43FE04       ORL     0xfe,#0x4
     252          		T3_clear=1;
    \   000011   43CB04       ORL     0xcb,#0x4
     253          		while(T3CNT < 2);
-   \                     ??read_1:
+   \                     ??read_2:
    \   000014   E5CA         MOV     A,0xca
    \   000016   C3           CLR     C
    \   000017   9402         SUBB    A,#0x2
-   \   000019   40F9         JC      ??read_1
+   \   000019   40F9         JC      ??read_2
     254          		P1_HIGH;
    \   00001B   53FEFB       ANL     0xfe,#0xfb
     255          		T3_clear=1;
    \   00001E   43CB04       ORL     0xcb,#0x4
     256          		while(T3CNT < 10);
-   \                     ??read_2:
+   \                     ??read_3:
    \   000021   E5CA         MOV     A,0xca
    \   000023   C3           CLR     C
    \   000024   940A         SUBB    A,#0xa
-   \   000026   40F9         JC      ??read_2
+   \   000026   40F9         JC      ??read_3
     257          		result >>= 1;
    \   000028   E9           MOV     A,R1
    \   000029   C3           CLR     C
@@ -834,25 +834,25 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
    \   00002B   F9           MOV     R1,A
     258          		if (P1_2){
    \   00002C   A292         MOV     C,0x90.2
-   \   00002E   5003         JNC     ??read_3
+   \   00002E   5003         JNC     ??read_4
     259          			result |= 0x80;
    \   000030   D2E7         SETB    0xE0 /* A   */.7
    \   000032   F9           MOV     R1,A
     260          		}
     261          		T3_clear=1;
-   \                     ??read_3:
+   \                     ??read_4:
    \   000033   43CB04       ORL     0xcb,#0x4
     262          		while(T3CNT < 30);
-   \                     ??read_4:
+   \                     ??read_5:
    \   000036   E5CA         MOV     A,0xca
    \   000038   C3           CLR     C
    \   000039   941E         SUBB    A,#0x1e
-   \   00003B   40F9         JC      ??read_4
+   \   00003B   40F9         JC      ??read_5
     263          		bit--;
     264          	}
    \   00003D   18           DEC     R0
    \   00003E   E8           MOV     A,R0
-   \   00003F   70CD         JNZ     ??read_0
+   \   00003F   70CD         JNZ     ??read_1
     265          	return result;
    \   000041   02....       LJMP    ?BRET
    \   000044                REQUIRE _A_T3_mode
@@ -884,37 +884,37 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??clusterTemperatureMeasurementeInit?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    clusterTemperatureMeasurementeInit
+   \   000003   ......       DC24    ??clusterTemperatureMeasurementeInit
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??readTemperatureLoop?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    readTemperatureLoop
+   \   000003   ......       DC24    ??readTemperatureLoop
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??readTemperature?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    readTemperature
+   \   000003   ......       DC24    ??readTemperature
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??readSyncronus?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    readSyncronus
+   \   000003   ......       DC24    ??readSyncronus
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??reset?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    reset
+   \   000003   ......       DC24    ??reset
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??write?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    `write`
+   \   000003   ......       DC24    ??write
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??read?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    `read`
+   \   000003   ......       DC24    ??read
     267          
     268          
     269          
@@ -923,26 +923,26 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
 
    ISTACK XSTACK Function
    ------ ------ --------
-      2      4   clusterTemperatureMeasurementeInit
+      2      4   clusterTemperatureMeasurementeInit()
         2      4   -> osal_start_timerEx
-        2      0   -> readTemperature
-      0     12   read
-      2      4   readSyncronus
+        2      0   -> readTemperature()
+      0     12   read()
+      2      4   readSyncronus()
         2      4   -> osal_start_timerEx
-        2      0   -> reset
-        2      0   -> write
-      2     16   readTemperature
+        2      0   -> reset()
+        2      0   -> write(unsigned char)
+      2     16   readTemperature()
         2      0   -> osal_pwrmgr_task_state
         2      4   -> osal_start_timerEx
-        2      0   -> readSyncronus
-      0     12   readTemperatureLoop
+        2      0   -> readSyncronus()
+      0     12   readTemperatureLoop(uint16)
         0     12   -> osal_pwrmgr_task_state
-        0     12   -> read
-        0     12   -> readTemperature
-        0     12   -> reset
-        0     12   -> write
-      0     12   reset
-      0     12   write
+        0     12   -> read()
+        0     12   -> readTemperature()
+        0     12   -> reset()
+        0     12   -> write(unsigned char)
+      0     12   reset()
+      0     12   write(unsigned char)
 
 
    Segment part sizes:
@@ -978,19 +978,19 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemp
        1  _A_TIMIF
        4  __Constant_2710
        4  __Constant_2ee
-      10  clusterTemperatureMeasurementeInit
+      10  clusterTemperatureMeasurementeInit()
        2  decTemperatureValue
        2  maxTemperatureValue
        2  minTemperatureValue
-      68  read
-      70  readSyncronus
-      20  readTemperature
-     168  readTemperatureLoop
-      68  reset
+      68  read()
+      70  readSyncronus()
+      20  readTemperature()
+     168  readTemperatureLoop(uint16)
+      68  reset()
        2  tempTemperatureValue
        2  temperatureValue
        2  toleranceTemperature
-      60  write
+      60  write(unsigned char)
 
  
  521 bytes in segment BANKED_CODE

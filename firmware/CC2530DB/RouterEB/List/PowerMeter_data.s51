@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:17:23 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:23 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\PowerMeter_data.c                      /
+//                          are\Source\PowerMeter_data.cpp                    /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\PowerMeter_data.c -D SECURE=0 -D       /
+//                          are\Source\PowerMeter_data.cpp -D SECURE=0 -D     /
 //                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE   /
 //                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN    /
 //                          -D NV_INIT -D xNV_RESTORE -D                      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\PowerMeter_data.s51    /
 //                                                                            /
@@ -133,37 +132,79 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN __INIT_XDATA_I
 
         PUBLIC OnOff_SimpleDesc
-        PUBLIC powerMeterAttrs
-        PUBLIC powerMeter_InClusterList
-        PUBLIC powerMeter_OutClusterList
-`?<Name processIdentifyTimeC 0>` SYMBOL "processIdentifyTimeChange"
-??processIdentifyTimeChange?relay SYMBOL "?relay", `?<Name processIdentifyTimeC 0>`
-`?<Name setIOStatus 2>` SYMBOL "setIOStatus"
-??setIOStatus?relay SYMBOL "?relay", `?<Name setIOStatus 2>`
+        PUBLIC SmartPlug_SimpleDesc
+        PUBLIC onOffAttrs
+        PUBLIC smartPlugAttrs
+
+??processIdentifyTimeChange?relay SYMBOL "?relay", `?<Name  1>`
+
+??setIOStatus?relay SYMBOL "?relay", `?<Name  4>`
 
         EXTERN ??processIdentifyTimeChange?relay
         FUNCTION ??processIdentifyTimeChange?relay,00H
         EXTERN ??setIOStatus?relay
         FUNCTION ??setIOStatus?relay,00H
+        EXTERN ActivePower
+        EXTERN ActivePowerMax
+        EXTERN ActivePowerMinx
+        EXTERN ApparentPower
         EXTERN HWRevision
+        EXTERN PowerFactor
+        EXTERN RMSCurrent
+        EXTERN RMSCurrentMax
+        EXTERN RMSCurrentMinx
+        EXTERN RMSVolt
+        EXTERN RMSVoltMax
+        EXTERN RMSVoltMin
+        EXTERN ReactivePower
         EXTERN ZCLVersion
+        EXTERN acCurrentDiv
+        EXTERN acCurrentMult
+        EXTERN acPowerDiv
+        EXTERN acPowerMult
+        EXTERN acVoltDiv
+        EXTERN acVoltMult
+        EXTERN activeCurrent
+        EXTERN averageRmsVolrPeriod
         EXTERN batteryAlarmMask
         EXTERN batteryVoltage
+        EXTERN currentSummationDelivered
         EXTERN dateCode
         EXTERN deviceEnable
+        EXTERN frequency
+        EXTERN frequencyDiv
+        EXTERN frequencyMult
         EXTERN identifyTime
+        EXTERN lineCurrent
         EXTERN locationDescription
         EXTERN mainVoltage
         EXTERN manufacturerName
+        EXTERN measurementType
+        EXTERN metteringDeviceType
         EXTERN modelId
         EXTERN onOffValue
         EXTERN physicalEnvironment
+        EXTERN powerDivisor
+        EXTERN powerMult
         EXTERN powerSource
+        EXTERN reactiveCurrent
+        EXTERN status
+        EXTERN summationFormatting
+        EXTERN totalActivePower
+        EXTERN totalApparentPower
+        EXTERN totalReactivePower
+        EXTERN unitOfMeasure
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.cpp
 //    1 /**************************************************************************************************
 //    2   Filename:       PowerMeter_data.c
 //    3   Autorh: 		 Paolo Achdjia
@@ -187,24 +228,26 @@
 //   21 #include "clusters/ClusterBasic.h"
 //   22 #include "clusters/ClusterPower.h"
 //   23 #include "clusters/ClusterOnOff.h"
-//   24 
-//   25 /*********************************************************************
-//   26  * CONSTANTS
-//   27  */
-//   28 
-//   29 #define DEVICE_VERSION     0
-//   30 #define FLAGS              0
-//   31 
-//   32 
+//   24 #include "clusters/ClusterMetering.h"
+//   25 #include "clusters/ClusterElectricityMeasure.h"
+//   26 
+//   27 /*********************************************************************
+//   28  * CONSTANTS
+//   29  */
+//   30 
+//   31 #define DEVICE_VERSION     0
+//   32 #define FLAGS              0
 //   33 
-//   34 /*********************************************************************
-//   35  * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
-//   36  */
+//   34 
+//   35 
+//   36 /*********************************************************************
+//   37  * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
+//   38  */
 
         RSEG CODE_C:CODE:REORDER:NOROOT(0)
         DATA8
-//   37 CONST zclAttrRec_t powerMeterAttrs[] = {
-powerMeterAttrs:
+//   39 CONST struct zclAttrRec_t onOffAttrs[] = {
+onOffAttrs:
         DATA16
         DW 0
         DW 3
@@ -326,51 +369,525 @@ powerMeterAttrs:
         DATA16
         DW 0H
         DB 0, 0
-//   38 	BASIC_ATTRIBUTE
-//   39 	IDENTIFY_ATTRIBUTES
-//   40 	POWER_ATTRIBUTES
-//   41 	ONOF_ATTRIBUTES
-//   42  	LAST_CLUSTER_ATTRIBUTE
-//   43 };
-//   44 
-//   45 /*********************************************************************
-//   46  * SIMPLE DESCRIPTOR
-//   47  */
-//   48 // This is the Cluster ID List and should be filled with Application specific cluster IDs.
-//   49 #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
+//   40 	BASIC_ATTRIBUTE
+//   41 	IDENTIFY_ATTRIBUTES
+//   42 	POWER_ATTRIBUTES
+//   43 	ONOF_ATTRIBUTES
+//   44  	LAST_CLUSTER_ATTRIBUTE
+//   45 };
+//   46 
+
+        RSEG CODE_C:CODE:REORDER:NOROOT(0)
+        DATA8
+//   47 CONST struct zclAttrRec_t smartPlugAttrs[] = {
+smartPlugAttrs:
+        DATA16
+        DW 0
+        DW 3
+        DATA8
+        DB 32
+        DB 1
+        DATA16
+        DW HWRevision
+        DW 0H
+        DW 0
+        DW 0
+        DATA8
+        DB 32
+        DB 1
+        DATA16
+        DW ZCLVersion
+        DW 0H
+        DW 0
+        DW 4
+        DATA8
+        DB 66
+        DB 1
+        DATA16
+        DW manufacturerName
+        DW 0H
+        DW 0
+        DW 5
+        DATA8
+        DB 66
+        DB 1
+        DATA16
+        DW modelId
+        DW 0H
+        DW 0
+        DW 6
+        DATA8
+        DB 66
+        DB 1
+        DATA16
+        DW dateCode
+        DW 0H
+        DW 0
+        DW 7
+        DATA8
+        DB 48
+        DB 1
+        DATA16
+        DW powerSource
+        DW 0H
+        DW 0
+        DW 16
+        DATA8
+        DB 66
+        DB 3
+        DATA16
+        DW locationDescription
+        DW 0H
+        DW 0
+        DW 17
+        DATA8
+        DB 48
+        DB 3
+        DATA16
+        DW physicalEnvironment
+        DW 0H
+        DW 0
+        DW 18
+        DATA8
+        DB 16
+        DB 3
+        DATA16
+        DW deviceEnable
+        DW 0H
+        DW 3
+        DW 0
+        DATA8
+        DB 33
+        DB 3
+        DATA16
+        DW identifyTime
+        DW ??processIdentifyTimeChange?relay
+        DW 1
+        DW 0
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW mainVoltage
+        DW 0H
+        DW 1
+        DW 32
+        DATA8
+        DB 32
+        DB 1
+        DATA16
+        DW batteryVoltage
+        DW 0H
+        DW 1
+        DW 53
+        DATA8
+        DB 24
+        DB 1
+        DATA16
+        DW batteryAlarmMask
+        DW 0H
+        DW 6
+        DW 0
+        DATA8
+        DB 16
+        DB 1
+        DATA16
+        DW onOffValue
+        DW ??setIOStatus?relay
+        DW 1794
+        DW 0
+        DATA8
+        DB 37
+        DB 1
+        DATA16
+        DW currentSummationDelivered
+        DW 0H
+        DW 1794
+        DW 512
+        DATA8
+        DB 24
+        DB 1
+        DATA16
+        DW status
+        DW 0H
+        DW 1794
+        DW 768
+        DATA8
+        DB 48
+        DB 1
+        DATA16
+        DW unitOfMeasure
+        DW 0H
+        DW 1794
+        DW 771
+        DATA8
+        DB 24
+        DB 1
+        DATA16
+        DW summationFormatting
+        DW 0H
+        DW 1794
+        DW 774
+        DATA8
+        DB 24
+        DB 1
+        DATA16
+        DW metteringDeviceType
+        DW 0H
+        DW 2820
+        DW 0
+        DATA8
+        DB 27
+        DB 1
+        DATA16
+        DW measurementType
+        DW 0H
+        DW 2820
+        DW 768
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW frequency
+        DW 0H
+        DW 2820
+        DW 772
+        DATA8
+        DB 43
+        DB 1
+        DATA16
+        DW totalActivePower
+        DW 0H
+        DW 2820
+        DW 773
+        DATA8
+        DB 43
+        DB 1
+        DATA16
+        DW totalReactivePower
+        DW 0H
+        DW 2820
+        DW 774
+        DATA8
+        DB 35
+        DB 1
+        DATA16
+        DW totalApparentPower
+        DW 0H
+        DW 2820
+        DW 1024
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW frequencyMult
+        DW 0H
+        DW 2820
+        DW 1025
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW frequencyDiv
+        DW 0H
+        DW 2820
+        DW 1026
+        DATA8
+        DB 35
+        DB 1
+        DATA16
+        DW powerMult
+        DW 0H
+        DW 2820
+        DW 1027
+        DATA8
+        DB 35
+        DB 1
+        DATA16
+        DW powerDivisor
+        DW 0H
+        DW 2820
+        DW 1281
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW lineCurrent
+        DW 0H
+        DW 2820
+        DW 1282
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW activeCurrent
+        DW 0H
+        DW 2820
+        DW 1283
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW reactiveCurrent
+        DW 0H
+        DW 2820
+        DW 1285
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSVolt
+        DW 0H
+        DW 2820
+        DW 1286
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSVoltMin
+        DW 0H
+        DW 2820
+        DW 1287
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSVoltMax
+        DW 0H
+        DW 2820
+        DW 1288
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSCurrent
+        DW 0H
+        DW 2820
+        DW 1289
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSCurrentMinx
+        DW 0H
+        DW 2820
+        DW 1290
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW RMSCurrentMax
+        DW 0H
+        DW 2820
+        DW 1291
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW ActivePower
+        DW 0H
+        DW 2820
+        DW 1292
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW ActivePowerMinx
+        DW 0H
+        DW 2820
+        DW 1293
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW ActivePowerMax
+        DW 0H
+        DW 2820
+        DW 1294
+        DATA8
+        DB 41
+        DB 1
+        DATA16
+        DW ReactivePower
+        DW 0H
+        DW 2820
+        DW 1295
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW ApparentPower
+        DW 0H
+        DW 2820
+        DW 1296
+        DATA8
+        DB 40
+        DB 1
+        DATA16
+        DW PowerFactor
+        DW 0H
+        DW 2820
+        DW 1297
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW averageRmsVolrPeriod
+        DW 0H
+        DW 2820
+        DW 1536
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acVoltMult
+        DW 0H
+        DW 2820
+        DW 1537
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acVoltDiv
+        DW 0H
+        DW 2820
+        DW 1538
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acCurrentMult
+        DW 0H
+        DW 2820
+        DW 1539
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acCurrentDiv
+        DW 0H
+        DW 2820
+        DW 1540
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acPowerMult
+        DW 0H
+        DW 2820
+        DW 1541
+        DATA8
+        DB 33
+        DB 1
+        DATA16
+        DW acPowerDiv
+        DW 0H
+        DW 65535
+        DW 0
+        DATA8
+        DB 0
+        DB 0
+        DATA16
+        DW 0H
+        DB 0, 0
+//   48 	BASIC_ATTRIBUTE
+//   49 	IDENTIFY_ATTRIBUTES
+//   50 	POWER_ATTRIBUTES
+//   51 	ONOF_ATTRIBUTES
+//   52 	METERING_ATTRIBUTES
+//   53 	ELECTRICITY_MEASURE_ATTRIBUTES
+//   54  	LAST_CLUSTER_ATTRIBUTE
+//   55 };
+//   56 
+//   57 /*********************************************************************
+//   58  * SIMPLE DESCRIPTOR
+//   59  */
+//   60 // This is the Cluster ID List and should be filled with Application specific cluster IDs.
+//   61 #define ON_OFF_MAX_IN_CLUSTERS       4
 
         RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
         DATA8
-//   50 const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] ={
-powerMeter_InClusterList:
+//   62 const cId_t onOffInClusters[ON_OFF_MAX_IN_CLUSTERS] ={
+onOffInClusters:
         DATA16
         DW 0
         DW 3
         DW 1
         DW 6
-//   51   ZCL_CLUSTER_ID_GEN_BASIC,
-//   52   ZCL_CLUSTER_ID_GEN_IDENTIFY,
-//   53   ZCL_CLUSTER_ID_GEN_POWER_CFG,
-//   54   ZCL_CLUSTER_ID_GEN_ON_OFF
-//   55 };
-//   56 
-//   57 #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
+//   63   ZCL_CLUSTER_ID_GEN_BASIC,
+//   64   ZCL_CLUSTER_ID_GEN_IDENTIFY,
+//   65   ZCL_CLUSTER_ID_GEN_POWER_CFG,
+//   66   ZCL_CLUSTER_ID_GEN_ON_OFF
+//   67 };
+//   68 
+//   69 #define SMART_PLUG_MAX_IN_CLUSTERS       6
+
+        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
+        DATA8
+//   70 const cId_t smartPlugInClusters[SMART_PLUG_MAX_IN_CLUSTERS] ={
+smartPlugInClusters:
+        DATA16
+        DW 0
+        DW 3
+        DW 1
+        DW 1794
+        DW 6
+        DW 2820
+//   71   ZCL_CLUSTER_ID_GEN_BASIC,
+//   72   ZCL_CLUSTER_ID_GEN_IDENTIFY,
+//   73   ZCL_CLUSTER_ID_GEN_POWER_CFG,
+//   74   ZCL_CLUSTER_ID_SE_SIMPLE_METERING,
+//   75   ZCL_CLUSTER_ID_GEN_ON_OFF,
+//   76   ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT
+//   77 };
+//   78 
+//   79 #define ON_OFF_MAX_OUT_CLUSTERS       1
 
         RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
         DATA16
-//   58 const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] ={
-powerMeter_OutClusterList:
+//   80 const cId_t onOffOutClusters[ON_OFF_MAX_OUT_CLUSTERS] ={
+onOffOutClusters:
         DW 0
-//   59   ZCL_CLUSTER_ID_GEN_BASIC
-//   60 };
-//   61 
+//   81   ZCL_CLUSTER_ID_GEN_BASIC
+//   82 };
+//   83 
+//   84 #define SMART_PLUG_MAX_OUT_CLUSTERS       1
+
+        RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
+        DATA16
+//   85 const cId_t smartPlugOutClusters[ON_OFF_MAX_OUT_CLUSTERS] ={
+smartPlugOutClusters:
+        DW 0
+//   86   ZCL_CLUSTER_ID_GEN_BASIC
+//   87 };
+//   88 
 
         RSEG XDATA_I:XDATA:NOROOT(0)
-//   62 SimpleDescriptionFormat_t OnOff_SimpleDesc = {
+//   89 SimpleDescriptionFormat_t OnOff_SimpleDesc = {
 OnOff_SimpleDesc:
         DATA8
         DS 12
         REQUIRE `?<Initializer for OnOff_SimpleDesc>`
+        REQUIRE __INIT_XDATA_I
+//   90   ENDPOINT_ONOFF,                  	//  int Endpoint;
+//   91   ZCL_HA_PROFILE_ID,                //  uint16 AppProfId[2];
+//   92   ZCL_HA_DEVICEID_ON_OFF_LIGHT,     //  uint16 AppDeviceId[2];
+//   93   DEVICE_VERSION,           		//  int   AppDevVer:4;
+//   94   FLAGS,                    		//  int   AppFlags:4;
+//   95   ON_OFF_MAX_IN_CLUSTERS,        	//  byte  AppNumInClusters;
+//   96   (cId_t *)onOffInClusters, 		//  byte *pAppInClusterList;
+//   97   ON_OFF_MAX_OUT_CLUSTERS,       	//  byte  AppNumInClusters;
+//   98   (cId_t *)onOffOutClusters 		//  byte *pAppInClusterList;
+//   99 };
+//  100 
+//  101 
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//  102 SimpleDescriptionFormat_t SmartPlug_SimpleDesc = {
+SmartPlug_SimpleDesc:
+        DATA8
+        DS 12
+        REQUIRE `?<Initializer for SmartPlug_SimpleDesc>`
         REQUIRE __INIT_XDATA_I
 
         RSEG XDATA_ID:CODE:NOROOT(0)
@@ -384,35 +901,51 @@ OnOff_SimpleDesc:
         DB 0
         DB 4
         DATA16
-        DW powerMeter_InClusterList
+        DW onOffInClusters
         DATA8
         DB 1
         DATA16
-        DW powerMeter_OutClusterList
+        DW onOffOutClusters
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for SmartPlug_SimpleDesc>`:
+        DATA8
+        DB 15
+        DATA16
+        DW 260
+        DW 81
+        DATA8
+        DB 0
+        DB 4
+        DATA16
+        DW smartPlugInClusters
+        DATA8
+        DB 1
+        DATA16
+        DW smartPlugOutClusters
 
         END
-//   63   ENDPOINT_ONOFF,                  			//  int Endpoint;
-//   64   ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-//   65   ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
-//   66   DEVICE_VERSION,           			//  int   AppDevVer:4;
-//   67   FLAGS,                    			//  int   AppFlags:4;
-//   68   ZCLSAMPLELIGHT_MAX_INCLUSTERS,        //  byte  AppNumInClusters;
-//   69   (cId_t *)powerMeter_InClusterList, 	//  byte *pAppInClusterList;
-//   70   ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,       //  byte  AppNumInClusters;
-//   71   (cId_t *)powerMeter_OutClusterList 	//  byte *pAppInClusterList;
-//   72 };
-//   73 
-//   74 
-//   75 
+//  103   ENDPOINT_SMART_PLUG,          		//  int Endpoint;
+//  104   ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
+//  105   ZCL_HA_DEVICEID_SMART_PLUG,	     	//  uint16 AppDeviceId[2];
+//  106   DEVICE_VERSION,           			//  int   AppDevVer:4;
+//  107   FLAGS,                    			//  int   AppFlags:4;
+//  108   ON_OFF_MAX_IN_CLUSTERS,        		//  byte  AppNumInClusters;
+//  109   (cId_t *)smartPlugInClusters, 		//  byte *pAppInClusterList;
+//  110   ON_OFF_MAX_OUT_CLUSTERS,       		//  byte  AppNumInClusters;
+//  111   (cId_t *)smartPlugOutClusters		 	//  byte *pAppInClusterList;
+//  112 };
+//  113 
+//  114 
 // 
-// 150 bytes in segment CODE_C
-//  12 bytes in segment XDATA_I
-//  12 bytes in segment XDATA_ID
-//  10 bytes in segment XDATA_ROM_C
+// 660 bytes in segment CODE_C
+//  24 bytes in segment XDATA_I
+//  24 bytes in segment XDATA_ID
+//  24 bytes in segment XDATA_ROM_C
 // 
-// 162 bytes of CODE  memory
-//  10 bytes of CONST memory
-//  12 bytes of XDATA memory
+// 684 bytes of CODE  memory
+//  24 bytes of CONST memory
+//  24 bytes of XDATA memory
 //
 //Errors: none
 //Warnings: none

@@ -1,0 +1,438 @@
+///////////////////////////////////////////////////////////////////////////////
+//                                                                            /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            27/Oct/2015  08:40:51 /
+// Copyright 2004-2013 IAR Systems AB.                                        /
+//                                                                            /
+//    Core               =  plain                                             /
+//    Code model         =  banked                                            /
+//    Data model         =  large                                             /
+//    Calling convention =  xdata reentrant                                   /
+//    Constant location  =  data_rom                                          /
+//    Dptr setup         =  1,16                                              /
+//                                                                            /
+//    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\Source\clusters\ClusterElectricityMeasure.cpp /
+//    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
+//                          (-DCPU32MHZ -DROOT=__near_func                    /
+//                          -DMAC_CFG_APP_PENDING_QUEUE=TRUE                  /
+//                          -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8        /
+//                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO  /
+//                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR      /
+//                          -DDEFAULT_CHANLIST=0x00000800                     /
+//                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                      /
+//                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_M /
+//                          ASK=0x007F -DBEACON_REQUEST_DELAY=100             /
+//                          -DBEACON_REQ_DELAY_MASK=0x00FF                    /
+//                          -DLINK_STATUS_JITTER_MASK=0x007F                  /
+//                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_P /
+//                          OLLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7           /
+//                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3   /
+//                          -DNWK_MAX_DATA_RETRIES=2                          /
+//                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9        /
+//                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40          /
+//                          -DNWK_MAX_BINDING_ENTRIES=4                       /
+//                          -DMAX_BINDING_CLUSTER_IDS=4                       /
+//                          "-DDEFAULT_KEY={0x01, 0x03, 0x05, 0x07, 0x09,     /
+//                          0x0B, 0x0D, 0x0F, 0x00, 0x02, 0x04, 0x06, 0x08,   /
+//                          0x0A, 0x0C, 0x0D}" -DMAC_MAX_FRAME_SIZE=116       /
+//                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const    /
+//                          __code" -DGENERIC=__generic                       /
+//                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000       /
+//                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100   /
+//                          -DREJOIN_POLL_RATE=440) -f                        /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\Source\clusters\ClusterElectricityMeasure.cpp /
+//                           -D SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE    /
+//                          -D HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D   /
+//                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
+//                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE  /
+//                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC         /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\ -lA                   /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\ --diag_suppress       /
+//                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zp /
+//                          owermeter\firmware\CC2530DB\RouterEB\Obj\ -e      /
+//                          --debug --core=plain --dptr=16,1                  /
+//                          --data_model=large --code_model=banked            /
+//                          --calling_convention=xdata_reentrant              /
+//                          --place_constants=data_rom --nr_virtual_regs 16   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\ -I C:\Users\paolo\Documents\GitH /
+//                          ub\zpowermeter\firmware\CC2530DB\..\Source\ -I    /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Source\ha\ -I                     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Source\zmain\ -I                  /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\hal\include\ -I        /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\hal\target\CC2530EB\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\mac\include\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\mac\high_level\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\mac\low_level\srf04\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\mac\low_level\srf04 /
+//                          \single_chip\ -I C:\Users\paolo\Documents\GitHub\ /
+//                          zpowermeter\firmware\CC2530DB\..\Components\mt\   /
+//                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
+//                          rmware\CC2530DB\..\Components\osal\include\ -I    /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\services\saddr\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\services\sdata\ -I     /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\af\ -I           /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\nwk\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sapi\ -I         /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sec\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\sys\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\zcl\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\stack\zdo\ -I          /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\zmac\ -I               /
+//                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
+//    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
+//                          are\CC2530DB\RouterEB\List\ClusterElectricityMeas /
+//                          ure.s51                                           /
+//                                                                            /
+//                                                                            /
+///////////////////////////////////////////////////////////////////////////////
+
+        NAME ClusterElectricityMeasure
+
+        RTMODEL "__SystemLibrary", "CLib"
+        RTMODEL "__calling_convention", "xdata_reentrant"
+        RTMODEL "__code_model", "banked"
+        RTMODEL "__core", "plain"
+        RTMODEL "__data_model", "large"
+        RTMODEL "__dptr_size", "16"
+        RTMODEL "__extended_stack", "disabled"
+        RTMODEL "__location_for_constants", "data"
+        RTMODEL "__number_of_dptrs", "1"
+        RTMODEL "__rt_version", "1"
+
+        RSEG DOVERLAY:DATA:NOROOT(0)
+        RSEG IOVERLAY:IDATA:NOROOT(0)
+        RSEG ISTACK:IDATA:NOROOT(0)
+        RSEG PSTACK:XDATA:NOROOT(0)
+        RSEG XSTACK:XDATA:NOROOT(0)
+
+        EXTERN __INIT_XDATA_I
+        EXTERN __INIT_XDATA_Z
+
+        PUBLIC ActivePower
+        PUBLIC ActivePowerMax
+        PUBLIC ActivePowerMinx
+        PUBLIC ApparentPower
+        PUBLIC PowerFactor
+        PUBLIC RMSCurrent
+        PUBLIC RMSCurrentMax
+        PUBLIC RMSCurrentMinx
+        PUBLIC RMSVolt
+        PUBLIC RMSVoltMax
+        PUBLIC RMSVoltMin
+        PUBLIC ReactivePower
+        PUBLIC acCurrentDiv
+        PUBLIC acCurrentMult
+        PUBLIC acPowerDiv
+        PUBLIC acPowerMult
+        PUBLIC acVoltDiv
+        PUBLIC acVoltMult
+        PUBLIC activeCurrent
+        PUBLIC averageRmsVolrPeriod
+        PUBLIC frequency
+        PUBLIC frequencyDiv
+        PUBLIC frequencyMult
+        PUBLIC lineCurrent
+        PUBLIC measurementType
+        PUBLIC powerDivisor
+        PUBLIC powerMult
+        PUBLIC reactiveCurrent
+        PUBLIC totalActivePower
+        PUBLIC totalApparentPower
+        PUBLIC totalReactivePower
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterElectricityMeasure.cpp
+//    1 #include "ClusterElectricityMeasure.h"
+//    2 
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//    3 uint32 measurementType=0x0107;
+measurementType:
+        DATA32
+        DS 4
+        REQUIRE `?<Initializer for measurementType>`
+        REQUIRE __INIT_XDATA_I
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//    4 uint16 frequency=220;
+frequency:
+        DATA16
+        DS 2
+        REQUIRE `?<Initializer for frequency>`
+        REQUIRE __INIT_XDATA_I
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA32
+//    5 int32 totalActivePower;
+totalActivePower:
+        DS 4
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA32
+//    6 int32 totalReactivePower;
+totalReactivePower:
+        DS 4
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA32
+//    7 uint32 totalApparentPower;
+totalApparentPower:
+        DS 4
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//    8 uint16 frequencyMult=1;
+frequencyMult:
+        DATA16
+        DS 2
+        REQUIRE `?<Initializer for frequencyMult>`
+        REQUIRE __INIT_XDATA_I
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//    9 uint16 frequencyDiv=1;
+frequencyDiv:
+        DATA16
+        DS 2
+        REQUIRE `?<Initializer for frequencyDiv>`
+        REQUIRE __INIT_XDATA_I
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//   10 uint32 powerMult=1;
+powerMult:
+        DATA32
+        DS 4
+        REQUIRE `?<Initializer for powerMult>`
+        REQUIRE __INIT_XDATA_I
+
+        RSEG XDATA_I:XDATA:NOROOT(0)
+//   11 uint32 powerDivisor=1;
+powerDivisor:
+        DATA32
+        DS 4
+        REQUIRE `?<Initializer for powerDivisor>`
+        REQUIRE __INIT_XDATA_I
+//   12 
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   13 uint16 lineCurrent;
+lineCurrent:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   14 int16 activeCurrent;
+activeCurrent:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   15 int16 reactiveCurrent;
+reactiveCurrent:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   16 uint16 RMSVolt;
+RMSVolt:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   17 uint16 RMSVoltMin;
+RMSVoltMin:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   18 uint16 RMSVoltMax;
+RMSVoltMax:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   19 uint16 RMSCurrent;
+RMSCurrent:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   20 uint16 RMSCurrentMinx;
+RMSCurrentMinx:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   21 uint16 RMSCurrentMax;
+RMSCurrentMax:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   22 int16 ActivePower;
+ActivePower:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   23 int16 ActivePowerMinx;
+ActivePowerMinx:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   24 int16 ActivePowerMax;
+ActivePowerMax:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   25 int16 ReactivePower;
+ReactivePower:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   26 uint16 ApparentPower;
+ApparentPower:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA8
+//   27 int8 PowerFactor;
+PowerFactor:
+        DS 1
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   28 uint16 averageRmsVolrPeriod;
+averageRmsVolrPeriod:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   29 uint16 acVoltMult;
+acVoltMult:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   30 uint16 acVoltDiv;
+acVoltDiv:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   31 uint16 acCurrentMult;
+acCurrentMult:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   32 uint16 acCurrentDiv;
+acCurrentDiv:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   33 uint16 acPowerMult;
+acPowerMult:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_Z:XDATA:NOROOT(0)
+        DATA16
+//   34 uint16 acPowerDiv;
+acPowerDiv:
+        DS 2
+        REQUIRE __INIT_XDATA_Z
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for measurementType>`:
+        DATA32
+        DD 263
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for frequency>`:
+        DATA16
+        DW 220
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for frequencyMult>`:
+        DATA16
+        DW 1
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for frequencyDiv>`:
+        DATA16
+        DW 1
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for powerMult>`:
+        DATA32
+        DD 1
+
+        RSEG XDATA_ID:CODE:NOROOT(0)
+`?<Initializer for powerDivisor>`:
+        DATA32
+        DD 1
+
+        END
+// 
+// 18 bytes in segment XDATA_I
+// 18 bytes in segment XDATA_ID
+// 55 bytes in segment XDATA_Z
+// 
+// 18 bytes of CODE  memory
+// 73 bytes of XDATA memory
+//
+//Errors: none
+//Warnings: none

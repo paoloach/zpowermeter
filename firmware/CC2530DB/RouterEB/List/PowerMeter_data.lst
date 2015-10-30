@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:17:23 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:23 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\PowerMeter_data.c                        #
+#                          re\Source\PowerMeter_data.cpp                      #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,7 +45,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\PowerMeter_data.c -D SECURE=0 -D         #
+#                          re\Source\PowerMeter_data.cpp -D SECURE=0 -D       #
 #                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
 #                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
 #                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\PowerMeter_data.lst      #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.cpp
       1          /**************************************************************************************************
       2            Filename:       PowerMeter_data.c
       3            Autorh: 		 Paolo Achdjia
@@ -139,23 +138,25 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
      21          #include "clusters/ClusterBasic.h"
      22          #include "clusters/ClusterPower.h"
      23          #include "clusters/ClusterOnOff.h"
-     24          
-     25          /*********************************************************************
-     26           * CONSTANTS
-     27           */
-     28          
-     29          #define DEVICE_VERSION     0
-     30          #define FLAGS              0
-     31          
-     32          
+     24          #include "clusters/ClusterMetering.h"
+     25          #include "clusters/ClusterElectricityMeasure.h"
+     26          
+     27          /*********************************************************************
+     28           * CONSTANTS
+     29           */
+     30          
+     31          #define DEVICE_VERSION     0
+     32          #define FLAGS              0
      33          
-     34          /*********************************************************************
-     35           * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
-     36           */
+     34          
+     35          
+     36          /*********************************************************************
+     37           * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
+     38           */
 
    \                                 In  segment CODE_C, align 1
-     37          CONST zclAttrRec_t powerMeterAttrs[] = {
-   \                     powerMeterAttrs:
+     39          CONST struct zclAttrRec_t onOffAttrs[] = {
+   \                     onOffAttrs:
    \   000000   0000         DW 0
    \   000002   0300         DW 3
    \   000004   20           DB 32
@@ -246,47 +247,413 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    \   000091   00           DB 0
    \   000092   0000         DW 0H
    \   000094   0000         DB 0, 0
-     38          	BASIC_ATTRIBUTE
-     39          	IDENTIFY_ATTRIBUTES
-     40          	POWER_ATTRIBUTES
-     41          	ONOF_ATTRIBUTES
-     42           	LAST_CLUSTER_ATTRIBUTE
-     43          };
-     44          
-     45          /*********************************************************************
-     46           * SIMPLE DESCRIPTOR
-     47           */
-     48          // This is the Cluster ID List and should be filled with Application specific cluster IDs.
-     49          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
+     40          	BASIC_ATTRIBUTE
+     41          	IDENTIFY_ATTRIBUTES
+     42          	POWER_ATTRIBUTES
+     43          	ONOF_ATTRIBUTES
+     44           	LAST_CLUSTER_ATTRIBUTE
+     45          };
+     46          
+
+   \                                 In  segment CODE_C, align 1
+     47          CONST struct zclAttrRec_t smartPlugAttrs[] = {
+   \                     smartPlugAttrs:
+   \   000000   0000         DW 0
+   \   000002   0300         DW 3
+   \   000004   20           DB 32
+   \   000005   01           DB 1
+   \   000006   ....         DW HWRevision
+   \   000008   0000         DW 0H
+   \   00000A   0000         DW 0
+   \   00000C   0000         DW 0
+   \   00000E   20           DB 32
+   \   00000F   01           DB 1
+   \   000010   ....         DW ZCLVersion
+   \   000012   0000         DW 0H
+   \   000014   0000         DW 0
+   \   000016   0400         DW 4
+   \   000018   42           DB 66
+   \   000019   01           DB 1
+   \   00001A   ....         DW manufacturerName
+   \   00001C   0000         DW 0H
+   \   00001E   0000         DW 0
+   \   000020   0500         DW 5
+   \   000022   42           DB 66
+   \   000023   01           DB 1
+   \   000024   ....         DW modelId
+   \   000026   0000         DW 0H
+   \   000028   0000         DW 0
+   \   00002A   0600         DW 6
+   \   00002C   42           DB 66
+   \   00002D   01           DB 1
+   \   00002E   ....         DW dateCode
+   \   000030   0000         DW 0H
+   \   000032   0000         DW 0
+   \   000034   0700         DW 7
+   \   000036   30           DB 48
+   \   000037   01           DB 1
+   \   000038   ....         DW powerSource
+   \   00003A   0000         DW 0H
+   \   00003C   0000         DW 0
+   \   00003E   1000         DW 16
+   \   000040   42           DB 66
+   \   000041   03           DB 3
+   \   000042   ....         DW locationDescription
+   \   000044   0000         DW 0H
+   \   000046   0000         DW 0
+   \   000048   1100         DW 17
+   \   00004A   30           DB 48
+   \   00004B   03           DB 3
+   \   00004C   ....         DW physicalEnvironment
+   \   00004E   0000         DW 0H
+   \   000050   0000         DW 0
+   \   000052   1200         DW 18
+   \   000054   10           DB 16
+   \   000055   03           DB 3
+   \   000056   ....         DW deviceEnable
+   \   000058   0000         DW 0H
+   \   00005A   0300         DW 3
+   \   00005C   0000         DW 0
+   \   00005E   21           DB 33
+   \   00005F   03           DB 3
+   \   000060   ....         DW identifyTime
+   \   000062   ....         DW ??processIdentifyTimeChange?relay
+   \   000064   0100         DW 1
+   \   000066   0000         DW 0
+   \   000068   21           DB 33
+   \   000069   01           DB 1
+   \   00006A   ....         DW mainVoltage
+   \   00006C   0000         DW 0H
+   \   00006E   0100         DW 1
+   \   000070   2000         DW 32
+   \   000072   20           DB 32
+   \   000073   01           DB 1
+   \   000074   ....         DW batteryVoltage
+   \   000076   0000         DW 0H
+   \   000078   0100         DW 1
+   \   00007A   3500         DW 53
+   \   00007C   18           DB 24
+   \   00007D   01           DB 1
+   \   00007E   ....         DW batteryAlarmMask
+   \   000080   0000         DW 0H
+   \   000082   0600         DW 6
+   \   000084   0000         DW 0
+   \   000086   10           DB 16
+   \   000087   01           DB 1
+   \   000088   ....         DW onOffValue
+   \   00008A   ....         DW ??setIOStatus?relay
+   \   00008C   0207         DW 1794
+   \   00008E   0000         DW 0
+   \   000090   25           DB 37
+   \   000091   01           DB 1
+   \   000092   ....         DW currentSummationDelivered
+   \   000094   0000         DW 0H
+   \   000096   0207         DW 1794
+   \   000098   0002         DW 512
+   \   00009A   18           DB 24
+   \   00009B   01           DB 1
+   \   00009C   ....         DW status
+   \   00009E   0000         DW 0H
+   \   0000A0   0207         DW 1794
+   \   0000A2   0003         DW 768
+   \   0000A4   30           DB 48
+   \   0000A5   01           DB 1
+   \   0000A6   ....         DW unitOfMeasure
+   \   0000A8   0000         DW 0H
+   \   0000AA   0207         DW 1794
+   \   0000AC   0303         DW 771
+   \   0000AE   18           DB 24
+   \   0000AF   01           DB 1
+   \   0000B0   ....         DW summationFormatting
+   \   0000B2   0000         DW 0H
+   \   0000B4   0207         DW 1794
+   \   0000B6   0603         DW 774
+   \   0000B8   18           DB 24
+   \   0000B9   01           DB 1
+   \   0000BA   ....         DW metteringDeviceType
+   \   0000BC   0000         DW 0H
+   \   0000BE   040B         DW 2820
+   \   0000C0   0000         DW 0
+   \   0000C2   1B           DB 27
+   \   0000C3   01           DB 1
+   \   0000C4   ....         DW measurementType
+   \   0000C6   0000         DW 0H
+   \   0000C8   040B         DW 2820
+   \   0000CA   0003         DW 768
+   \   0000CC   21           DB 33
+   \   0000CD   01           DB 1
+   \   0000CE   ....         DW frequency
+   \   0000D0   0000         DW 0H
+   \   0000D2   040B         DW 2820
+   \   0000D4   0403         DW 772
+   \   0000D6   2B           DB 43
+   \   0000D7   01           DB 1
+   \   0000D8   ....         DW totalActivePower
+   \   0000DA   0000         DW 0H
+   \   0000DC   040B         DW 2820
+   \   0000DE   0503         DW 773
+   \   0000E0   2B           DB 43
+   \   0000E1   01           DB 1
+   \   0000E2   ....         DW totalReactivePower
+   \   0000E4   0000         DW 0H
+   \   0000E6   040B         DW 2820
+   \   0000E8   0603         DW 774
+   \   0000EA   23           DB 35
+   \   0000EB   01           DB 1
+   \   0000EC   ....         DW totalApparentPower
+   \   0000EE   0000         DW 0H
+   \   0000F0   040B         DW 2820
+   \   0000F2   0004         DW 1024
+   \   0000F4   21           DB 33
+   \   0000F5   01           DB 1
+   \   0000F6   ....         DW frequencyMult
+   \   0000F8   0000         DW 0H
+   \   0000FA   040B         DW 2820
+   \   0000FC   0104         DW 1025
+   \   0000FE   21           DB 33
+   \   0000FF   01           DB 1
+   \   000100   ....         DW frequencyDiv
+   \   000102   0000         DW 0H
+   \   000104   040B         DW 2820
+   \   000106   0204         DW 1026
+   \   000108   23           DB 35
+   \   000109   01           DB 1
+   \   00010A   ....         DW powerMult
+   \   00010C   0000         DW 0H
+   \   00010E   040B         DW 2820
+   \   000110   0304         DW 1027
+   \   000112   23           DB 35
+   \   000113   01           DB 1
+   \   000114   ....         DW powerDivisor
+   \   000116   0000         DW 0H
+   \   000118   040B         DW 2820
+   \   00011A   0105         DW 1281
+   \   00011C   21           DB 33
+   \   00011D   01           DB 1
+   \   00011E   ....         DW lineCurrent
+   \   000120   0000         DW 0H
+   \   000122   040B         DW 2820
+   \   000124   0205         DW 1282
+   \   000126   29           DB 41
+   \   000127   01           DB 1
+   \   000128   ....         DW activeCurrent
+   \   00012A   0000         DW 0H
+   \   00012C   040B         DW 2820
+   \   00012E   0305         DW 1283
+   \   000130   29           DB 41
+   \   000131   01           DB 1
+   \   000132   ....         DW reactiveCurrent
+   \   000134   0000         DW 0H
+   \   000136   040B         DW 2820
+   \   000138   0505         DW 1285
+   \   00013A   21           DB 33
+   \   00013B   01           DB 1
+   \   00013C   ....         DW RMSVolt
+   \   00013E   0000         DW 0H
+   \   000140   040B         DW 2820
+   \   000142   0605         DW 1286
+   \   000144   21           DB 33
+   \   000145   01           DB 1
+   \   000146   ....         DW RMSVoltMin
+   \   000148   0000         DW 0H
+   \   00014A   040B         DW 2820
+   \   00014C   0705         DW 1287
+   \   00014E   21           DB 33
+   \   00014F   01           DB 1
+   \   000150   ....         DW RMSVoltMax
+   \   000152   0000         DW 0H
+   \   000154   040B         DW 2820
+   \   000156   0805         DW 1288
+   \   000158   21           DB 33
+   \   000159   01           DB 1
+   \   00015A   ....         DW RMSCurrent
+   \   00015C   0000         DW 0H
+   \   00015E   040B         DW 2820
+   \   000160   0905         DW 1289
+   \   000162   21           DB 33
+   \   000163   01           DB 1
+   \   000164   ....         DW RMSCurrentMinx
+   \   000166   0000         DW 0H
+   \   000168   040B         DW 2820
+   \   00016A   0A05         DW 1290
+   \   00016C   21           DB 33
+   \   00016D   01           DB 1
+   \   00016E   ....         DW RMSCurrentMax
+   \   000170   0000         DW 0H
+   \   000172   040B         DW 2820
+   \   000174   0B05         DW 1291
+   \   000176   29           DB 41
+   \   000177   01           DB 1
+   \   000178   ....         DW ActivePower
+   \   00017A   0000         DW 0H
+   \   00017C   040B         DW 2820
+   \   00017E   0C05         DW 1292
+   \   000180   29           DB 41
+   \   000181   01           DB 1
+   \   000182   ....         DW ActivePowerMinx
+   \   000184   0000         DW 0H
+   \   000186   040B         DW 2820
+   \   000188   0D05         DW 1293
+   \   00018A   29           DB 41
+   \   00018B   01           DB 1
+   \   00018C   ....         DW ActivePowerMax
+   \   00018E   0000         DW 0H
+   \   000190   040B         DW 2820
+   \   000192   0E05         DW 1294
+   \   000194   29           DB 41
+   \   000195   01           DB 1
+   \   000196   ....         DW ReactivePower
+   \   000198   0000         DW 0H
+   \   00019A   040B         DW 2820
+   \   00019C   0F05         DW 1295
+   \   00019E   21           DB 33
+   \   00019F   01           DB 1
+   \   0001A0   ....         DW ApparentPower
+   \   0001A2   0000         DW 0H
+   \   0001A4   040B         DW 2820
+   \   0001A6   1005         DW 1296
+   \   0001A8   28           DB 40
+   \   0001A9   01           DB 1
+   \   0001AA   ....         DW PowerFactor
+   \   0001AC   0000         DW 0H
+   \   0001AE   040B         DW 2820
+   \   0001B0   1105         DW 1297
+   \   0001B2   21           DB 33
+   \   0001B3   01           DB 1
+   \   0001B4   ....         DW averageRmsVolrPeriod
+   \   0001B6   0000         DW 0H
+   \   0001B8   040B         DW 2820
+   \   0001BA   0006         DW 1536
+   \   0001BC   21           DB 33
+   \   0001BD   01           DB 1
+   \   0001BE   ....         DW acVoltMult
+   \   0001C0   0000         DW 0H
+   \   0001C2   040B         DW 2820
+   \   0001C4   0106         DW 1537
+   \   0001C6   21           DB 33
+   \   0001C7   01           DB 1
+   \   0001C8   ....         DW acVoltDiv
+   \   0001CA   0000         DW 0H
+   \   0001CC   040B         DW 2820
+   \   0001CE   0206         DW 1538
+   \   0001D0   21           DB 33
+   \   0001D1   01           DB 1
+   \   0001D2   ....         DW acCurrentMult
+   \   0001D4   0000         DW 0H
+   \   0001D6   040B         DW 2820
+   \   0001D8   0306         DW 1539
+   \   0001DA   21           DB 33
+   \   0001DB   01           DB 1
+   \   0001DC   ....         DW acCurrentDiv
+   \   0001DE   0000         DW 0H
+   \   0001E0   040B         DW 2820
+   \   0001E2   0406         DW 1540
+   \   0001E4   21           DB 33
+   \   0001E5   01           DB 1
+   \   0001E6   ....         DW acPowerMult
+   \   0001E8   0000         DW 0H
+   \   0001EA   040B         DW 2820
+   \   0001EC   0506         DW 1541
+   \   0001EE   21           DB 33
+   \   0001EF   01           DB 1
+   \   0001F0   ....         DW acPowerDiv
+   \   0001F2   0000         DW 0H
+   \   0001F4   FFFF         DW 65535
+   \   0001F6   0000         DW 0
+   \   0001F8   00           DB 0
+   \   0001F9   00           DB 0
+   \   0001FA   0000         DW 0H
+   \   0001FC   0000         DB 0, 0
+     48          	BASIC_ATTRIBUTE
+     49          	IDENTIFY_ATTRIBUTES
+     50          	POWER_ATTRIBUTES
+     51          	ONOF_ATTRIBUTES
+     52          	METERING_ATTRIBUTES
+     53          	ELECTRICITY_MEASURE_ATTRIBUTES
+     54           	LAST_CLUSTER_ATTRIBUTE
+     55          };
+     56          
+     57          /*********************************************************************
+     58           * SIMPLE DESCRIPTOR
+     59           */
+     60          // This is the Cluster ID List and should be filled with Application specific cluster IDs.
+     61          #define ON_OFF_MAX_IN_CLUSTERS       4
 
    \                                 In  segment XDATA_ROM_C, align 1
-     50          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] ={
-   \                     powerMeter_InClusterList:
+     62          const cId_t onOffInClusters[ON_OFF_MAX_IN_CLUSTERS] ={
+   \                     onOffInClusters:
    \   000000   0000         DW 0
    \   000002   0300         DW 3
    \   000004   0100         DW 1
    \   000006   0600         DW 6
-     51            ZCL_CLUSTER_ID_GEN_BASIC,
-     52            ZCL_CLUSTER_ID_GEN_IDENTIFY,
-     53            ZCL_CLUSTER_ID_GEN_POWER_CFG,
-     54            ZCL_CLUSTER_ID_GEN_ON_OFF
-     55          };
-     56          
-     57          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
+     63            ZCL_CLUSTER_ID_GEN_BASIC,
+     64            ZCL_CLUSTER_ID_GEN_IDENTIFY,
+     65            ZCL_CLUSTER_ID_GEN_POWER_CFG,
+     66            ZCL_CLUSTER_ID_GEN_ON_OFF
+     67          };
+     68          
+     69          #define SMART_PLUG_MAX_IN_CLUSTERS       6
 
    \                                 In  segment XDATA_ROM_C, align 1
-     58          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] ={
-   \                     powerMeter_OutClusterList:
+     70          const cId_t smartPlugInClusters[SMART_PLUG_MAX_IN_CLUSTERS] ={
+   \                     smartPlugInClusters:
    \   000000   0000         DW 0
-     59            ZCL_CLUSTER_ID_GEN_BASIC
-     60          };
-     61          
+   \   000002   0300         DW 3
+   \   000004   0100         DW 1
+   \   000006   0207         DW 1794
+   \   000008   0600         DW 6
+   \   00000A   040B         DW 2820
+     71            ZCL_CLUSTER_ID_GEN_BASIC,
+     72            ZCL_CLUSTER_ID_GEN_IDENTIFY,
+     73            ZCL_CLUSTER_ID_GEN_POWER_CFG,
+     74            ZCL_CLUSTER_ID_SE_SIMPLE_METERING,
+     75            ZCL_CLUSTER_ID_GEN_ON_OFF,
+     76            ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT
+     77          };
+     78          
+     79          #define ON_OFF_MAX_OUT_CLUSTERS       1
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     80          const cId_t onOffOutClusters[ON_OFF_MAX_OUT_CLUSTERS] ={
+   \                     onOffOutClusters:
+   \   000000   0000         DW 0
+     81            ZCL_CLUSTER_ID_GEN_BASIC
+     82          };
+     83          
+     84          #define SMART_PLUG_MAX_OUT_CLUSTERS       1
+
+   \                                 In  segment XDATA_ROM_C, align 1
+     85          const cId_t smartPlugOutClusters[ON_OFF_MAX_OUT_CLUSTERS] ={
+   \                     smartPlugOutClusters:
+   \   000000   0000         DW 0
+     86            ZCL_CLUSTER_ID_GEN_BASIC
+     87          };
+     88          
 
    \                                 In  segment XDATA_I, align 1, keep-with-next
-     62          SimpleDescriptionFormat_t OnOff_SimpleDesc = {
+     89          SimpleDescriptionFormat_t OnOff_SimpleDesc = {
    \                     OnOff_SimpleDesc:
    \   000000                DS 12
    \   00000C                REQUIRE `?<Initializer for OnOff_SimpleDesc>`
+   \   00000C                REQUIRE __INIT_XDATA_I
+     90            ENDPOINT_ONOFF,                  	//  int Endpoint;
+     91            ZCL_HA_PROFILE_ID,                //  uint16 AppProfId[2];
+     92            ZCL_HA_DEVICEID_ON_OFF_LIGHT,     //  uint16 AppDeviceId[2];
+     93            DEVICE_VERSION,           		//  int   AppDevVer:4;
+     94            FLAGS,                    		//  int   AppFlags:4;
+     95            ON_OFF_MAX_IN_CLUSTERS,        	//  byte  AppNumInClusters;
+     96            (cId_t *)onOffInClusters, 		//  byte *pAppInClusterList;
+     97            ON_OFF_MAX_OUT_CLUSTERS,       	//  byte  AppNumInClusters;
+     98            (cId_t *)onOffOutClusters 		//  byte *pAppInClusterList;
+     99          };
+    100          
+    101          
+
+   \                                 In  segment XDATA_I, align 1, keep-with-next
+    102          SimpleDescriptionFormat_t SmartPlug_SimpleDesc = {
+   \                     SmartPlug_SimpleDesc:
+   \   000000                DS 12
+   \   00000C                REQUIRE `?<Initializer for SmartPlug_SimpleDesc>`
    \   00000C                REQUIRE __INIT_XDATA_I
 
    \                                 In  segment XDATA_ID, align 1, keep-with-next
@@ -296,22 +663,32 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    \   000003   0001         DW 256
    \   000005   00           DB 0
    \   000006   04           DB 4
-   \   000007   ....         DW powerMeter_InClusterList
+   \   000007   ....         DW onOffInClusters
    \   000009   01           DB 1
-   \   00000A   ....         DW powerMeter_OutClusterList
-     63            ENDPOINT_ONOFF,                  			//  int Endpoint;
-     64            ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-     65            ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
-     66            DEVICE_VERSION,           			//  int   AppDevVer:4;
-     67            FLAGS,                    			//  int   AppFlags:4;
-     68            ZCLSAMPLELIGHT_MAX_INCLUSTERS,        //  byte  AppNumInClusters;
-     69            (cId_t *)powerMeter_InClusterList, 	//  byte *pAppInClusterList;
-     70            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,       //  byte  AppNumInClusters;
-     71            (cId_t *)powerMeter_OutClusterList 	//  byte *pAppInClusterList;
-     72          };
-     73          
-     74          
-     75          
+   \   00000A   ....         DW onOffOutClusters
+
+   \                                 In  segment XDATA_ID, align 1, keep-with-next
+   \                     `?<Initializer for SmartPlug_SimpleDesc>`:
+   \   000000   0F           DB 15
+   \   000001   0401         DW 260
+   \   000003   5100         DW 81
+   \   000005   00           DB 0
+   \   000006   04           DB 4
+   \   000007   ....         DW smartPlugInClusters
+   \   000009   01           DB 1
+   \   00000A   ....         DW smartPlugOutClusters
+    103            ENDPOINT_SMART_PLUG,          		//  int Endpoint;
+    104            ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
+    105            ZCL_HA_DEVICEID_SMART_PLUG,	     	//  uint16 AppDeviceId[2];
+    106            DEVICE_VERSION,           			//  int   AppDevVer:4;
+    107            FLAGS,                    			//  int   AppFlags:4;
+    108            ON_OFF_MAX_IN_CLUSTERS,        		//  byte  AppNumInClusters;
+    109            (cId_t *)smartPlugInClusters, 		//  byte *pAppInClusterList;
+    110            ON_OFF_MAX_OUT_CLUSTERS,       		//  byte  AppNumInClusters;
+    111            (cId_t *)smartPlugOutClusters		 	//  byte *pAppInClusterList;
+    112          };
+    113          
+    114          
 
 
    Segment part sizes:
@@ -319,20 +696,25 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    Bytes  Function/Label
    -----  --------------
       12  ?<Initializer for OnOff_SimpleDesc>
+      12  ?<Initializer for SmartPlug_SimpleDesc>
       12  OnOff_SimpleDesc
-     150  powerMeterAttrs
-       8  powerMeter_InClusterList
-       2  powerMeter_OutClusterList
+      12  SmartPlug_SimpleDesc
+     150  onOffAttrs
+       8  onOffInClusters
+       2  onOffOutClusters
+     510  smartPlugAttrs
+      12  smartPlugInClusters
+       2  smartPlugOutClusters
 
  
- 150 bytes in segment CODE_C
-  12 bytes in segment XDATA_I
-  12 bytes in segment XDATA_ID
-  10 bytes in segment XDATA_ROM_C
+ 660 bytes in segment CODE_C
+  24 bytes in segment XDATA_I
+  24 bytes in segment XDATA_ID
+  24 bytes in segment XDATA_ROM_C
  
- 162 bytes of CODE  memory
-  10 bytes of CONST memory
-  12 bytes of XDATA memory
+ 684 bytes of CODE  memory
+  24 bytes of CONST memory
+  24 bytes of XDATA memory
 
 Errors: none
 Warnings: none

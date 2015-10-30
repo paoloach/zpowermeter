@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             30/Oct/2015  18:26:21 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\clusters\ClusterBasic.c                  #
+#                          re\Source\clusters\ClusterBasic.cpp                #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,12 +45,12 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\clusters\ClusterBasic.c -D SECURE=0 -D   #
-#                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
-#                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
-#                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
-#                          -D ZCL_READ -D ZCL_WRITE -D ZCL_REPORT -D          #
-#                          FEATURE_SYSTEM_STATS -lC                           #
+#                          re\Source\clusters\ClusterBasic.cpp -D SECURE=0    #
+#                          -D OSC32K_CRYSTAL_INSTALLED=FALSE -D               #
+#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
+#                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
+#                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\ -lA                     #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\ClusterBasic.lst         #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasic.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasic.cpp
       1          /**************************************************************************************************
       2            Filename:       ClusterBasic.cpp
       3          
@@ -245,7 +244,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
      34          void basicResetCB( void ){
-   \                     basicResetCB:
+   \                     ??basicResetCB:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
      35            // Reset all attributes to default values
@@ -255,7 +254,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
      38          ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){
-   \                     processBasicClusterCommands:
+   \                     ??processBasicClusterCommands:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
@@ -267,7 +266,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000009   A3           INC     DPTR
    \   00000A   E0           MOVX    A,@DPTR
    \   00000B   5408         ANL     A,#0x8
-   \   00000D   7012         JNZ     ??processBasicClusterCommands_0
+   \   00000D   7012         JNZ     ??processBasicClusterCommands_1
      40          		switch(pInMsg->hdr.commandID){
    \   00000F   8A82         MOV     DPL,R2
    \   000011   8B83         MOV     DPH,R3
@@ -279,20 +278,20 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000018   A3           INC     DPTR
    \   000019   A3           INC     DPTR
    \   00001A   E0           MOVX    A,@DPTR
-   \   00001B   6004         JZ      ??processBasicClusterCommands_0
+   \   00001B   6004         JZ      ??processBasicClusterCommands_1
      41          			case COMMAND_BASIC_RESET_FACT_DEFAULT:
      42          				basicResetCB();
      43          				return ZSuccess;
      44          		default:
      45                		return ZFailure;   // Error ignore the command
    \   00001D   7901         MOV     R1,#0x1
-   \   00001F   8002         SJMP    ??processBasicClusterCommands_1
+   \   00001F   8002         SJMP    ??processBasicClusterCommands_2
      46          		}
      47          	}
      48          	return ZSuccess;
-   \                     ??processBasicClusterCommands_0:
-   \   000021   7900         MOV     R1,#0x0
    \                     ??processBasicClusterCommands_1:
+   \   000021   7900         MOV     R1,#0x0
+   \                     ??processBasicClusterCommands_2:
    \   000023   D083         POP     DPH
    \   000025   D082         POP     DPL
    \   000027   02....       LJMP    ?BRET
@@ -325,19 +324,19 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??basicResetCB?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    basicResetCB
+   \   000003   ......       DC24    ??basicResetCB
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??processBasicClusterCommands?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    processBasicClusterCommands
+   \   000003   ......       DC24    ??processBasicClusterCommands
 
    Maximum stack usage in bytes:
 
    ISTACK Function
    ------ --------
-      0   basicResetCB
-      2   processBasicClusterCommands
+      0   basicResetCB()
+      2   processBasicClusterCommands(zclIncoming_t *)
 
 
    Segment part sizes:
@@ -350,7 +349,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
        6  ??processBasicClusterCommands?relay
        1  HWRevision
        1  ZCLVersion
-       3  basicResetCB
+       3  basicResetCB()
       17  dateCode
        1  deviceEnable
       17  locationDescription
@@ -358,7 +357,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
       17  modelId
        1  physicalEnvironment
        1  powerSource
-      42  processBasicClusterCommands
+      42  processBasicClusterCommands(zclIncoming_t *)
 
  
  45 bytes in segment BANKED_CODE

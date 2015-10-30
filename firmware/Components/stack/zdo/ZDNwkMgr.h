@@ -40,10 +40,6 @@
 #ifndef ZDNWKMGR_H
 #define ZDNWKMGR_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 /******************************************************************************
  * INCLUDES
@@ -52,6 +48,11 @@ extern "C"
 #include "nwk_globals.h"
 #include "nwk_util.h"
 #include "ZDApp.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /******************************************************************************
  * CONSTANTS
@@ -146,7 +147,7 @@ typedef struct
   uint8  reportType;
   uint8  EPID[Z_EXTADDR_LEN];
   uint8  reportInfoCnt;
-  uint16 panIDs[];
+  uint16 panIDs[1];
 } ZDNwkMgr_NetworkReport_t;
 
 // Used for Network Update command

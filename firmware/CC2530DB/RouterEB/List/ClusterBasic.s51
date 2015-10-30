@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:45 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:21 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterBasic.c                /
+//                          are\Source\clusters\ClusterBasic.cpp              /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterBasic.c -D SECURE=0    /
+//                          are\Source\clusters\ClusterBasic.cpp -D SECURE=0  /
 //                          -D OSC32K_CRYSTAL_INSTALLED=FALSE -D              /
 //                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D      /
 //                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\ClusterBasic.s51       /
 //                                                                            /
@@ -133,20 +132,30 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN ?BDISPATCH
         EXTERN ?BRET
         EXTERN __INIT_XDATA_I
         EXTERN __INIT_XDATA_Z
 
+        PUBLIC ??basicResetCB
+        FUNCTION ??basicResetCB,0203H
+        ARGFRAME XSTACK, 0, STACK
         PUBLIC ??basicResetCB?relay
         FUNCTION ??basicResetCB?relay,0203H
+        PUBLIC ??processBasicClusterCommands
+        FUNCTION ??processBasicClusterCommands,0203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME ISTACK, 2, STACK
         PUBLIC ??processBasicClusterCommands?relay
         FUNCTION ??processBasicClusterCommands?relay,0203H
         PUBLIC HWRevision
         PUBLIC ZCLVersion
-        PUBLIC basicResetCB
-        FUNCTION basicResetCB,0203H
-        ARGFRAME XSTACK, 0, STACK
         PUBLIC dateCode
         PUBLIC deviceEnable
         PUBLIC locationDescription
@@ -154,10 +163,6 @@
         PUBLIC modelId
         PUBLIC physicalEnvironment
         PUBLIC powerSource
-        PUBLIC processBasicClusterCommands
-        FUNCTION processBasicClusterCommands,0203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME ISTACK, 2, STACK
         
           CFI Names cfiNames0
           CFI StackFrame CFA_SP SP IDATA
@@ -247,12 +252,12 @@
           CFI ?RET_LOW Frame(CFA_SP, 1)
           CFI EndCommon cfiCommon0
         
-basicResetCB        SYMBOL "basicResetCB"
-??basicResetCB?relay SYMBOL "?relay", basicResetCB
-processBasicClusterCommands SYMBOL "processBasicClusterCommands"
-??processBasicClusterCommands?relay SYMBOL "?relay", processBasicClusterCommands
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasic.c
+??basicResetCB?relay SYMBOL "?relay", ??basicResetCB
+
+??processBasicClusterCommands?relay SYMBOL "?relay", ??processBasicClusterCommands
+
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasic.cpp
 //    1 /**************************************************************************************************
 //    2   Filename:       ClusterBasic.cpp
 //    3 
@@ -391,9 +396,9 @@ deviceEnable:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   34 void basicResetCB( void ){
-basicResetCB:
+??basicResetCB:
           CFI Block cfiBlock0 Using cfiCommon0
-          CFI Function basicResetCB
+          CFI Function ??basicResetCB
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -405,9 +410,9 @@ basicResetCB:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   38 ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){
-processBasicClusterCommands:
+??processBasicClusterCommands:
           CFI Block cfiBlock1 Using cfiCommon0
-          CFI Function processBasicClusterCommands
+          CFI Function ??processBasicClusterCommands
         CODE
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
@@ -424,7 +429,7 @@ processBasicClusterCommands:
         INC     DPTR
         MOVX    A,@DPTR
         ANL     A,#0x8
-        JNZ     ??processBasicClusterCommands_0
+        JNZ     ??processBasicClusterCommands_1
 //   40 		switch(pInMsg->hdr.commandID){
         MOV     DPL,R2
         MOV     DPH,R3
@@ -436,20 +441,20 @@ processBasicClusterCommands:
         INC     DPTR
         INC     DPTR
         MOVX    A,@DPTR
-        JZ      ??processBasicClusterCommands_0
+        JZ      ??processBasicClusterCommands_1
 //   41 			case COMMAND_BASIC_RESET_FACT_DEFAULT:
 //   42 				basicResetCB();
 //   43 				return ZSuccess;
 //   44 		default:
 //   45       		return ZFailure;   // Error ignore the command
         MOV     R1,#0x1
-        SJMP    ??processBasicClusterCommands_1
+        SJMP    ??processBasicClusterCommands_2
 //   46 		}
 //   47 	}
 //   48 	return ZSuccess;
-??processBasicClusterCommands_0:
-        MOV     R1,#0x0
 ??processBasicClusterCommands_1:
+        MOV     R1,#0x0
+??processBasicClusterCommands_2:
         POP     DPH
           CFI DPH0 SameValue
           CFI CFA_SP SP+-4
@@ -491,14 +496,14 @@ processBasicClusterCommands:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    basicResetCB
+        DC24    ??basicResetCB
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??processBasicClusterCommands?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    processBasicClusterCommands
+        DC24    ??processBasicClusterCommands
 
         END
 // 

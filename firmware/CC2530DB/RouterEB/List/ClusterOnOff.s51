@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.30.1.41636 for 8051            15/Oct/2015  21:15:46 /
+// IAR C/C++ Compiler V8.30.1.41636 for 8051            30/Oct/2015  18:26:21 /
 // Copyright 2004-2013 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -11,7 +11,7 @@
 //    Dptr setup         =  1,16                                              /
 //                                                                            /
 //    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterOnOff.c                /
+//                          are\Source\clusters\ClusterOnOff.cpp              /
 //    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fi /
 //                          rmware\CC2530DB\..\Tools\f8wRouter.cfg            /
 //                          (-DCPU32MHZ -DROOT=__near_func                    /
@@ -46,7 +46,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Tools\f8wZCL.cfg                  /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\Source\clusters\ClusterOnOff.c -D SECURE=0    /
+//                          are\Source\clusters\ClusterOnOff.cpp -D SECURE=0  /
 //                          -D OSC32K_CRYSTAL_INSTALLED=FALSE -D              /
 //                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D      /
 //                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D      /
@@ -106,8 +106,7 @@
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\..\Components\zmac\ -I               /
 //                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
-//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz         /
-//                          --require_prototypes                              /
+//                          are\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++ /
 //    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmw /
 //                          are\CC2530DB\RouterEB\List\ClusterOnOff.s51       /
 //                                                                            /
@@ -133,41 +132,47 @@
         RSEG PSTACK:XDATA:NOROOT(0)
         RSEG XSTACK:XDATA:NOROOT(0)
 
+        ERROR
+//NOTE: This module defines or uses C++ features that are not
+//      accessible from assembler code. Assembling this file will
+//      not produce an equivalent object file to the one produced
+//      by the C++ compiler.
+
         EXTERN ?BANKED_ENTER_XDATA
         EXTERN ?BANKED_LEAVE_XDATA
         EXTERN ?BDISPATCH
         EXTERN ?BRET
         EXTERN __INIT_XDATA_I
 
+        PUBLIC ??onOffInit
+        FUNCTION ??onOffInit,0203H
+        ARGFRAME XSTACK, 0, STACK
         PUBLIC ??onOffInit?relay
         FUNCTION ??onOffInit?relay,0203H
+        PUBLIC ??processOnOffClusterServerCommands
+        FUNCTION ??processOnOffClusterServerCommands,021203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME ISTACK, 2, STACK
         PUBLIC ??processOnOffClusterServerCommands?relay
         FUNCTION ??processOnOffClusterServerCommands?relay,0203H
+        PUBLIC ??setIOStatus
+        FUNCTION ??setIOStatus,0203H
+        ARGFRAME XSTACK, 9, STACK
+        ARGFRAME IOVERLAY, 0, STATIC
+        ARGFRAME DOVERLAY, 0, STATIC
+        LOCFRAME ISTACK, 2, STACK
         PUBLIC ??setIOStatus?relay
         FUNCTION ??setIOStatus?relay,0203H
+        PUBLIC ??setLightStatus
+        FUNCTION ??setLightStatus,021203H
+        ARGFRAME XSTACK, 0, STACK
+        LOCFRAME XSTACK, 9, STACK
         PUBLIC ??setLightStatus?relay
         FUNCTION ??setLightStatus?relay,0203H
         PUBWEAK _A_DIR0_7
         PUBWEAK _A_P0
         PUBWEAK _A_P0SEL_7
-        PUBLIC onOffInit
-        FUNCTION onOffInit,0203H
-        ARGFRAME XSTACK, 0, STACK
         PUBLIC onOffValue
-        PUBLIC processOnOffClusterServerCommands
-        FUNCTION processOnOffClusterServerCommands,021203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME ISTACK, 2, STACK
-        PUBLIC setIOStatus
-        FUNCTION setIOStatus,0203H
-        ARGFRAME XSTACK, 9, STACK
-        ARGFRAME IOVERLAY, 0, STATIC
-        ARGFRAME DOVERLAY, 0, STATIC
-        LOCFRAME ISTACK, 2, STACK
-        PUBLIC setLightStatus
-        FUNCTION setLightStatus,021203H
-        ARGFRAME XSTACK, 0, STACK
-        LOCFRAME XSTACK, 9, STACK
         
           CFI Names cfiNames0
           CFI StackFrame CFA_SP SP IDATA
@@ -257,16 +262,16 @@
           CFI ?RET_LOW Frame(CFA_SP, 1)
           CFI EndCommon cfiCommon0
         
-onOffInit           SYMBOL "onOffInit"
-??onOffInit?relay   SYMBOL "?relay", onOffInit
-processOnOffClusterServerCommands SYMBOL "processOnOffClusterServerCommands"
-??processOnOffClusterServerCommands?relay SYMBOL "?relay", processOnOffClusterServerCommands
-setIOStatus         SYMBOL "setIOStatus"
-??setIOStatus?relay SYMBOL "?relay", setIOStatus
-setLightStatus      SYMBOL "setLightStatus"
-??setLightStatus?relay SYMBOL "?relay", setLightStatus
 
-// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterOnOff.c
+??onOffInit?relay   SYMBOL "?relay", ??onOffInit
+
+??processOnOffClusterServerCommands?relay SYMBOL "?relay", ??processOnOffClusterServerCommands
+
+??setIOStatus?relay SYMBOL "?relay", ??setIOStatus
+
+??setLightStatus?relay SYMBOL "?relay", ??setLightStatus
+
+// C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterOnOff.cpp
 //    1 	/**************************************************************************************************
 //    2   Filename:       ClusterOnOff.c
 //    3 
@@ -330,9 +335,9 @@ onOffValue:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   38 void onOffInit(void) {
-onOffInit:
+??onOffInit:
           CFI Block cfiBlock0 Using cfiCommon0
-          CFI Function onOffInit
+          CFI Function ??onOffInit
         CODE
         ; Saved register size: 0
         ; Auto size: 0
@@ -352,9 +357,9 @@ onOffInit:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   44 void setIOStatus(void){
-setIOStatus:
+??setIOStatus:
           CFI Block cfiBlock1 Using cfiCommon0
-          CFI Function setIOStatus
+          CFI Function ??setIOStatus
         CODE
         PUSH    DPL
           CFI DPL0 Frame(CFA_SP, 4)
@@ -368,17 +373,17 @@ setIOStatus:
         MOV     DPTR,#onOffValue
         MOVX    A,@DPTR
         XRL     A,#0x1
-        JNZ     ??setIOStatus_0
+        JNZ     ??setIOStatus_1
 //   46 	  P0_0=1;
         SETB    0x80.0
-        SJMP    ??setIOStatus_1
+        SJMP    ??setIOStatus_2
 //   47   	else
 //   48 	  P0_0=0;
-??setIOStatus_0:
+??setIOStatus_1:
         CLR     0x80.0
           CFI EndBlock cfiBlock1
 //   49 }
-??setIOStatus_1:
+??setIOStatus_2:
         REQUIRE ?Subroutine0
         REQUIRE _A_P0
         ; // Fall through to label ?Subroutine0
@@ -402,11 +407,11 @@ setIOStatus:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   51 void setLightStatus(uint8 status){
-setLightStatus:
+??setLightStatus:
           CFI Block cfiBlock3 Using cfiCommon0
-          CFI Function setLightStatus
+          CFI Function ??setLightStatus
         CODE
-        FUNCALL setLightStatus, setIOStatus
+        FUNCALL ??setLightStatus, ??setIOStatus
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 9, STACK
@@ -437,8 +442,8 @@ setLightStatus:
         MOV     DPTR,#onOffValue
         MOVX    @DPTR,A
 //   53 	setIOStatus();
-        ; Setup parameters for call to function setIOStatus
-        LCALL   ??setIOStatus?relay  ; Banked call to: setIOStatus
+        ; Setup parameters for call to function setIOStatus()
+        LCALL   ??setIOStatus?relay  ; Banked call to: setIOStatus()
 //   54 }
         MOV     R7,#0x1
         LJMP    ?BANKED_LEAVE_XDATA
@@ -449,11 +454,11 @@ setLightStatus:
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
 //   58 ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg) {
-processOnOffClusterServerCommands:
+??processOnOffClusterServerCommands:
           CFI Block cfiBlock4 Using cfiCommon0
-          CFI Function processOnOffClusterServerCommands
+          CFI Function ??processOnOffClusterServerCommands
         CODE
-        FUNCALL processOnOffClusterServerCommands, setIOStatus
+        FUNCALL ??processOnOffClusterServerCommands, ??setIOStatus
         LOCFRAME ISTACK, 2, STACK
         LOCFRAME PSTACK, 0, STACK
         LOCFRAME XSTACK, 0, STACK
@@ -483,11 +488,11 @@ processOnOffClusterServerCommands:
         INC     DPTR
         INC     DPTR
         MOVX    A,@DPTR
-        JZ      ??processOnOffClusterServerCommands_0
-        DEC     A
         JZ      ??processOnOffClusterServerCommands_1
         DEC     A
-        JNZ     ??processOnOffClusterServerCommands_2
+        JZ      ??processOnOffClusterServerCommands_2
+        DEC     A
+        JNZ     ??processOnOffClusterServerCommands_3
 //   60 	case COMMAND_ON:
 //   61 		onOffValue = LIGHT_ON;
 //   62 		break;
@@ -498,12 +503,12 @@ processOnOffClusterServerCommands:
 //   67 		if ( onOffValue == LIGHT_OFF )
         MOV     DPTR,#onOffValue
         MOVX    A,@DPTR
-        JNZ     ??processOnOffClusterServerCommands_0
+        JNZ     ??processOnOffClusterServerCommands_1
 //   68       		onOffValue = LIGHT_ON;
-??processOnOffClusterServerCommands_1:
+??processOnOffClusterServerCommands_2:
         MOV     DPTR,#onOffValue
         MOV     A,#0x1
-??processOnOffClusterServerCommands_3:
+??processOnOffClusterServerCommands_4:
         MOVX    @DPTR,A
 //   69     	else
 //   70       		onOffValue = LIGHT_OFF;
@@ -512,19 +517,19 @@ processOnOffClusterServerCommands:
 //   73 		return ZFailure;
 //   74 	}
 //   75 	setIOStatus();
-        ; Setup parameters for call to function setIOStatus
-        LCALL   ??setIOStatus?relay  ; Banked call to: setIOStatus
+        ; Setup parameters for call to function setIOStatus()
+        LCALL   ??setIOStatus?relay  ; Banked call to: setIOStatus()
 //   76 	return ZSuccess;
         MOV     R1,#0x0
-??processOnOffClusterServerCommands_4:
+??processOnOffClusterServerCommands_5:
         SJMP    ?Subroutine0
-??processOnOffClusterServerCommands_0:
+??processOnOffClusterServerCommands_1:
         MOV     DPTR,#onOffValue
         CLR     A
-        SJMP    ??processOnOffClusterServerCommands_3
-??processOnOffClusterServerCommands_2:
-        MOV     R1,#0x1
         SJMP    ??processOnOffClusterServerCommands_4
+??processOnOffClusterServerCommands_3:
+        MOV     R1,#0x1
+        SJMP    ??processOnOffClusterServerCommands_5
           CFI EndBlock cfiBlock4
 //   77 }
 
@@ -538,28 +543,28 @@ processOnOffClusterServerCommands:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    onOffInit
+        DC24    ??onOffInit
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??setIOStatus?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    setIOStatus
+        DC24    ??setIOStatus
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??setLightStatus?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    setLightStatus
+        DC24    ??setLightStatus
 
         RSEG BANK_RELAYS:CODE:REORDER:NOROOT(0)
 ??processOnOffClusterServerCommands?relay:
         CODE
         LCALL   ?BDISPATCH
         DATA24
-        DC24    processOnOffClusterServerCommands
+        DC24    ??processOnOffClusterServerCommands
 
         END
 // 

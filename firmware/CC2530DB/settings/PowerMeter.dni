@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-2095180707
+Checksum=-196846550
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -29,7 +29,8 @@ Category=_ 0
 Bp0=_ "STD_CODE" "LogicalCode:0x02C3" 0 0 0 0 "" 0 ""
 Bp1=_ "STD_CODE" "LogicalCode:0x3CC01" 0 0 0 0 "" 0 ""
 Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Components\hal\target\CC2530EB\hal_board_cfg.h}.242.1" 0 0 0 0 "" 0 ""
-Count=3
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\Components\stack\zcl\zcl.cpp}.2558.1" 1 0 0 0 "" 0 ""
+Count=4
 [ChipconEmu]
 Stop timers on halt=0
 Leave target running=1

@@ -109,7 +109,7 @@ typedef struct
   uint16  transID;
   uint8*  asdu;                 // saved asdu
   uint8   numdests;             // number of the destination reflections
-  ReflectDestRec_t  dests[];    // Arrary of destinations
+  ReflectDestRec_t  dests[1];    // Arrary of destinations
                                 // - the number of destinations must
                                 // be used to allocate this element
 } ReflectTracking_t;

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             27/Oct/2015  21:12:23 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -11,7 +11,7 @@
 #    Dptr setup         =  1,16                                               #
 #                                                                             #
 #    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\CS5463.c                                 #
+#                          re\Source\CS5463.cpp                               #
 #    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
 #                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
 #                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
@@ -45,7 +45,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\Source\CS5463.c -D SECURE=0 -D                  #
+#                          re\Source\CS5463.cpp -D SECURE=0 -D                #
 #                          OSC32K_CRYSTAL_INSTALLED=FALSE -D HAL_KEY=FALSE    #
 #                          -D HAL_BOARD_CC2530EB_REV17 -D TC_LINKKEY_JOIN -D  #
 #                          NV_INIT -D xNV_RESTORE -D MULTICAST_ENABLED=FALSE  #
@@ -105,8 +105,7 @@
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\..\Components\zmac\ -I                 #
 #                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
-#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
-#                          --require_prototypes                               #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz --eec++   #
 #    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
 #                          re\CC2530DB\RouterEB\List\CS5463.lst               #
 #    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
@@ -115,7 +114,7 @@
 #                                                                             #
 ###############################################################################
 
-C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.cpp
       1          /**************************************************************************************************
       2          
       3           DESCRIPTION:
@@ -207,7 +206,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
      58          void CS5463_Init(void ){
-   \                     CS5463_Init:
+   \                     ??CS5463_Init:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
@@ -248,8 +247,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
    \   000030   D287         SETB    0x80.7
      76          	
      77          	CS5463_startConversion();
-   \   000032                ; Setup parameters for call to function CS5463_startConversion
-   \   000032   12....       LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion
+   \   000032                ; Setup parameters for call to function CS5463_startConversion()
+   \   000032   12....       LCALL   ??CS5463_startConversion?relay; Banked call to: CS5463_startConversion()
      78          }
    \   000035   D083         POP     DPH
    \   000037   D082         POP     DPL
@@ -264,7 +263,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
      80          void CS5463_startConversion(void) {
-   \                     CS5463_startConversion:
+   \                     ??CS5463_startConversion:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
      81          	P0_7=0;
@@ -276,10 +275,10 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
      84          	U0DBUF=0xE8;
    \   000004   75C1E8       MOV     0xc1,#-0x18
      85          	while(U0_TX_BYTE==0);
-   \                     ??CS5463_startConversion_0:
+   \                     ??CS5463_startConversion_1:
    \   000007   E586         MOV     A,0x86
    \   000009   A2E6         MOV     C,0xE0 /* A   */.6
-   \   00000B   50FA         JNC     ??CS5463_startConversion_0
+   \   00000B   50FA         JNC     ??CS5463_startConversion_1
      86          	asm("NOP");
    \   00000D   00           NOP
      87          	asm("NOP");
@@ -295,21 +294,21 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??CS5463_Init?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    CS5463_Init
+   \   000003   ......       DC24    ??CS5463_Init
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??CS5463_startConversion?relay:
    \   000000   12....       LCALL   ?BDISPATCH
-   \   000003   ......       DC24    CS5463_startConversion
+   \   000003   ......       DC24    ??CS5463_startConversion
      90          
 
    Maximum stack usage in bytes:
 
    ISTACK Function
    ------ --------
-      2   CS5463_Init
-        2   -> CS5463_startConversion
-      0   CS5463_startConversion
+      2   CS5463_Init()
+        2   -> CS5463_startConversion()
+      0   CS5463_startConversion()
 
 
    Segment part sizes:
@@ -318,8 +317,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\CS5463.c
    -----  --------------
        6  ??CS5463_Init?relay
        6  ??CS5463_startConversion?relay
-      60  CS5463_Init
-      20  CS5463_startConversion
+      60  CS5463_Init()
+      20  CS5463_startConversion()
        1  U0BAUD
        1  U0DBUF
        1  _A_DIR0_7

@@ -56,6 +56,9 @@ void powerMeter_Init( byte task_id ){
 	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
  	zcl_registerAttrList(ENDPOINT_ONOFF, onOffAttrs );
   	zcl_registerForMsg( zPowerMeterTaskID );
+	
+	zclHA_Init( &SmartPlug_SimpleDesc );
+ 	zcl_registerAttrList(ENDPOINT_SMART_PLUG, smartPlugAttrs );
   
   	EA=1;
  	identifyInit(zPowerMeterTaskID);
