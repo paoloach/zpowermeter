@@ -404,7 +404,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\zmac\f8w
 -D__HAS_LOCATED_DECLARATION__=1
 -D__IAR_COMPILERBASE__=593409
 -D__DATE__="Oct 30 2015"
--D__TIME__="20:15:55"
+-D__TIME__="20:18:12"
 -D__STDC__=1
 -D__cplusplus=199711L
 -D__iar_extended_embedded_cplusplus=1
