@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             04/Nov/2015  21:35:00 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -125,21 +125,22 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
       7          **************************************************************************************************/
       8          
       9          #include "ClusterBasic.h"
-     10          
+     10          #include "osal.h"
      11          
+     12          
 
    \                                 In  segment XDATA_ROM_C, align 1
-     12          const uint8 HWRevision = 1;
+     13          const uint8 HWRevision = 1;
    \                     HWRevision:
    \   000000   01           DB 1
 
    \                                 In  segment XDATA_ROM_C, align 1
-     13          const uint8 ZCLVersion = 1;
+     14          const uint8 ZCLVersion = 1;
    \                     ZCLVersion:
    \   000000   01           DB 1
 
    \                                 In  segment XDATA_ROM_C, align 1
-     14          const uint8 manufacturerName[] = { 20, 'A','c','h','d','j','i','a','n',' ','T','e','s','t',' ',' ',' ',' ',' ',' ',' ' };
+     15          const uint8 manufacturerName[] = { 20, 'A','c','h','d','j','i','a','n',' ','T','e','s','t',' ',' ',' ',' ',' ',' ',' ' };
    \                     manufacturerName:
    \   000000   14           DB 20
    \   000001   41           DB 65
@@ -164,7 +165,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000014   20           DB 32
 
    \                                 In  segment XDATA_ROM_C, align 1
-     15          const uint8 modelId[] = { 16,'z', 'P','o','w','e','r','M','e','t','e','r',' ',' ',' ',' ',' ' };
+     16          const uint8 modelId[] = { 16,'z', 'P','o','w','e','r','M','e','t','e','r',' ',' ',' ',' ',' ' };
    \                     modelId:
    \   000000   10           DB 16
    \   000001   7A           DB 122
@@ -185,7 +186,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000010   20           DB 32
 
    \                                 In  segment XDATA_ROM_C, align 1
-     16          const uint8 dateCode[] = { 16, '2','0','1','5','1','0','1','3',' ',' ',' ',' ',' ',' ',' ',' ' };
+     17          const uint8 dateCode[] = { 16, '2','0','1','5','1','0','1','3',' ',' ',' ',' ',' ',' ',' ',' ' };
    \                     dateCode:
    \   000000   10           DB 16
    \   000001   32           DB 50
@@ -206,61 +207,507 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000010   20           DB 32
 
    \                                 In  segment XDATA_ROM_C, align 1
-     17          const uint8 powerSource = POWER_SOURCE_DC;
+     18          const uint8 powerSource = POWER_SOURCE_DC;
    \                     powerSource:
    \   000000   04           DB 4
-     18          
+     19          
 
    \                                 In  segment XDATA_I, align 1, keep-with-next
-     19          uint8 locationDescription[17] = { 16, ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ' };
+     20          uint8 locationDescription[17] = { 16, ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ' };
    \                     locationDescription:
    \   000000                DS 17
    \   000011                REQUIRE `?<Initializer for locationDescription>`
    \   000011                REQUIRE __INIT_XDATA_I
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     20          uint8 physicalEnvironment = 0;
+     21          uint8 physicalEnvironment = 0;
    \                     physicalEnvironment:
    \   000000                DS 1
    \   000001                REQUIRE __INIT_XDATA_Z
 
    \                                 In  segment XDATA_I, align 1, keep-with-next
-     21          uint8 deviceEnable = DEVICE_ENABLED;
+     22          uint8 deviceEnable = DEVICE_ENABLED;
    \                     deviceEnable:
    \   000000                DS 1
    \   000001                REQUIRE `?<Initializer for deviceEnable>`
    \   000001                REQUIRE __INIT_XDATA_I
-     22          
      23          
-     24          /*********************************************************************
-     25           * @fn      zclSampleLight_BasicResetCB
-     26           *
-     27           * @brief   Callback from the ZCL General Cluster Library
-     28           *          to set all the Basic Cluster attributes to default values.
-     29           *
-     30           * @param   none
-     31           *
-     32           * @return  none
-     33           */
+     24          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     34          void basicResetCB( void ){
+     25          void basicResetCB( void ){
    \                     basicResetCB:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
-     35            // Reset all attributes to default values
-     36          }
+     26            // Reset all attributes to default values
+     27          }
    \   000000   02....       LJMP    ?BRET
-     37          
+     28          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     38          ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){
+     29          void basicClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
+   \                     basicClusterWriteAttribute:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000   74F5         MOV     A,#-0xb
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 11
+   \   000005                ; Auto size: 0
+     30          	if (writeAttribute == NULL){
+   \   000005   EA           MOV     A,R2
+   \   000006   4B           ORL     A,R3
+   \   000007   7003         JNZ     $+5
+   \   000009   02....       LJMP    ??basicClusterWriteAttribute_0 & 0xFFFF
+     31          		return;
+     32          	}
+     33          	writeAttribute->status=ZCL_STATUS_SUCCESS;
+   \   00000C   EA           MOV     A,R2
+   \   00000D   2406         ADD     A,#0x6
+   \   00000F   F8           MOV     R0,A
+   \   000010   E4           CLR     A
+   \   000011   3B           ADDC    A,R3
+   \   000012   F9           MOV     R1,A
+   \   000013   E8           MOV     A,R0
+   \   000014   FC           MOV     R4,A
+   \   000015   E9           MOV     A,R1
+   \   000016   FD           MOV     R5,A
+   \   000017   8C82         MOV     DPL,R4
+   \   000019   8D83         MOV     DPH,R5
+   \   00001B   E4           CLR     A
+   \   00001C   F0           MOVX    @DPTR,A
+     34          	switch(writeAttribute->attrId){
+   \   00001D   8A82         MOV     DPL,R2
+   \   00001F   8B83         MOV     DPH,R3
+   \   000021   E0           MOVX    A,@DPTR
+   \   000022   F5..         MOV     ?V0,A
+   \   000024   A3           INC     DPTR
+   \   000025   E0           MOVX    A,@DPTR
+   \   000026   6003         JZ      $+5
+   \   000028   02....       LJMP    ??basicClusterWriteAttribute_1 & 0xFFFF
+   \   00002B   E5..         MOV     A,?V0
+   \   00002D   12....       LCALL   ?UC_SWITCH_SPARSE
+   \                     `?<Jumptable for basicClusterWriteAttribute>_0`:
+   \   000030   01           DB        1
+   \   000031   03           DB        3
+   \   000032   07           DB        7
+   \   000033   ....         DW        ??basicClusterWriteAttribute_2
+   \   000035   04           DB        4
+   \   000036   00           DB        0
+   \   000037   ....         DW        ??basicClusterWriteAttribute_2
+   \   000039   10           DB        16
+   \   00003A   ....         DW        ??basicClusterWriteAttribute_3
+   \   00003C   11           DB        17
+   \   00003D   ....         DW        ??basicClusterWriteAttribute_4
+   \   00003F   12           DB        18
+   \   000040   ....         DW        ??basicClusterWriteAttribute_5
+   \   000042   ....         DW        ??basicClusterWriteAttribute_1
+     35          	case ATTRID_BASIC_HW_VERSION:
+     36          	case ATTRID_BASIC_ZCL_VERSION:
+     37          	case ATTRID_BASIC_MANUFACTURER_NAME:
+     38          	case ATTRID_BASIC_MODEL_ID:
+     39          	case ATTRID_BASIC_DATE_CODE:
+     40          	case ATTRID_BASIC_POWER_SOURCE:
+     41          		writeAttribute->status=ZCL_STATUS_READ_ONLY;
+   \                     ??basicClusterWriteAttribute_2:
+   \   000044   8C82         MOV     DPL,R4
+   \   000046   8D83         MOV     DPH,R5
+   \   000048   7488         MOV     A,#-0x78
+   \   00004A   807E         SJMP    ??basicClusterWriteAttribute_6
+     42          		break;
+     43          	case ATTRID_BASIC_LOCATION_DESC:
+     44          		if (writeAttribute->dataType == ZCL_DATATYPE_CHAR_STR)
+   \                     ??basicClusterWriteAttribute_3:
+   \   00004C   8A82         MOV     DPL,R2
+   \   00004E   8B83         MOV     DPH,R3
+   \   000050   A3           INC     DPTR
+   \   000051   A3           INC     DPTR
+   \   000052   E0           MOVX    A,@DPTR
+   \   000053   6442         XRL     A,#0x42
+   \   000055   7065         JNZ     ??basicClusterWriteAttribute_7
+     45          			osal_memcpy((void *)&locationDescription, writeAttribute->dataPtr, writeAttribute->len);
+   \   000057                ; Setup parameters for call to function osal_memcpy
+   \   000057   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_0:
+   \   00005A   12....       LCALL   ?PUSH_XSTACK_I_THREE
+   \   00005D   8A82         MOV     DPL,R2
+   \   00005F   8B83         MOV     DPH,R3
+   \   000061   A3           INC     DPTR
+   \   000062   A3           INC     DPTR
+   \   000063   A3           INC     DPTR
+   \   000064   A3           INC     DPTR
+   \   000065   A3           INC     DPTR
+   \   000066   E0           MOVX    A,@DPTR
+   \   000067   FC           MOV     R4,A
+   \   000068   7D00         MOV     R5,#0x0
+   \   00006A   7A..         MOV     R2,#locationDescription & 0xff
+   \   00006C   7B..         MOV     R3,#(locationDescription >> 8) & 0xff
+   \   00006E   8022         SJMP    ??basicClusterWriteAttribute_8
+     46          		else
+     47          			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+     48          		break;
+     49          	case ATTRID_BASIC_PHYSICAL_ENV:
+     50          		if (writeAttribute->dataType == ZCL_DATATYPE_ENUM8)
+   \                     ??basicClusterWriteAttribute_4:
+   \   000070   8A82         MOV     DPL,R2
+   \   000072   8B83         MOV     DPH,R3
+   \   000074   A3           INC     DPTR
+   \   000075   A3           INC     DPTR
+   \   000076   E0           MOVX    A,@DPTR
+   \   000077   6430         XRL     A,#0x30
+   \   000079   7041         JNZ     ??basicClusterWriteAttribute_7
+     51          			osal_memcpy((void *)&physicalEnvironment, writeAttribute->dataPtr, writeAttribute->len);
+   \   00007B                ; Setup parameters for call to function osal_memcpy
+   \   00007B   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_1:
+   \   00007E   12....       LCALL   ?PUSH_XSTACK_I_THREE
+   \   000081   8A82         MOV     DPL,R2
+   \   000083   8B83         MOV     DPH,R3
+   \   000085   A3           INC     DPTR
+   \   000086   A3           INC     DPTR
+   \   000087   A3           INC     DPTR
+   \   000088   A3           INC     DPTR
+   \   000089   A3           INC     DPTR
+   \   00008A   E0           MOVX    A,@DPTR
+   \   00008B   FC           MOV     R4,A
+   \   00008C   7D00         MOV     R5,#0x0
+   \   00008E   7A..         MOV     R2,#physicalEnvironment & 0xff
+   \   000090   7B..         MOV     R3,#(physicalEnvironment >> 8) & 0xff
+   \                     ??basicClusterWriteAttribute_8:
+   \   000092   12....       LCALL   ??osal_memcpy?relay  ; Banked call to: osal_memcpy
+   \   000095   7403         MOV     A,#0x3
+   \   000097   12....       LCALL   ?DEALLOC_XSTACK8
+   \   00009A   802F         SJMP    ??basicClusterWriteAttribute_0
+     52          		else 
+     53          			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+     54          		break;
+     55          	case ATTRID_BASIC_DEVICE_ENABLED:
+     56          		if (writeAttribute->dataType == ZCL_DATATYPE_BOOLEAN)
+   \                     ??basicClusterWriteAttribute_5:
+   \   00009C   8A82         MOV     DPL,R2
+   \   00009E   8B83         MOV     DPH,R3
+   \   0000A0   A3           INC     DPTR
+   \   0000A1   A3           INC     DPTR
+   \   0000A2   E0           MOVX    A,@DPTR
+   \   0000A3   6410         XRL     A,#0x10
+   \   0000A5   7015         JNZ     ??basicClusterWriteAttribute_7
+     57          			deviceEnable = *(uint8 *)writeAttribute->dataPtr;
+   \   0000A7   8A82         MOV     DPL,R2
+   \   0000A9   8B83         MOV     DPH,R3
+   \   0000AB   A3           INC     DPTR
+   \   0000AC   A3           INC     DPTR
+   \   0000AD   A3           INC     DPTR
+   \   0000AE   E0           MOVX    A,@DPTR
+   \   0000AF   F8           MOV     R0,A
+   \   0000B0   A3           INC     DPTR
+   \   0000B1   E0           MOVX    A,@DPTR
+   \   0000B2   F583         MOV     DPH,A
+   \   0000B4   8882         MOV     DPL,R0
+   \   0000B6   E0           MOVX    A,@DPTR
+   \   0000B7   90....       MOV     DPTR,#deviceEnable
+   \   0000BA   800E         SJMP    ??basicClusterWriteAttribute_6
+     58          		else 
+     59          			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+   \                     ??basicClusterWriteAttribute_7:
+   \   0000BC   8C82         MOV     DPL,R4
+   \   0000BE   8D83         MOV     DPH,R5
+   \   0000C0   748D         MOV     A,#-0x73
+   \   0000C2   8006         SJMP    ??basicClusterWriteAttribute_6
+     60          		break;
+     61          	default:
+     62          		writeAttribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+   \                     ??basicClusterWriteAttribute_1:
+   \   0000C4   8C82         MOV     DPL,R4
+   \   0000C6   8D83         MOV     DPH,R5
+   \   0000C8   7486         MOV     A,#-0x7a
+   \                     ??basicClusterWriteAttribute_6:
+   \   0000CA   F0           MOVX    @DPTR,A
+     63          	}
+     64          }
+   \                     ??basicClusterWriteAttribute_0:
+   \   0000CB   7F03         MOV     R7,#0x3
+   \   0000CD   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine1:
+   \   000000   8A82         MOV     DPL,R2
+   \   000002   8B83         MOV     DPH,R3
+   \   000004   A3           INC     DPTR
+   \   000005   A3           INC     DPTR
+   \   000006   A3           INC     DPTR
+   \   000007   E0           MOVX    A,@DPTR
+   \   000008   F5..         MOV     ?V0,A
+   \   00000A   A3           INC     DPTR
+   \   00000B   E0           MOVX    A,@DPTR
+   \   00000C   F5..         MOV     ?V1,A
+   \   00000E   75..00       MOV     ?V2,#0x0
+   \   000011   78..         MOV     R0,#?V0
+   \   000013   22           RET
+     65          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     66          void basicClusterReadAttribute(zclAttrRec_t * statusRec){
+   \                     basicClusterReadAttribute:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V1
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000   74F2         MOV     A,#-0xe
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 14
+   \   000005                ; Auto size: 0
+     67          	if (statusRec == NULL){
+   \   000005   EA           MOV     A,R2
+   \   000006   4B           ORL     A,R3
+   \   000007   7003         JNZ     $+5
+   \   000009   02....       LJMP    ??basicClusterReadAttribute_0 & 0xFFFF
+     68          		return;
+     69          	}
+     70          	statusRec->attr.accessControl = ACCESS_CONTROL_READ;
+   \   00000C   EA           MOV     A,R2
+   \   00000D   2405         ADD     A,#0x5
+   \   00000F   F8           MOV     R0,A
+   \   000010   E4           CLR     A
+   \   000011   3B           ADDC    A,R3
+   \   000012   F9           MOV     R1,A
+   \   000013   88..         MOV     ?V0,R0
+   \   000015   89..         MOV     ?V1,R1
+   \   000017   8882         MOV     DPL,R0
+   \   000019   F583         MOV     DPH,A
+   \   00001B   7401         MOV     A,#0x1
+   \   00001D   F0           MOVX    @DPTR,A
+     71          	switch(statusRec->attr.attrId){
+   \   00001E   7C..         MOV     R4,#ZCLVersion & 0xff
+   \   000020   7D..         MOV     R5,#(ZCLVersion >> 8) & 0xff
+   \   000022   EA           MOV     A,R2
+   \   000023   2406         ADD     A,#0x6
+   \   000025   08           INC     R0
+   \   000026   E4           CLR     A
+   \   000027   3B           ADDC    A,R3
+   \   000028   F9           MOV     R1,A
+   \   000029   E8           MOV     A,R0
+   \   00002A   FE           MOV     R6,A
+   \   00002B   E9           MOV     A,R1
+   \   00002C   FF           MOV     R7,A
+   \   00002D   EA           MOV     A,R2
+   \   00002E   2404         ADD     A,#0x4
+   \   000030   F8           MOV     R0,A
+   \   000031   E4           CLR     A
+   \   000032   3B           ADDC    A,R3
+   \   000033   F9           MOV     R1,A
+   \   000034   8A82         MOV     DPL,R2
+   \   000036   8B83         MOV     DPH,R3
+   \   000038   A3           INC     DPTR
+   \   000039   A3           INC     DPTR
+   \   00003A   E0           MOVX    A,@DPTR
+   \   00003B   F5..         MOV     ?V4,A
+   \   00003D   A3           INC     DPTR
+   \   00003E   E0           MOVX    A,@DPTR
+   \   00003F   6003         JZ      $+5
+   \   000041   02....       LJMP    ??basicClusterReadAttribute_1 & 0xFFFF
+   \   000044   E5..         MOV     A,?V4
+   \   000046   12....       LCALL   ?UC_SWITCH_SPARSE
+   \                     `?<Jumptable for basicClusterReadAttribute>_0`:
+   \   000049   00           DB        0
+   \   00004A   09           DB        9
+   \   00004B   00           DB        0
+   \   00004C   ....         DW        ??basicClusterReadAttribute_2
+   \   00004E   03           DB        3
+   \   00004F   ....         DW        ??basicClusterReadAttribute_3
+   \   000051   04           DB        4
+   \   000052   ....         DW        ??basicClusterReadAttribute_4
+   \   000054   05           DB        5
+   \   000055   ....         DW        ??basicClusterReadAttribute_5
+   \   000057   06           DB        6
+   \   000058   ....         DW        ??basicClusterReadAttribute_6
+   \   00005A   07           DB        7
+   \   00005B   ....         DW        ??basicClusterReadAttribute_7
+   \   00005D   10           DB        16
+   \   00005E   ....         DW        ??basicClusterReadAttribute_8
+   \   000060   11           DB        17
+   \   000061   ....         DW        ??basicClusterReadAttribute_9
+   \   000063   12           DB        18
+   \   000064   ....         DW        ??basicClusterReadAttribute_10
+   \   000066   ....         DW        ??basicClusterReadAttribute_1
+     72          	case ATTRID_BASIC_HW_VERSION:
+     73          		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
+   \                     ??basicClusterReadAttribute_3:
+   \   000068   8882         MOV     DPL,R0
+   \   00006A   8983         MOV     DPH,R1
+   \   00006C   7420         MOV     A,#0x20
+   \   00006E   12....       LCALL   ??Subroutine2_0 & 0xFFFF
+     74          		statusRec->attr.dataPtr = (void *)&HWRevision;
+   \                     ??CrossCallReturnLabel_5:
+   \   000071   74..         MOV     A,#HWRevision & 0xff
+   \   000073   F0           MOVX    @DPTR,A
+   \   000074   A3           INC     DPTR
+   \   000075   74..         MOV     A,#(HWRevision >> 8) & 0xff
+   \   000077   02....       LJMP    ??basicClusterReadAttribute_11 & 0xFFFF
+     75          		break;
+     76          	case ATTRID_BASIC_ZCL_VERSION:
+     77          		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
+   \                     ??basicClusterReadAttribute_2:
+   \   00007A   8882         MOV     DPL,R0
+   \   00007C   8983         MOV     DPH,R1
+   \   00007E   7420         MOV     A,#0x20
+   \   000080   8006         SJMP    ??basicClusterReadAttribute_12
+     78          		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+     79          		break;
+     80          	case ATTRID_BASIC_MANUFACTURER_NAME:
+     81          		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+   \                     ??basicClusterReadAttribute_4:
+   \   000082   8882         MOV     DPL,R0
+   \   000084   8983         MOV     DPH,R1
+   \   000086   7442         MOV     A,#0x42
+   \                     ??basicClusterReadAttribute_12:
+   \   000088   12....       LCALL   ??Subroutine2_0 & 0xFFFF
+     82          		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+   \                     ??CrossCallReturnLabel_6:
+   \   00008B   EC           MOV     A,R4
+   \   00008C   F0           MOVX    @DPTR,A
+   \   00008D   A3           INC     DPTR
+   \   00008E   ED           MOV     A,R5
+   \   00008F   806D         SJMP    ??basicClusterReadAttribute_11
+     83          		break;
+     84          	case ATTRID_BASIC_MODEL_ID:
+     85          		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+   \                     ??basicClusterReadAttribute_5:
+   \   000091   12....       LCALL   ?Subroutine0 & 0xFFFF
+     86          		statusRec->attr.dataPtr = (void *)&modelId;
+   \                     ??CrossCallReturnLabel_2:
+   \   000094   74..         MOV     A,#modelId & 0xff
+   \   000096   F0           MOVX    @DPTR,A
+   \   000097   A3           INC     DPTR
+   \   000098   74..         MOV     A,#(modelId >> 8) & 0xff
+   \   00009A   8062         SJMP    ??basicClusterReadAttribute_11
+     87          		break;
+     88          	case ATTRID_BASIC_DATE_CODE:
+     89          		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+   \                     ??basicClusterReadAttribute_6:
+   \   00009C   12....       LCALL   ?Subroutine0 & 0xFFFF
+     90          		statusRec->attr.dataPtr = (void *)&dateCode;
+   \                     ??CrossCallReturnLabel_3:
+   \   00009F   74..         MOV     A,#dateCode & 0xff
+   \   0000A1   F0           MOVX    @DPTR,A
+   \   0000A2   A3           INC     DPTR
+   \   0000A3   74..         MOV     A,#(dateCode >> 8) & 0xff
+   \   0000A5   8057         SJMP    ??basicClusterReadAttribute_11
+     91          		break;
+     92          	case ATTRID_BASIC_POWER_SOURCE:
+     93          		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
+   \                     ??basicClusterReadAttribute_7:
+   \   0000A7   8882         MOV     DPL,R0
+   \   0000A9   8983         MOV     DPH,R1
+   \   0000AB   7430         MOV     A,#0x30
+   \   0000AD   12....       LCALL   ??Subroutine2_0 & 0xFFFF
+     94          		statusRec->attr.dataPtr = (void *)&powerSource;
+   \                     ??CrossCallReturnLabel_7:
+   \   0000B0   74..         MOV     A,#powerSource & 0xff
+   \   0000B2   F0           MOVX    @DPTR,A
+   \   0000B3   A3           INC     DPTR
+   \   0000B4   74..         MOV     A,#(powerSource >> 8) & 0xff
+   \   0000B6   8046         SJMP    ??basicClusterReadAttribute_11
+     95          		break;
+     96          	case ATTRID_BASIC_LOCATION_DESC:
+     97          		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+   \                     ??basicClusterReadAttribute_8:
+   \   0000B8   12....       LCALL   ?Subroutine0 & 0xFFFF
+     98          		statusRec->attr.dataPtr = (void *)&locationDescription;
+   \                     ??CrossCallReturnLabel_4:
+   \   0000BB   74..         MOV     A,#locationDescription & 0xff
+   \   0000BD   F0           MOVX    @DPTR,A
+   \   0000BE   A3           INC     DPTR
+   \   0000BF   74..         MOV     A,#(locationDescription >> 8) & 0xff
+   \   0000C1   8020         SJMP    ??basicClusterReadAttribute_13
+     99          		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+    100          		break;
+    101          	case ATTRID_BASIC_PHYSICAL_ENV:
+    102          		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
+   \                     ??basicClusterReadAttribute_9:
+   \   0000C3   8882         MOV     DPL,R0
+   \   0000C5   8983         MOV     DPH,R1
+   \   0000C7   7430         MOV     A,#0x30
+   \   0000C9   12....       LCALL   ??Subroutine2_0 & 0xFFFF
+    103          		statusRec->attr.dataPtr = (void *)&physicalEnvironment;
+   \                     ??CrossCallReturnLabel_8:
+   \   0000CC   74..         MOV     A,#physicalEnvironment & 0xff
+   \   0000CE   F0           MOVX    @DPTR,A
+   \   0000CF   A3           INC     DPTR
+   \   0000D0   74..         MOV     A,#(physicalEnvironment >> 8) & 0xff
+   \   0000D2   800F         SJMP    ??basicClusterReadAttribute_13
+    104          		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+    105          		break;
+    106          	case ATTRID_BASIC_DEVICE_ENABLED:
+    107          		statusRec->attr.dataType = ZCL_DATATYPE_BOOLEAN;
+   \                     ??basicClusterReadAttribute_10:
+   \   0000D4   8882         MOV     DPL,R0
+   \   0000D6   8983         MOV     DPH,R1
+   \   0000D8   7410         MOV     A,#0x10
+   \   0000DA   12....       LCALL   ??Subroutine2_0 & 0xFFFF
+    108          		statusRec->attr.dataPtr = (void *)&deviceEnable;
+   \                     ??CrossCallReturnLabel_9:
+   \   0000DD   74..         MOV     A,#deviceEnable & 0xff
+   \   0000DF   F0           MOVX    @DPTR,A
+   \   0000E0   A3           INC     DPTR
+   \   0000E1   74..         MOV     A,#(deviceEnable >> 8) & 0xff
+   \                     ??basicClusterReadAttribute_13:
+   \   0000E3   F0           MOVX    @DPTR,A
+    109          		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+   \   0000E4   85..82       MOV     DPL,?V0
+   \   0000E7   85..83       MOV     DPH,?V1
+   \   0000EA   7403         MOV     A,#0x3
+   \   0000EC   8010         SJMP    ??basicClusterReadAttribute_11
+    110          		break;
+    111          	default:
+    112          		statusRec->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+   \                     ??basicClusterReadAttribute_1:
+   \   0000EE   8A82         MOV     DPL,R2
+   \   0000F0   8B83         MOV     DPH,R3
+   \   0000F2   A3           INC     DPTR
+   \   0000F3   A3           INC     DPTR
+   \   0000F4   A3           INC     DPTR
+   \   0000F5   A3           INC     DPTR
+   \   0000F6   A3           INC     DPTR
+   \   0000F7   A3           INC     DPTR
+   \   0000F8   A3           INC     DPTR
+   \   0000F9   A3           INC     DPTR
+   \   0000FA   A3           INC     DPTR
+   \   0000FB   A3           INC     DPTR
+   \   0000FC   7486         MOV     A,#-0x7a
+   \                     ??basicClusterReadAttribute_11:
+   \   0000FE   F0           MOVX    @DPTR,A
+    113          	}
+    114          }
+   \                     ??basicClusterReadAttribute_0:
+   \   0000FF   7F06         MOV     R7,#0x6
+   \   000101   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000   8882         MOV     DPL,R0
+   \   000002   8983         MOV     DPH,R1
+   \   000004   7442         MOV     A,#0x42
+   \   000006                REQUIRE ??Subroutine2_0
+   \   000006                ; // Fall through to label ??Subroutine2_0
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ??Subroutine2_0:
+   \   000000   F0           MOVX    @DPTR,A
+   \   000001   8E82         MOV     DPL,R6
+   \   000003   8F83         MOV     DPH,R7
+   \   000005   22           RET
+    115          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+    116          ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){
    \                     processBasicClusterCommands:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-     39          	if ( zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
+    117          	if ( zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
    \   000004   8A82         MOV     DPL,R2
    \   000006   8B83         MOV     DPH,R3
    \   000008   A3           INC     DPTR
@@ -268,7 +715,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   00000A   E0           MOVX    A,@DPTR
    \   00000B   5408         ANL     A,#0x8
    \   00000D   7012         JNZ     ??processBasicClusterCommands_0
-     40          		switch(pInMsg->hdr.commandID){
+    118          		switch(pInMsg->hdr.commandID){
    \   00000F   8A82         MOV     DPL,R2
    \   000011   8B83         MOV     DPH,R3
    \   000013   A3           INC     DPTR
@@ -280,23 +727,23 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000019   A3           INC     DPTR
    \   00001A   E0           MOVX    A,@DPTR
    \   00001B   6004         JZ      ??processBasicClusterCommands_0
-     41          			case COMMAND_BASIC_RESET_FACT_DEFAULT:
-     42          				basicResetCB();
-     43          				return ZSuccess;
-     44          		default:
-     45                		return ZFailure;   // Error ignore the command
+    119          			case COMMAND_BASIC_RESET_FACT_DEFAULT:
+    120          				basicResetCB();
+    121          				return ZSuccess;
+    122          		default:
+    123                		return ZFailure;   // Error ignore the command
    \   00001D   7901         MOV     R1,#0x1
    \   00001F   8002         SJMP    ??processBasicClusterCommands_1
-     46          		}
-     47          	}
-     48          	return ZSuccess;
+    124          		}
+    125          	}
+    126          	return ZSuccess;
    \                     ??processBasicClusterCommands_0:
    \   000021   7900         MOV     R1,#0x0
    \                     ??processBasicClusterCommands_1:
    \   000023   D083         POP     DPH
    \   000025   D082         POP     DPL
    \   000027   02....       LJMP    ?BRET
-     49          }
+    127          }
 
    \                                 In  segment XDATA_ID, align 1, keep-with-next
    \                     `?<Initializer for locationDescription>`:
@@ -328,16 +775,29 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    \   000003   ......       DC24    basicResetCB
 
    \                                 In  segment BANK_RELAYS, align 1
+   \                     ??basicClusterWriteAttribute?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    basicClusterWriteAttribute
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??basicClusterReadAttribute?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    basicClusterReadAttribute
+
+   \                                 In  segment BANK_RELAYS, align 1
    \                     ??processBasicClusterCommands?relay:
    \   000000   12....       LCALL   ?BDISPATCH
    \   000003   ......       DC24    processBasicClusterCommands
 
    Maximum stack usage in bytes:
 
-   ISTACK Function
-   ------ --------
-      0   basicResetCB
-      2   processBasicClusterCommands
+   ISTACK XSTACK Function
+   ------ ------ --------
+      0     14   basicClusterReadAttribute
+      0     14   basicClusterWriteAttribute
+        0     14   -> osal_memcpy
+      0      0   basicResetCB
+      2      0   processBasicClusterCommands
 
 
    Segment part sizes:
@@ -346,10 +806,17 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
    -----  --------------
        1  ?<Initializer for deviceEnable>
       17  ?<Initializer for locationDescription>
+       6  ??Subroutine2_0
+       6  ??basicClusterReadAttribute?relay
+       6  ??basicClusterWriteAttribute?relay
        6  ??basicResetCB?relay
        6  ??processBasicClusterCommands?relay
+       6  ?Subroutine0
+      20  ?Subroutine1
        1  HWRevision
        1  ZCLVersion
+     260  basicClusterReadAttribute
+     208  basicClusterWriteAttribute
        3  basicResetCB
       17  dateCode
        1  deviceEnable
@@ -361,16 +828,16 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterBasi
       42  processBasicClusterCommands
 
  
- 45 bytes in segment BANKED_CODE
- 12 bytes in segment BANK_RELAYS
- 18 bytes in segment XDATA_I
- 18 bytes in segment XDATA_ID
- 58 bytes in segment XDATA_ROM_C
-  1 byte  in segment XDATA_Z
+ 545 bytes in segment BANKED_CODE
+  24 bytes in segment BANK_RELAYS
+  18 bytes in segment XDATA_I
+  18 bytes in segment XDATA_ID
+  58 bytes in segment XDATA_ROM_C
+   1 byte  in segment XDATA_Z
  
- 75 bytes of CODE  memory
- 58 bytes of CONST memory
- 19 bytes of XDATA memory
+ 587 bytes of CODE  memory
+  58 bytes of CONST memory
+  19 bytes of XDATA memory
 
 Errors: none
 Warnings: none

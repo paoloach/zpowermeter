@@ -1,0 +1,432 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             04/Nov/2015  16:02:03 #
+# Copyright 2004-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Core               =  plain                                              #
+#    Code model         =  banked                                             #
+#    Data model         =  large                                              #
+#    Calling convention =  xdata reentrant                                    #
+#    Constant location  =  data_rom                                           #
+#    Dptr setup         =  1,16                                               #
+#                                                                             #
+#    Source file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\zclReadAttributeFn.c       #
+#    Command line       =  -f C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\..\Tools\f8wRouter.cfg (-DCPU32MHZ  #
+#                          -DROOT=__near_func -DMAC_CFG_APP_PENDING_QUEUE=TRU #
+#                          E -DMAC_CFG_TX_DATA_MAX=5 -DMAC_CFG_TX_MAX=8       #
+#                          -DMAC_CFG_RX_MAX=5 -DRTR_NWK) -f                   #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wConfig.cfg (-DZIGBEEPRO    #
+#                          -DSECURE=0 -DZG_SECURE_DYNAMIC=0 -DREFLECTOR       #
+#                          -DDEFAULT_CHANLIST=0x00000800                      #
+#                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                       #
+#                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_MA #
+#                          SK=0x007F -DBEACON_REQUEST_DELAY=100               #
+#                          -DBEACON_REQ_DELAY_MASK=0x00FF                     #
+#                          -DLINK_STATUS_JITTER_MASK=0x007F                   #
+#                          -DROUTE_EXPIRY_TIME=30 -DAPSC_ACK_WAIT_DURATION_PO #
+#                          LLED=3000 -DNWK_INDIRECT_MSG_TIMEOUT=7             #
+#                          -DMAX_RREQ_ENTRIES=8 -DAPSC_MAX_FRAME_RETRIES=3    #
+#                          -DNWK_MAX_DATA_RETRIES=2                           #
+#                          -DMAX_POLL_FAILURE_RETRIES=2 -DMAX_BCAST=9         #
+#                          -DAPS_MAX_GROUPS=16 -DMAX_RTG_ENTRIES=40           #
+#                          -DNWK_MAX_BINDING_ENTRIES=4                        #
+#                          -DMAX_BINDING_CLUSTER_IDS=4 "-DDEFAULT_KEY={0x01,  #
+#                          0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x00,    #
+#                          0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0D}"         #
+#                          -DMAC_MAX_FRAME_SIZE=116                           #
+#                          -DZDNWKMGR_MIN_TRANSMISSIONS=20 "-DCONST=const     #
+#                          __code" -DGENERIC=__generic                        #
+#                          -DRFD_RCVC_ALWAYS_ON=FALSE -DPOLL_RATE=5000        #
+#                          -DQUEUED_POLL_RATE=100 -DRESPONSE_POLL_RATE=100    #
+#                          -DREJOIN_POLL_RATE=440) -f                         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Tools\f8wZCL.cfg                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\Components\stack\zcl\zclReadAttributeFn.c -D    #
+#                          SECURE=0 -D OSC32K_CRYSTAL_INSTALLED=FALSE -D      #
+#                          HAL_KEY=FALSE -D HAL_BOARD_CC2530EB_REV17 -D       #
+#                          TC_LINKKEY_JOIN -D NV_INIT -D xNV_RESTORE -D       #
+#                          MULTICAST_ENABLED=FALSE -D ZCL_READ -D ZCL_WRITE   #
+#                          -D ZCL_REPORT -D FEATURE_SYSTEM_STATS -lC          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ -lA                     #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\ --diag_suppress         #
+#                          Pe001,Pa010 -o C:\Users\paolo\Documents\GitHub\zpo #
+#                          wermeter\firmware\CC2530DB\RouterEB\Obj\ -e        #
+#                          --debug --core=plain --dptr=16,1                   #
+#                          --data_model=large --code_model=banked             #
+#                          --calling_convention=xdata_reentrant               #
+#                          --place_constants=data_rom --nr_virtual_regs 16    #
+#                          -I C:\Users\paolo\Documents\GitHub\zpowermeter\fir #
+#                          mware\CC2530DB\ -I C:\Users\paolo\Documents\GitHub #
+#                          \zpowermeter\firmware\CC2530DB\..\Source\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\ha\ -I                       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Source\zmain\ -I                    #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\hal\target\CC2530EB\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\include\ -I          #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\high_level\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\ -I  #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\mac\low_level\srf04\sing #
+#                          le_chip\ -I C:\Users\paolo\Documents\GitHub\zpower #
+#                          meter\firmware\CC2530DB\..\Components\mt\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\osal\include\ -I         #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\saddr\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\services\sdata\ -I       #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\af\ -I             #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\nwk\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sapi\ -I           #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sec\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\sys\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zcl\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\stack\zdo\ -I            #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\ -I                 #
+#                          C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\..\Components\zmac\f8w\ -Ohz           #
+#                          --require_prototypes                               #
+#    List file          =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\List\zclReadAttributeFn.lst   #
+#    Object file        =  C:\Users\paolo\Documents\GitHub\zpowermeter\firmwa #
+#                          re\CC2530DB\RouterEB\Obj\zclReadAttributeFn.r51    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\stack\zcl\zclReadAttributeFn.c
+      1          /**************************************************************************************************
+      2          
+      3           DESCRIPTION:
+      4            --
+      5          
+      6           CREATED: 30/10/2015, by Paolo Achdjian
+      7          
+      8           FILE: zclReadAttributeFn.c
+      9          
+     10          ***************************************************************************************************/
+     11          
+     12          #include "zclReadAttributeFn.h"
+     13          #include "OSAL_Memory.h"
+     14          
+     15          #define ZCL_STATUS_UNSUPPORTED_ATTRIBUTE                0x86
+     16          
+
+   \                                 In  segment XDATA_Z, align 1, keep-with-next
+     17          static struct ReadAttributeFnList * head;
+   \                     head:
+   \   000000                DS 2
+   \   000002                REQUIRE __INIT_XDATA_Z
+     18          
+     19          static void readAttributeFnDefault(zclAttrRec_t *);
+     20          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     21          void addReadAttributeFn(uint8 endpoint, uint16 cluster, ReadAttributeFn callback){
+   \                     addReadAttributeFn:
+   \   000000                REQUIRE ?V0
+   \   000000                REQUIRE ?V2
+   \   000000                REQUIRE ?V3
+   \   000000                REQUIRE ?V4
+   \   000000                REQUIRE ?V5
+   \   000000   74F2         MOV     A,#-0xe
+   \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
+   \   000005                ; Saved register size: 14
+   \   000005                ; Auto size: 0
+   \   000005   89..         MOV     ?V0,R1
+   \   000007   8A..         MOV     ?V2,R2
+   \   000009   8B..         MOV     ?V3,R3
+   \   00000B   EC           MOV     A,R4
+   \   00000C   FE           MOV     R6,A
+   \   00000D   ED           MOV     A,R5
+   \   00000E   FF           MOV     R7,A
+     22          	if (head == NULL){
+   \   00000F   90....       MOV     DPTR,#head
+   \   000012   E0           MOVX    A,@DPTR
+   \   000013   F8           MOV     R0,A
+   \   000014   A3           INC     DPTR
+   \   000015   E0           MOVX    A,@DPTR
+   \   000016   F9           MOV     R1,A
+   \   000017   E8           MOV     A,R0
+   \   000018   49           ORL     A,R1
+   \   000019   7A07         MOV     R2,#0x7
+   \   00001B   7B00         MOV     R3,#0x0
+   \   00001D   702A         JNZ     ??addReadAttributeFn_0
+     23          		head = (struct ReadAttributeFnList *) osal_mem_alloc(sizeof(struct ReadAttributeFnList));
+   \   00001F                ; Setup parameters for call to function osal_mem_alloc
+   \   00001F   12....       LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
+   \   000022   90....       MOV     DPTR,#head
+   \   000025   EA           MOV     A,R2
+   \   000026   F0           MOVX    @DPTR,A
+   \   000027   A3           INC     DPTR
+   \   000028   EB           MOV     A,R3
+   \   000029   12....       LCALL   ?Subroutine2 & 0xFFFF
+     24          		head->endpoint = endpoint;
+     25          		head->clusterId = cluster;
+     26          		head->callback = callback;
+     27          		head->next = NULL;
+     28          	} else {
+   \                     ??CrossCallReturnLabel_2:
+   \   00002C   E5..         MOV     A,?V0
+   \   00002E   12....       LCALL   ?Subroutine2 & 0xFFFF
+   \                     ??CrossCallReturnLabel_3:
+   \   000031   A3           INC     DPTR
+   \   000032   E5..         MOV     A,?V2
+   \   000034   F0           MOVX    @DPTR,A
+   \   000035   A3           INC     DPTR
+   \   000036   E5..         MOV     A,?V3
+   \   000038   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_0:
+   \   00003B   EE           MOV     A,R6
+   \   00003C   F0           MOVX    @DPTR,A
+   \   00003D   A3           INC     DPTR
+   \   00003E   EF           MOV     A,R7
+   \   00003F   12....       LCALL   ?Subroutine1 & 0xFFFF
+   \                     ??CrossCallReturnLabel_1:
+   \   000042   A3           INC     DPTR
+   \   000043   A3           INC     DPTR
+   \   000044   E4           CLR     A
+   \   000045   F0           MOVX    @DPTR,A
+   \   000046   A3           INC     DPTR
+   \   000047   8043         SJMP    ??addReadAttributeFn_1
+     29          		struct ReadAttributeFnList * newHead = (struct ReadAttributeFnList *) osal_mem_alloc(sizeof(struct ReadAttributeFnList));
+   \                     ??addReadAttributeFn_0:
+   \   000049                ; Setup parameters for call to function osal_mem_alloc
+   \   000049   12....       LCALL   ??osal_mem_alloc?relay; Banked call to: osal_mem_alloc
+   \   00004C   8A..         MOV     ?V4,R2
+   \   00004E   8B..         MOV     ?V5,R3
+   \   000050   A8..         MOV     R0,?V4
+   \   000052   A9..         MOV     R1,?V5
+     30          		newHead->endpoint = endpoint;
+   \   000054   8882         MOV     DPL,R0
+   \   000056   8983         MOV     DPH,R1
+   \   000058   E5..         MOV     A,?V0
+   \   00005A   F0           MOVX    @DPTR,A
+     31          		newHead->clusterId = cluster;
+   \   00005B   A3           INC     DPTR
+   \   00005C   E5..         MOV     A,?V2
+   \   00005E   F0           MOVX    @DPTR,A
+   \   00005F   A3           INC     DPTR
+   \   000060   E5..         MOV     A,?V3
+   \   000062   F0           MOVX    @DPTR,A
+     32          		newHead->callback = callback;
+   \   000063   8882         MOV     DPL,R0
+   \   000065   8983         MOV     DPH,R1
+   \   000067   A3           INC     DPTR
+   \   000068   A3           INC     DPTR
+   \   000069   A3           INC     DPTR
+   \   00006A   EE           MOV     A,R6
+   \   00006B   F0           MOVX    @DPTR,A
+   \   00006C   A3           INC     DPTR
+   \   00006D   EF           MOV     A,R7
+   \   00006E   F0           MOVX    @DPTR,A
+     33          		newHead->next = head;
+   \   00006F   90....       MOV     DPTR,#head
+   \   000072   E0           MOVX    A,@DPTR
+   \   000073   FA           MOV     R2,A
+   \   000074   A3           INC     DPTR
+   \   000075   E0           MOVX    A,@DPTR
+   \   000076   FB           MOV     R3,A
+   \   000077   8882         MOV     DPL,R0
+   \   000079   8983         MOV     DPH,R1
+   \   00007B   A3           INC     DPTR
+   \   00007C   A3           INC     DPTR
+   \   00007D   A3           INC     DPTR
+   \   00007E   A3           INC     DPTR
+   \   00007F   A3           INC     DPTR
+   \   000080   EA           MOV     A,R2
+   \   000081   F0           MOVX    @DPTR,A
+   \   000082   A3           INC     DPTR
+   \   000083   EB           MOV     A,R3
+   \   000084   F0           MOVX    @DPTR,A
+     34          		head = newHead;
+   \   000085   90....       MOV     DPTR,#head
+   \   000088   E8           MOV     A,R0
+   \   000089   F0           MOVX    @DPTR,A
+   \   00008A   A3           INC     DPTR
+   \   00008B   E9           MOV     A,R1
+   \                     ??addReadAttributeFn_1:
+   \   00008C   F0           MOVX    @DPTR,A
+     35          	}
+     36          }
+   \   00008D   7F06         MOV     R7,#0x6
+   \   00008F   02....       LJMP    ?BANKED_LEAVE_XDATA
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine2:
+   \   000000   12....       LCALL   ?Subroutine3 & 0xFFFF
+   \                     ??CrossCallReturnLabel_4:
+   \   000003   22           RET
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine3:
+   \   000000   F0           MOVX    @DPTR,A
+   \   000001   90....       MOV     DPTR,#head
+   \   000004   E0           MOVX    A,@DPTR
+   \   000005   F8           MOV     R0,A
+   \   000006   A3           INC     DPTR
+   \   000007   E0           MOVX    A,@DPTR
+   \   000008   F583         MOV     DPH,A
+   \   00000A   8882         MOV     DPL,R0
+   \   00000C   22           RET
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine1:
+   \   000000   12....       LCALL   ?Subroutine3 & 0xFFFF
+   \                     ??CrossCallReturnLabel_5:
+   \   000003   A3           INC     DPTR
+   \   000004   A3           INC     DPTR
+   \   000005   A3           INC     DPTR
+   \   000006   22           RET
+     37          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     38          ReadAttributeFn findReadAttributeFn(uint8 endpoint, uint16 clusterId){
+   \                     findReadAttributeFn:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     39          	struct ReadAttributeFnList * iter = head;
+   \   000004   90....       MOV     DPTR,#head
+   \   000007   E0           MOVX    A,@DPTR
+   \   000008   FA           MOV     R2,A
+   \   000009   A3           INC     DPTR
+   \   00000A   E0           MOVX    A,@DPTR
+   \   00000B   FB           MOV     R3,A
+   \   00000C   8A82         MOV     DPL,R2
+   \   00000E   8B83         MOV     DPH,R3
+     40          	while (iter != NULL){
+   \   000010   E582         MOV     A,DPL
+   \   000012   4583         ORL     A,DPH
+   \   000014   600E         JZ      ??findReadAttributeFn_0
+     41          		if (iter->endpoint == endpoint && clusterId == clusterId){
+   \                     ??findReadAttributeFn_1:
+   \   000016   E0           MOVX    A,@DPTR
+   \   000017   69           XRL     A,R1
+   \   000018   70FC         JNZ     ??findReadAttributeFn_1
+     42          			return iter->callback;
+   \   00001A   A3           INC     DPTR
+   \   00001B   A3           INC     DPTR
+   \   00001C   A3           INC     DPTR
+   \   00001D   E0           MOVX    A,@DPTR
+   \   00001E   FA           MOV     R2,A
+   \   00001F   A3           INC     DPTR
+   \   000020   E0           MOVX    A,@DPTR
+   \   000021   FB           MOV     R3,A
+   \   000022   8004         SJMP    ??findReadAttributeFn_2
+     43          		}
+     44          	}
+     45          	return &readAttributeFnDefault;
+   \                     ??findReadAttributeFn_0:
+   \   000024   7A..         MOV     R2,#??readAttributeFnDefault?relay & 0xff
+   \   000026   7B..         MOV     R3,#(??readAttributeFnDefault?relay >> 8) & 0xff
+   \                     ??findReadAttributeFn_2:
+   \   000028                REQUIRE ?Subroutine0
+   \   000028                ; // Fall through to label ?Subroutine0
+     46          }
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000   D083         POP     DPH
+   \   000002   D082         POP     DPL
+   \   000004   02....       LJMP    ?BRET
+     47          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     48          void readAttributeFnDefault(zclAttrRec_t * status){
+   \                     readAttributeFnDefault:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     49          	status->attr.status=ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+   \   000004   8A82         MOV     DPL,R2
+   \   000006   8B83         MOV     DPH,R3
+   \   000008   A3           INC     DPTR
+   \   000009   A3           INC     DPTR
+   \   00000A   A3           INC     DPTR
+   \   00000B   A3           INC     DPTR
+   \   00000C   A3           INC     DPTR
+   \   00000D   A3           INC     DPTR
+   \   00000E   A3           INC     DPTR
+   \   00000F   A3           INC     DPTR
+   \   000010   A3           INC     DPTR
+   \   000011   A3           INC     DPTR
+   \   000012   7486         MOV     A,#-0x7a
+   \   000014   F0           MOVX    @DPTR,A
+     50          }
+   \   000015   80..         SJMP    ?Subroutine0
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??addReadAttributeFn?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    addReadAttributeFn
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??findReadAttributeFn?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    findReadAttributeFn
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??readAttributeFnDefault?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    readAttributeFnDefault
+
+   Maximum stack usage in bytes:
+
+   ISTACK XSTACK Function
+   ------ ------ --------
+      1     14   addReadAttributeFn
+        0     14   -> osal_mem_alloc
+      2      0   findReadAttributeFn
+      2      0   readAttributeFnDefault
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       6  ??addReadAttributeFn?relay
+       6  ??findReadAttributeFn?relay
+       6  ??readAttributeFnDefault?relay
+       7  ?Subroutine0
+       7  ?Subroutine1
+       4  ?Subroutine2
+      13  ?Subroutine3
+     146  addReadAttributeFn
+      40  findReadAttributeFn
+       2  head
+      23  readAttributeFnDefault
+
+ 
+ 240 bytes in segment BANKED_CODE
+  18 bytes in segment BANK_RELAYS
+   2 bytes in segment XDATA_Z
+ 
+ 258 bytes of CODE  memory
+   2 bytes of XDATA memory
+
+Errors: none
+Warnings: none

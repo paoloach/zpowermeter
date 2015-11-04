@@ -2965,16 +2965,22 @@
       <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_ezmode.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_general.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Components\stack\zcl\zcl_general.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\Source\ha\zcl_ha.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Source\ha\zcl_ha.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclReadAttributeFn.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclReadAttributeFn.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclWriteAttributeFn.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Components\stack\zcl\zclWriteAttributeFn.h</name>
     </file>
   </group>
   <group>

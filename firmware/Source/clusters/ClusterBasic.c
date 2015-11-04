@@ -7,6 +7,7 @@
 **************************************************************************************************/
 
 #include "ClusterBasic.h"
+#include "osal.h"
 
 
 const uint8 HWRevision = 1;
@@ -21,18 +22,95 @@ uint8 physicalEnvironment = 0;
 uint8 deviceEnable = DEVICE_ENABLED;
 
 
-/*********************************************************************
- * @fn      zclSampleLight_BasicResetCB
- *
- * @brief   Callback from the ZCL General Cluster Library
- *          to set all the Basic Cluster attributes to default values.
- *
- * @param   none
- *
- * @return  none
- */
 void basicResetCB( void ){
   // Reset all attributes to default values
+}
+
+void basicClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
+	if (writeAttribute == NULL){
+		return;
+	}
+	writeAttribute->status=ZCL_STATUS_SUCCESS;
+	switch(writeAttribute->attrId){
+	case ATTRID_BASIC_HW_VERSION:
+	case ATTRID_BASIC_ZCL_VERSION:
+	case ATTRID_BASIC_MANUFACTURER_NAME:
+	case ATTRID_BASIC_MODEL_ID:
+	case ATTRID_BASIC_DATE_CODE:
+	case ATTRID_BASIC_POWER_SOURCE:
+		writeAttribute->status=ZCL_STATUS_READ_ONLY;
+		break;
+	case ATTRID_BASIC_LOCATION_DESC:
+		if (writeAttribute->dataType == ZCL_DATATYPE_CHAR_STR)
+			osal_memcpy((void *)&locationDescription, writeAttribute->dataPtr, writeAttribute->len);
+		else
+			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+		break;
+	case ATTRID_BASIC_PHYSICAL_ENV:
+		if (writeAttribute->dataType == ZCL_DATATYPE_ENUM8)
+			osal_memcpy((void *)&physicalEnvironment, writeAttribute->dataPtr, writeAttribute->len);
+		else 
+			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+		break;
+	case ATTRID_BASIC_DEVICE_ENABLED:
+		if (writeAttribute->dataType == ZCL_DATATYPE_BOOLEAN)
+			deviceEnable = *(uint8 *)writeAttribute->dataPtr;
+		else 
+			writeAttribute->status = ZCL_STATUS_INVALID_DATA_TYPE;
+		break;
+	default:
+		writeAttribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
+}
+
+void basicClusterReadAttribute(zclAttrRec_t * statusRec){
+	if (statusRec == NULL){
+		return;
+	}
+	statusRec->attr.accessControl = ACCESS_CONTROL_READ;
+	switch(statusRec->attr.attrId){
+	case ATTRID_BASIC_HW_VERSION:
+		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
+		statusRec->attr.dataPtr = (void *)&HWRevision;
+		break;
+	case ATTRID_BASIC_ZCL_VERSION:
+		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
+		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+		break;
+	case ATTRID_BASIC_MANUFACTURER_NAME:
+		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+		break;
+	case ATTRID_BASIC_MODEL_ID:
+		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->attr.dataPtr = (void *)&modelId;
+		break;
+	case ATTRID_BASIC_DATE_CODE:
+		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->attr.dataPtr = (void *)&dateCode;
+		break;
+	case ATTRID_BASIC_POWER_SOURCE:
+		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
+		statusRec->attr.dataPtr = (void *)&powerSource;
+		break;
+	case ATTRID_BASIC_LOCATION_DESC:
+		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->attr.dataPtr = (void *)&locationDescription;
+		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		break;
+	case ATTRID_BASIC_PHYSICAL_ENV:
+		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
+		statusRec->attr.dataPtr = (void *)&physicalEnvironment;
+		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		break;
+	case ATTRID_BASIC_DEVICE_ENABLED:
+		statusRec->attr.dataType = ZCL_DATATYPE_BOOLEAN;
+		statusRec->attr.dataPtr = (void *)&deviceEnable;
+		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		break;
+	default:
+		statusRec->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
 }
 
 ZStatus_t processBasicClusterCommands( zclIncoming_t *pInMsg ){

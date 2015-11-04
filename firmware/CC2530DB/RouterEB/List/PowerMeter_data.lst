@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:17:23 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             04/Nov/2015  21:35:19 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -156,134 +156,76 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    \                                 In  segment CODE_C, align 1
      37          CONST zclAttrRec_t powerMeterAttrs[] = {
    \                     powerMeterAttrs:
-   \   000000   0000         DW 0
-   \   000002   0300         DW 3
-   \   000004   20           DB 32
+   \   000000   0100         DW 1
+   \   000002   0000         DW 0
+   \   000004   21           DB 33
    \   000005   01           DB 1
-   \   000006   ....         DW HWRevision
+   \   000006   ....         DW mainVoltage
    \   000008   0000         DW 0H
-   \   00000A   0000         DW 0
-   \   00000C   0000         DW 0
-   \   00000E   20           DB 32
-   \   00000F   01           DB 1
-   \   000010   ....         DW ZCLVersion
-   \   000012   0000         DW 0H
-   \   000014   0000         DW 0
-   \   000016   0400         DW 4
-   \   000018   42           DB 66
-   \   000019   01           DB 1
-   \   00001A   ....         DW manufacturerName
-   \   00001C   0000         DW 0H
-   \   00001E   0000         DW 0
-   \   000020   0500         DW 5
-   \   000022   42           DB 66
-   \   000023   01           DB 1
-   \   000024   ....         DW modelId
-   \   000026   0000         DW 0H
-   \   000028   0000         DW 0
-   \   00002A   0600         DW 6
-   \   00002C   42           DB 66
-   \   00002D   01           DB 1
-   \   00002E   ....         DW dateCode
-   \   000030   0000         DW 0H
-   \   000032   0000         DW 0
-   \   000034   0700         DW 7
-   \   000036   30           DB 48
-   \   000037   01           DB 1
-   \   000038   ....         DW powerSource
-   \   00003A   0000         DW 0H
-   \   00003C   0000         DW 0
-   \   00003E   1000         DW 16
-   \   000040   42           DB 66
-   \   000041   03           DB 3
-   \   000042   ....         DW locationDescription
-   \   000044   0000         DW 0H
-   \   000046   0000         DW 0
-   \   000048   1100         DW 17
-   \   00004A   30           DB 48
-   \   00004B   03           DB 3
-   \   00004C   ....         DW physicalEnvironment
-   \   00004E   0000         DW 0H
-   \   000050   0000         DW 0
-   \   000052   1200         DW 18
-   \   000054   10           DB 16
-   \   000055   03           DB 3
-   \   000056   ....         DW deviceEnable
-   \   000058   0000         DW 0H
-   \   00005A   0300         DW 3
-   \   00005C   0000         DW 0
-   \   00005E   21           DB 33
-   \   00005F   03           DB 3
-   \   000060   ....         DW identifyTime
-   \   000062   ....         DW ??processIdentifyTimeChange?relay
-   \   000064   0100         DW 1
-   \   000066   0000         DW 0
-   \   000068   21           DB 33
-   \   000069   01           DB 1
-   \   00006A   ....         DW mainVoltage
-   \   00006C   0000         DW 0H
-   \   00006E   0100         DW 1
-   \   000070   2000         DW 32
-   \   000072   20           DB 32
-   \   000073   01           DB 1
-   \   000074   ....         DW batteryVoltage
-   \   000076   0000         DW 0H
-   \   000078   0100         DW 1
-   \   00007A   3500         DW 53
-   \   00007C   18           DB 24
-   \   00007D   01           DB 1
-   \   00007E   ....         DW batteryAlarmMask
-   \   000080   0000         DW 0H
-   \   000082   0600         DW 6
-   \   000084   0000         DW 0
-   \   000086   10           DB 16
-   \   000087   01           DB 1
-   \   000088   ....         DW onOffValue
-   \   00008A   ....         DW ??setIOStatus?relay
-   \   00008C   FFFF         DW 65535
-   \   00008E   0000         DW 0
-   \   000090   00           DB 0
-   \   000091   00           DB 0
-   \   000092   0000         DW 0H
-   \   000094   0000         DB 0, 0
-     38          	BASIC_ATTRIBUTE
-     39          	IDENTIFY_ATTRIBUTES
-     40          	POWER_ATTRIBUTES
-     41          	ONOF_ATTRIBUTES
-     42           	LAST_CLUSTER_ATTRIBUTE
-     43          };
-     44          
-     45          /*********************************************************************
-     46           * SIMPLE DESCRIPTOR
-     47           */
-     48          // This is the Cluster ID List and should be filled with Application specific cluster IDs.
-     49          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
+   \   00000A   00           DB 0
+   \   00000B   0100         DW 1
+   \   00000D   2000         DW 32
+   \   00000F   20           DB 32
+   \   000010   01           DB 1
+   \   000011   ....         DW batteryVoltage
+   \   000013   0000         DW 0H
+   \   000015   00           DB 0
+   \   000016   0100         DW 1
+   \   000018   3500         DW 53
+   \   00001A   18           DB 24
+   \   00001B   01           DB 1
+   \   00001C   ....         DW batteryAlarmMask
+   \   00001E   0000         DW 0H
+   \   000020   00           DB 0
+   \   000021   0600         DW 6
+   \   000023   0000         DW 0
+   \   000025   10           DB 16
+   \   000026   01           DB 1
+   \   000027   ....         DW onOffValue
+   \   000029   ....         DW ??setIOStatus?relay
+   \   00002B   00           DB 0
+   \   00002C   FFFF         DW 65535
+   \   00002E   0000         DW 0
+   \   000030   00           DB 0
+   \   000031   00           DB 0
+   \   000032   0000         DW 0H
+   \   000034   000000       DB 0, 0, 0
+     38          	POWER_ATTRIBUTES
+     39          	ONOF_ATTRIBUTES
+     40           	LAST_CLUSTER_ATTRIBUTE
+     41          };
+     42          
+     43          /*********************************************************************
+     44           * SIMPLE DESCRIPTOR
+     45           */
+     46          // This is the Cluster ID List and should be filled with Application specific cluster IDs.
+     47          #define ZCLSAMPLELIGHT_MAX_INCLUSTERS       4
 
    \                                 In  segment XDATA_ROM_C, align 1
-     50          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] ={
+     48          const cId_t powerMeter_InClusterList[ZCLSAMPLELIGHT_MAX_INCLUSTERS] ={
    \                     powerMeter_InClusterList:
    \   000000   0000         DW 0
    \   000002   0300         DW 3
    \   000004   0100         DW 1
    \   000006   0600         DW 6
-     51            ZCL_CLUSTER_ID_GEN_BASIC,
-     52            ZCL_CLUSTER_ID_GEN_IDENTIFY,
-     53            ZCL_CLUSTER_ID_GEN_POWER_CFG,
-     54            ZCL_CLUSTER_ID_GEN_ON_OFF
-     55          };
-     56          
-     57          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
+     49            ZCL_CLUSTER_ID_GEN_BASIC,
+     50            ZCL_CLUSTER_ID_GEN_IDENTIFY,
+     51            ZCL_CLUSTER_ID_GEN_POWER_CFG,
+     52            ZCL_CLUSTER_ID_GEN_ON_OFF
+     53          };
+     54          
+     55          #define ZCLSAMPLELIGHT_MAX_OUTCLUSTERS       1
 
    \                                 In  segment XDATA_ROM_C, align 1
-     58          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] ={
+     56          const cId_t powerMeter_OutClusterList[ZCLSAMPLELIGHT_MAX_OUTCLUSTERS] ={
    \                     powerMeter_OutClusterList:
    \   000000   0000         DW 0
-     59            ZCL_CLUSTER_ID_GEN_BASIC
-     60          };
-     61          
+     57            ZCL_CLUSTER_ID_GEN_BASIC
+     58          };
+     59          
 
    \                                 In  segment XDATA_I, align 1, keep-with-next
-     62          SimpleDescriptionFormat_t OnOff_SimpleDesc = {
+     60          SimpleDescriptionFormat_t OnOff_SimpleDesc = {
    \                     OnOff_SimpleDesc:
    \   000000                DS 12
    \   00000C                REQUIRE `?<Initializer for OnOff_SimpleDesc>`
@@ -299,19 +241,19 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    \   000007   ....         DW powerMeter_InClusterList
    \   000009   01           DB 1
    \   00000A   ....         DW powerMeter_OutClusterList
-     63            ENDPOINT_ONOFF,                  			//  int Endpoint;
-     64            ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-     65            ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
-     66            DEVICE_VERSION,           			//  int   AppDevVer:4;
-     67            FLAGS,                    			//  int   AppFlags:4;
-     68            ZCLSAMPLELIGHT_MAX_INCLUSTERS,        //  byte  AppNumInClusters;
-     69            (cId_t *)powerMeter_InClusterList, 	//  byte *pAppInClusterList;
-     70            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,       //  byte  AppNumInClusters;
-     71            (cId_t *)powerMeter_OutClusterList 	//  byte *pAppInClusterList;
-     72          };
+     61            ENDPOINT_ONOFF,                  			//  int Endpoint;
+     62            ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
+     63            ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
+     64            DEVICE_VERSION,           			//  int   AppDevVer:4;
+     65            FLAGS,                    			//  int   AppFlags:4;
+     66            ZCLSAMPLELIGHT_MAX_INCLUSTERS,        //  byte  AppNumInClusters;
+     67            (cId_t *)powerMeter_InClusterList, 	//  byte *pAppInClusterList;
+     68            ZCLSAMPLELIGHT_MAX_OUTCLUSTERS,       //  byte  AppNumInClusters;
+     69            (cId_t *)powerMeter_OutClusterList 	//  byte *pAppInClusterList;
+     70          };
+     71          
+     72          
      73          
-     74          
-     75          
 
 
    Segment part sizes:
@@ -320,19 +262,19 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\PowerMeter_data.c
    -----  --------------
       12  ?<Initializer for OnOff_SimpleDesc>
       12  OnOff_SimpleDesc
-     150  powerMeterAttrs
+      55  powerMeterAttrs
        8  powerMeter_InClusterList
        2  powerMeter_OutClusterList
 
  
- 150 bytes in segment CODE_C
-  12 bytes in segment XDATA_I
-  12 bytes in segment XDATA_ID
-  10 bytes in segment XDATA_ROM_C
+ 55 bytes in segment CODE_C
+ 12 bytes in segment XDATA_I
+ 12 bytes in segment XDATA_ID
+ 10 bytes in segment XDATA_ROM_C
  
- 162 bytes of CODE  memory
-  10 bytes of CONST memory
-  12 bytes of XDATA memory
+ 67 bytes of CODE  memory
+ 10 bytes of CONST memory
+ 12 bytes of XDATA memory
 
 Errors: none
 Warnings: none

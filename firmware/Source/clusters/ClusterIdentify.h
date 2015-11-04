@@ -12,8 +12,10 @@
 #include "zcl_general.h"
 #include "zcl.h"
 #include "ClusterOSALEvents.h"
+#include "zclReadAttributeFn.h"
+#include "zclWriteAttributeFn.h"
 
-extern uint16 identifyTime;
+
 
 #define IDENTIFY_ATTRIBUTES  { ZCL_CLUSTER_ID_GEN_IDENTIFY, {  ATTRID_IDENTIFY_TIME,  ZCL_DATATYPE_UINT16, ACCESS_CONTROL_R_W, (void *)&identifyTime, &processIdentifyTimeChange  }  },
 
@@ -23,5 +25,8 @@ uint16 identifyLoop(uint16 events);
 
 ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg );
 ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg );
+
+void identifyClusterReadAttribute(zclAttrRec_t *);
+void identifyClusterWriteAttribute(ZclWriteAttribute_t *);
 
 #endif

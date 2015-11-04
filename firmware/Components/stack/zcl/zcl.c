@@ -45,6 +45,8 @@
 
 #include "zcl.h"
 #include "zcl_general.h"
+#include "zclReadAttributeFn.h"
+#include "zclWriteAttributeFn.h"
 
 #if defined ( INTER_PAN )
   #include "stub_aps.h"
@@ -193,38 +195,19 @@ static zclLibPlugin_t *zclFindPlugin( uint16 clusterID, uint16 profileID );
   static zclCmdRecsList_t *zclFindCmdRecsList( uint8 endpoint );
 #endif
 
-static zclAttrRecsList *zclFindAttrRecsList( uint8 endpoint );
 static zclOptionRec_t *zclFindClusterOption( uint8 endpoint, uint16 clusterID );
 static uint8 zclGetClusterOption( uint8 endpoint, uint16 clusterID );
 static void zclSetSecurityOption( uint8 endpoint, uint16 clusterID, uint8 enable );
 
 static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameType, uint8 cmd, uint16 profileID );
-
-#if defined ( ZCL_READ ) || defined ( ZCL_WRITE )
-static zclReadWriteCB_t zclGetReadWriteCB( uint8 endpoint );
-static zclAuthorizeCB_t zclGetAuthorizeCB( uint8 endpoint );
-#endif // ZCL_READ || ZCL_WRITE
-
-#ifdef ZCL_READ
 ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataLen );
-static uint16 zclGetAttrDataLengthUsingCB( uint8 endpoint, uint16 clusterID, uint16 attrId );
-static ZStatus_t zclReadAttrDataUsingCB( uint8 endpoint, uint16 clusterId, uint16 attrId,
-                                         uint8 *pAttrData, uint16 *pDataLen );
-static ZStatus_t zclAuthorizeRead( uint8 endpoint, afAddrType_t *srcAddr, zclAttrRec_t *pAttr );
 static void *zclParseInReadRspCmd( zclParseCmd_t *pCmd );
 static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg );
-#endif // ZCL_READ
 
-#ifdef ZCL_WRITE
-static ZStatus_t zclWriteAttrData( uint8 endpoint, afAddrType_t *srcAddr,
-                                   zclAttrRec_t *pAttr, zclWriteRec_t *pWriteRec );
-static ZStatus_t zclWriteAttrDataUsingCB( uint8 endpoint, afAddrType_t *srcAddr,
-                                          zclAttrRec_t *pAttr, uint8 *pAttrData );
-static ZStatus_t zclAuthorizeWrite( uint8 endpoint, afAddrType_t *srcAddr, zclAttrRec_t *pAttr );
 static void *zclParseInWriteRspCmd( zclParseCmd_t *pCmd );
 static uint8 zclProcessInWriteCmd( zclIncoming_t *pInMsg );
 static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg );
-#endif // ZCL_WRITE
+
 
 #ifdef ZCL_REPORT
 static void *zclParseInConfigReportRspCmd( zclParseCmd_t *pCmd );
@@ -591,52 +574,7 @@ ZStatus_t zcl_registerCmdList( uint8 endpoint, CONST uint8 cmdListSize, CONST zc
 }
 #endif  // ZCL_DISCOVER
 
-/*********************************************************************
- * @fn          zcl_registerAttrList
- *
- * @brief       Register an Attribute List with ZCL Foundation
- *
- * @param       endpoint - endpoint the attribute list belongs to
- * @param       numAttr - number of attributes in list
- * @param       newAttrList - array of Attribute records.
- *                            NOTE: THE ATTRIBUTE IDs (FOR A CLUSTER) MUST BE IN
- *                            ASCENDING ORDER. OTHERWISE, THE DISCOVERY RESPONSE
- *                            COMMAND WILL NOT HAVE THE RIGHT ATTRIBUTE INFO
- *
- * @return      ZSuccess if OK
- */
-ZStatus_t zcl_registerAttrList( uint8 endpoint, CONST zclAttrRec_t newAttrList[] )
-{
-  zclAttrRecsList *pNewItem;
-  zclAttrRecsList *pLoop;
 
-  // Fill in the new profile list
-  pNewItem = zcl_mem_alloc( sizeof( zclAttrRecsList ) );
-  if ( pNewItem == NULL )  {
-    return (ZMemError);
-  }
-
-  pNewItem->next = (zclAttrRecsList *)NULL;
-  pNewItem->endpoint = endpoint;
-  pNewItem->pfnReadWriteCB = NULL;
-  pNewItem->attrs = newAttrList;
-
-  // Find spot in list
-	if ( attrList == NULL ){
-		attrList = pNewItem;
- 	}  else  {
-    	// Look for end of list
-    	pLoop = attrList;
-    	while ( pLoop->next != NULL ){
-			pLoop = pLoop->next;
-    	}
-
-    	// Put new item at end of list
-    	pLoop->next = pNewItem;
-	}
-
-	return ( ZSuccess );
-}
 
 /*********************************************************************
  * @fn          zcl_registerClusterOptionList
@@ -711,45 +649,6 @@ ZStatus_t zcl_registerValidateAttrData( zclValidateAttrData_t pfnValidateAttrDat
 }
 
 /*********************************************************************
- * @fn          zcl_registerReadWriteCB
- *
- * @brief       Register the application's callback function to read/write
- *              attribute data, and authorize read/write operation.
- *
- *              Note: The pfnReadWriteCB callback function is only required
- *                    when the attribute data format is unknown to ZCL. The
- *                    callback function gets called when the pointer 'dataPtr'
- *                    to the attribute value is NULL in the attribute database
- *                    registered with the ZCL.
- *
- *              Note: The pfnAuthorizeCB callback function is only required
- *                    when the Read/Write operation on an attribute requires
- *                    authorization (i.e., attributes with ACCESS_CONTROL_AUTH_READ
- *                    or ACCESS_CONTROL_AUTH_WRITE access permissions).
- *
- * @param       endpoint - application's endpoint
- * @param       pfnReadWriteCB - function pointer to read/write routine
- * @param       pfnAuthorizeCB - function pointer to authorize read/write operation
- *
- * @return      ZSuccess if successful. ZFailure, otherwise.
- */
-ZStatus_t zcl_registerReadWriteCB( uint8 endpoint, zclReadWriteCB_t pfnReadWriteCB,
-                                   zclAuthorizeCB_t pfnAuthorizeCB )
-{
-  zclAttrRecsList *pRec = zclFindAttrRecsList( endpoint );
-
-  if ( pRec != NULL )
-  {
-    pRec->pfnReadWriteCB = pfnReadWriteCB;
-    pRec->pfnAuthorizeCB = pfnAuthorizeCB;
-
-    return ( ZSuccess );
-  }
-
-  return ( ZFailure );
-}
-
-/*********************************************************************
  * @fn      zcl_DeviceOperational
  *
  * @brief   Used to see whether or not the device can send or respond
@@ -762,38 +661,29 @@ ZStatus_t zcl_registerReadWriteCB( uint8 endpoint, zclReadWriteCB_t pfnReadWrite
  *
  * @return  TRUE if device is operational, FALSE otherwise
  */
-static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID,
-                                    uint8 frameType, uint8 cmd, uint16 profileID )
-{
-  zclAttrRec_t attrRec;
-  uint8 deviceEnabled = DEVICE_ENABLED; // default value
+static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameType, uint8 cmd, uint16 profileID ){
+	zclAttrRec_t attrRec;
+	uint8 deviceEnabled = DEVICE_ENABLED; // default value
 
-  (void)profileID;  // Intentionally unreferenced parameter
+	(void)profileID;  // Intentionally unreferenced parameter
 
   // If the device is Disabled (DeviceEnabled attribute is set to Disabled), it
   // cannot send or respond to application level commands, other than commands
   // to read or write attributes. Note that the Identify cluster cannot be
   // disabled, and remains functional regardless of this setting.
-  if ( zcl_ProfileCmd( frameType ) && cmd <= ZCL_CMD_WRITE_NO_RSP )
-  {
-    return ( TRUE );
-  }
+	if ( zcl_ProfileCmd( frameType ) && cmd <= ZCL_CMD_WRITE_NO_RSP )  {
+		return ( TRUE );
+	}
 
-  if ( clusterID == ZCL_CLUSTER_ID_GEN_IDENTIFY )
-  {
-    return ( TRUE );
-  }
+	if ( clusterID == ZCL_CLUSTER_ID_GEN_IDENTIFY ){
+		return ( TRUE );
+	}
 
   // Is device enabled?
-  if ( zclFindAttrRec( srcEP, ZCL_CLUSTER_ID_GEN_BASIC,
-                       ATTRID_BASIC_DEVICE_ENABLED, &attrRec ) )
-  {
-#ifdef ZCL_READ
-    zclReadAttrData( &deviceEnabled, &attrRec, NULL );
-#endif
-  }
-
-  return ( deviceEnabled == DEVICE_ENABLED ? TRUE : FALSE );
+	ReadAttributeFn callback = findReadAttributeFn(srcEP, ZCL_CLUSTER_ID_GEN_BASIC);
+	callback(&attrRec);
+	zclReadAttrData( &deviceEnabled, &attrRec, NULL );
+	return ( deviceEnabled == DEVICE_ENABLED ? TRUE : FALSE );
 }
 
 /*********************************************************************
@@ -1004,82 +894,52 @@ ZStatus_t zcl_SendRead( uint8 srcEP, afAddrType_t *dstAddr,
  *
  * @return  ZSuccess if OK
  */
-ZStatus_t zcl_SendReadRsp( uint8 srcEP, afAddrType_t *dstAddr,
-                           uint16 clusterID, zclReadRspCmd_t *readRspCmd,
-                           uint8 direction, uint8 disableDefaultRsp, uint8 seqNum )
-{
-  uint8 *buf;
-  uint16 len = 0;
-  ZStatus_t status;
-  uint8 i;
+ZStatus_t zcl_SendReadRsp( uint8 srcEP, afAddrType_t *dstAddr,  uint16 clusterID, zclReadRspCmd_t *readRspCmd, uint8 direction, uint8 disableDefaultRsp, uint8 seqNum ){
+	uint8 *buf;
+	uint16 len = 0;
+ 	ZStatus_t status;
+ 	uint8 i;
 
-  // calculate the size of the command
-  for ( i = 0; i < readRspCmd->numAttr; i++ )
-  {
-    zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
+ 	// calculate the size of the command
+	for ( i = 0; i < readRspCmd->numAttr; i++ ) {
+    	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
 
-    len += 2 + 1; // Attribute ID + Status
+    	len += 2 + 1; // Attribute ID + Status
 
-    if ( statusRec->status == ZCL_STATUS_SUCCESS )
-    {
-      len++; // Attribute Data Type length
+    	if ( statusRec->status == ZCL_STATUS_SUCCESS ) {
+      		len++; // Attribute Data Type length
 
-      // Attribute Data length
-      if ( statusRec->data != NULL )
-      {
-        len += zclGetAttrDataLength( statusRec->dataType, statusRec->data );
-      }
-      else
-      {
-        len += zclGetAttrDataLengthUsingCB( srcEP, clusterID, statusRec->attrID );
-      }
-    }
-  }
+       		len += zclGetAttrDataLength( statusRec->dataType, statusRec->data );
+    	}
+  	}
 
-  buf = zcl_mem_alloc( len );
-  if ( buf != NULL )
-  {
-    // Load the buffer - serially
-    uint8 *pBuf = buf;
+  	buf = zcl_mem_alloc( len );
+  	if ( buf != NULL ){
+    	// Load the buffer - serially
+    	uint8 *pBuf = buf;
 
-    for ( i = 0; i < readRspCmd->numAttr; i++ )
-    {
-      zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
+    	for ( i = 0; i < readRspCmd->numAttr; i++ ){
+      		zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
 
-      *pBuf++ = LO_UINT16( statusRec->attrID );
-      *pBuf++ = HI_UINT16( statusRec->attrID );
-      *pBuf++ = statusRec->status;
+      		*pBuf++ = LO_UINT16( statusRec->attrID );
+      		*pBuf++ = HI_UINT16( statusRec->attrID );
+      		*pBuf++ = statusRec->status;
 
-      if ( statusRec->status == ZCL_STATUS_SUCCESS )
-      {
-        *pBuf++ = statusRec->dataType;
+      		if ( statusRec->status == ZCL_STATUS_SUCCESS ) {
+        		*pBuf++ = statusRec->dataType;
 
-        if ( statusRec->data != NULL )
-        {
-          // Copy attribute data to the buffer to be sent out
-          pBuf = zclSerializeData( statusRec->dataType, statusRec->data, pBuf );
-        }
-        else
-        {
-          uint16 dataLen;
+	          // Copy attribute data to the buffer to be sent out
+	          pBuf = zclSerializeData( statusRec->dataType, statusRec->data, pBuf );
+    		}
+    	} // for loop
 
-          // Read attribute data directly into the buffer to be sent out
-          zclReadAttrDataUsingCB( srcEP, clusterID, statusRec->attrID, pBuf, &dataLen );
-          pBuf += dataLen;
-        }
-      }
-    } // for loop
+    	status = zcl_SendCommand( srcEP, dstAddr, clusterID, ZCL_CMD_READ_RSP, FALSE,  direction, disableDefaultRsp, 0, seqNum, len, buf );
+    	zcl_mem_free( buf );
+	} else {
+    	status = ZMemError;
+	}
 
-    status = zcl_SendCommand( srcEP, dstAddr, clusterID, ZCL_CMD_READ_RSP, FALSE,
-                              direction, disableDefaultRsp, 0, seqNum, len, buf );
-    zcl_mem_free( buf );
-  }
-  else
-  {
-    status = ZMemError;
-  }
-
-  return ( status );
+	return ( status );
 }
 #endif // ZCL_READ
 
@@ -2313,31 +2173,6 @@ uint8 zclFindCmdRec( uint8 endpoint, uint16 clusterID, uint8 cmdID, zclCommandRe
 }
 #endif // ZCL_DISCOVER
 
-/*********************************************************************
- * @fn      zclFindAttrRecsList
- *
- * @brief   Find the right attribute record list for an endpoint
- *
- * @param   clusterID - endpointto look for
- *
- * @return  pointer to record list, NULL if not found
- */
-static zclAttrRecsList *zclFindAttrRecsList( uint8 endpoint )
-{
-  zclAttrRecsList *pLoop = attrList;
-
-  while ( pLoop != NULL )
-  {
-    if ( pLoop->endpoint == endpoint )
-    {
-      return ( pLoop );
-    }
-
-    pLoop = pLoop->next;
-  }
-
-  return ( NULL );
-}
 
 /*********************************************************************
  * @fn      zclFindAttrRec
@@ -2351,6 +2186,7 @@ static zclAttrRecsList *zclFindAttrRecsList( uint8 endpoint )
  *
  * @return  TRUE if record found. FALSE, otherwise.
  */
+/*
 uint8 zclFindAttrRec( uint8 endpoint, uint16 clusterID, uint16 attrId, zclAttrRec_t *pAttr )
 {
 	zclAttrRecsList *pRec = zclFindAttrRecsList( endpoint );
@@ -2360,7 +2196,7 @@ uint8 zclFindAttrRec( uint8 endpoint, uint16 clusterID, uint16 attrId, zclAttrRe
 		while(iter->clusterID != ACHDJIAN_LAST_CLUSTER){
 			if ( iter->clusterID == clusterID && iter->attr.attrId == attrId )  {
 				*pAttr = *iter;
-				return ( TRUE ); // EMBEDDED RETURN
+				return ( TRUE ); 
 			}
 			iter++;
 		}
@@ -2368,50 +2204,7 @@ uint8 zclFindAttrRec( uint8 endpoint, uint16 clusterID, uint16 attrId, zclAttrRe
 	return ( FALSE );
 }
 
-#if defined ( ZCL_READ ) || defined ( ZCL_WRITE )
-/*********************************************************************
- * @fn      zclGetReadWriteCB
- *
- * @brief   Get the Read/Write callback function pointer for a given endpoint.
- *
- * @param   endpoint - Application's endpoint
- *
- * @return  Read/Write CB, NULL if not found
- */
-static zclReadWriteCB_t zclGetReadWriteCB( uint8 endpoint )
-{
-  zclAttrRecsList *pRec = zclFindAttrRecsList( endpoint );
-
-  if ( pRec != NULL )
-  {
-    return ( pRec->pfnReadWriteCB );
-  }
-
-  return ( NULL );
-}
-
-/*********************************************************************
- * @fn      zclGetAuthorizeCB
- *
- * @brief   Get the Read/Write Authorization callback function pointer
- *          for a given endpoint.
- *
- * @param   endpoint - Application's endpoint
- *
- * @return  Authorization CB, NULL if not found
- */
-static zclAuthorizeCB_t zclGetAuthorizeCB( uint8 endpoint )
-{
-  zclAttrRecsList *pRec = zclFindAttrRecsList( endpoint );
-
-  if ( pRec != NULL )
-  {
-    return ( pRec->pfnAuthorizeCB );
-  }
-
-  return ( NULL );
-}
-#endif // ZCL_READ || ZCL_WRITE
+*/
 
 /*********************************************************************
  * @fn      zclFindClusterOption
@@ -3006,243 +2799,8 @@ ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataL
   return ( ZCL_STATUS_SUCCESS );
 }
 
-/*********************************************************************
- * @fn      zcl_ReadAttrData
- *
- * @brief   Read the attribute's current value into pAttrData.
- *          Use application's callback function if assigned to this attribute.
- *
- * @param   endpoint - application's endpoint
- * @param   clusterId - cluster that attribute belongs to
- * @param   attrId - attribute id
- * @param   pAttrData - where to put attribute data
- * @param   pDataLen - where to put attribute data length
- *
- * @return  Successful if data was read
- */
-ZStatus_t zcl_ReadAttrData( uint8 endpoint, uint16 clusterId, uint16 attrId,
-                                         uint8 *pAttrData, uint16 *pDataLen )
-{
-  zclAttrRec_t attrRec;
 
-  if ( zclFindAttrRec( endpoint, clusterId, attrId, &attrRec ) == FALSE )
-  {
-    return ( ZCL_STATUS_FAILURE );
-  }
-
-  if ( attrRec.attr.dataPtr != NULL )
-  {
-    return zclReadAttrData( pAttrData, &attrRec, pDataLen );
-  }
-  else
-  {
-    return zclReadAttrDataUsingCB( endpoint, clusterId, attrId, pAttrData, pDataLen );
-  }
-}
-
-/*********************************************************************
- * @fn      zclGetAttrDataLengthUsingCB
- *
- * @brief   Use application's callback to get the length of the attribute's
- *          current value stored in the database.
- *
- * @param   endpoint - application's endpoint
- * @param   clusterId - cluster that attribute belongs to
- * @param   attrId - attribute id
- *
- * @return  returns attribute length
- */
-static uint16 zclGetAttrDataLengthUsingCB( uint8 endpoint, uint16 clusterId, uint16 attrId )
-{
-  uint16 dataLen = 0;
-  zclReadWriteCB_t pfnReadWriteCB = zclGetReadWriteCB( endpoint );
-
-  if ( pfnReadWriteCB != NULL )
-  {
-    // Only get the attribute length
-    (*pfnReadWriteCB)( clusterId, attrId, ZCL_OPER_LEN, NULL, &dataLen );
-  }
-
-  return ( dataLen );
-}
-
-/*********************************************************************
- * @fn      zclReadAttrDataUsingCB
- *
- * @brief   Use application's callback to read the attribute's current
- *          value stored in the database.
- *
- * @param   endpoint - application's endpoint
- * @param   clusterId - cluster that attribute belongs to
- * @param   attrId - attribute id
- * @param   pAttrData - where to put attribute data
- * @param   pDataLen - where to put attribute data length
- *
- * @return  Successful if data was read
- */
-static ZStatus_t zclReadAttrDataUsingCB( uint8 endpoint, uint16 clusterId, uint16 attrId,
-                                         uint8 *pAttrData, uint16 *pDataLen )
-{
-  zclReadWriteCB_t pfnReadWriteCB = zclGetReadWriteCB( endpoint );
-
-  if ( pDataLen != NULL )
-  {
-    *pDataLen = 0; // Always initialize it to 0
-  }
-
-  if ( pfnReadWriteCB != NULL )
-  {
-    // Read the attribute value and its length
-    return ( (*pfnReadWriteCB)( clusterId, attrId, ZCL_OPER_READ, pAttrData, pDataLen ) );
-  }
-
-  return ( ZCL_STATUS_SOFTWARE_FAILURE );
-}
-
-/*********************************************************************
- * @fn      zclAuthorizeRead
- *
- * @brief   Use application's callback to authorize a Read operation
- *          on a given attribute.
- *
- * @param   endpoint - application's endpoint
- * @param   srcAddr - source Address
- * @param   pAttr - pointer to attribute
- *
- * @return  ZCL_STATUS_SUCCESS: Operation authorized
- *          ZCL_STATUS_NOT_AUTHORIZED: Operation not authorized
- */
-static ZStatus_t zclAuthorizeRead( uint8 endpoint, afAddrType_t *srcAddr, zclAttrRec_t *pAttr )
-{
-  if ( zcl_AccessCtrlAuthRead( pAttr->attr.accessControl ) )
-  {
-    zclAuthorizeCB_t pfnAuthorizeCB = zclGetAuthorizeCB( endpoint );
-
-    if ( pfnAuthorizeCB != NULL )
-    {
-      return ( (*pfnAuthorizeCB)( srcAddr, pAttr, ZCL_OPER_READ ) );
-    }
-  }
-
-  return ( ZCL_STATUS_SUCCESS );
-}
 #endif // ZCL_READ
-
-#ifdef ZCL_WRITE
-/*********************************************************************
- * @fn      zclWriteAttrData
- *
- * @brief   Write the received data.
- *
- * @param   endpoint - application's endpoint
- * @param   pAttr - where to write data to
- * @param   pWriteRec - data to be written
- *
- * @return  Successful if data was written
- */
-static ZStatus_t zclWriteAttrData( uint8 endpoint, afAddrType_t *srcAddr,
-                                   zclAttrRec_t *pAttr, zclWriteRec_t *pWriteRec )
-{
-  uint8 status;
-
-  if ( zcl_AccessCtrlWrite( pAttr->attr.accessControl ) )
-  {
-    status = zclAuthorizeWrite( endpoint, srcAddr, pAttr );
-    if ( status == ZCL_STATUS_SUCCESS )
-    {
-      if ( ( zcl_ValidateAttrDataCB == NULL ) || zcl_ValidateAttrDataCB( pAttr, pWriteRec ) )
-      {
-        // Write the attribute value
-        uint16 len = zclGetAttrDataLength( pAttr->attr.dataType, pWriteRec->attrData );
-        zcl_memcpy( pAttr->attr.dataPtr, pWriteRec->attrData, len );
-
-        status = ZCL_STATUS_SUCCESS;
-      }
-      else
-      {
-        status = ZCL_STATUS_INVALID_VALUE;
-      }
-    }
-  }
-  else
-  {
-    status = ZCL_STATUS_READ_ONLY;
-  }
-
-  return ( status );
-}
-
-/*********************************************************************
- * @fn      zclWriteAttrDataUsingCB
- *
- * @brief   Use application's callback to write the attribute's current
- *          value stored in the database.
- *
- * @param   endpoint - application's endpoint
- * @param   pAttr - where to write data to
- * @param   pAttrData - data to be written
- *
- * @return  Successful if data was written
- */
-static ZStatus_t zclWriteAttrDataUsingCB( uint8 endpoint, afAddrType_t *srcAddr,
-                                          zclAttrRec_t *pAttr, uint8 *pAttrData )
-{
-  uint8 status;
-
-  if ( zcl_AccessCtrlWrite( pAttr->attr.accessControl ) )
-  {
-    status = zclAuthorizeWrite( endpoint, srcAddr, pAttr );
-    if ( status == ZCL_STATUS_SUCCESS )
-    {
-      zclReadWriteCB_t pfnReadWriteCB = zclGetReadWriteCB( endpoint );
-      if ( pfnReadWriteCB != NULL )
-      {
-        // Write the attribute value
-        status = (*pfnReadWriteCB)( pAttr->clusterID, pAttr->attr.attrId,
-                                    ZCL_OPER_WRITE, pAttrData, NULL );
-      }
-      else
-      {
-        status = ZCL_STATUS_SOFTWARE_FAILURE;
-      }
-    }
-  }
-  else
-  {
-    status = ZCL_STATUS_READ_ONLY;
-  }
-
-  return ( status );
-}
-
-/*********************************************************************
- * @fn      zclAuthorizeWrite
- *
- * @brief   Use application's callback to authorize a Write operation
- *          on a given attribute.
- *
- * @param   endpoint - application's endpoint
- * @param   srcAddr - source Address
- * @param   pAttr - pointer to attribute
- *
- * @return  ZCL_STATUS_SUCCESS: Operation authorized
- *          ZCL_STATUS_NOT_AUTHORIZED: Operation not authorized
- */
-static ZStatus_t zclAuthorizeWrite( uint8 endpoint, afAddrType_t *srcAddr, zclAttrRec_t *pAttr )
-{
-  if ( zcl_AccessCtrlAuthWrite( pAttr->attr.accessControl ) )
-  {
-    zclAuthorizeCB_t pfnAuthorizeCB = zclGetAuthorizeCB( endpoint );
-
-    if ( pfnAuthorizeCB != NULL )
-    {
-      return ( (*pfnAuthorizeCB)( srcAddr, pAttr, ZCL_OPER_WRITE ) );
-    }
-  }
-
-  return ( ZCL_STATUS_SUCCESS );
-}
-#endif // ZCL_WRITE
 
 #ifdef ZCL_READ
 /*********************************************************************
@@ -4106,63 +3664,40 @@ static void *zclParseInDiscAttrsExtRspCmd( zclParseCmd_t *pCmd )
  *
  * @return  TRUE if command processed. FALSE, otherwise.
  */
-static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg )
-{
-  zclReadCmd_t *readCmd;
-  zclReadRspCmd_t *readRspCmd;
-  zclAttrRec_t attrRec;
-  uint16 len;
-  uint8 i;
+static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg ){
+	zclReadCmd_t *readCmd;
+	zclReadRspCmd_t *readRspCmd;
+	zclAttrRec_t attribute;
+	uint16 len;
+	uint8 i;
 
-  readCmd = (zclReadCmd_t *)pInMsg->attrCmd;
+	readCmd = (zclReadCmd_t *)pInMsg->attrCmd;
 
-  // calculate the length of the response status record
-  len = sizeof( zclReadRspCmd_t ) + (readCmd->numAttr * sizeof( zclReadRspStatus_t ));
+	// calculate the length of the response status record
+	len = sizeof( zclReadRspCmd_t ) + (readCmd->numAttr * sizeof( zclReadRspStatus_t ));
 
-  readRspCmd = zcl_mem_alloc( len );
-  if ( readRspCmd == NULL )
-  {
-    return FALSE; // EMBEDDED RETURN
-  }
+	readRspCmd = zcl_mem_alloc( len );
+	if ( readRspCmd == NULL )  {
+    	return FALSE; // EMBEDDED RETURN
+	}
 
-  readRspCmd->numAttr = readCmd->numAttr;
-  for ( i = 0; i < readCmd->numAttr; i++ )
-  {
-    zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
+	readRspCmd->numAttr = readCmd->numAttr;
+	
+	for ( i = 0; i < readCmd->numAttr; i++ )  {
+    	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
+    	statusRec->attrID = readCmd->attrID[i];
+		ReadAttributeFn callback = findReadAttributeFn(pInMsg->msg->endPoint, pInMsg->msg->clusterId);
+		callback(&attribute);
+		statusRec->data = attribute.attr.dataPtr;
+		statusRec->dataType = attribute.attr.dataType;
+		statusRec->status = attribute.attr.status;
+	}
 
-    statusRec->attrID = readCmd->attrID[i];
+	// Build and send Read Response command
+	zcl_SendReadRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr), pInMsg->msg->clusterId, readRspCmd, !pInMsg->hdr.fc.direction, true, pInMsg->hdr.transSeqNum );
+	zcl_mem_free( readRspCmd );
 
-    if ( zclFindAttrRec( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                         readCmd->attrID[i], &attrRec ) )
-    {
-      if ( zcl_AccessCtrlRead( attrRec.attr.accessControl ) )
-      {
-        statusRec->status = zclAuthorizeRead( pInMsg->msg->endPoint,
-                                              &(pInMsg->msg->srcAddr), &attrRec );
-        if ( statusRec->status == ZCL_STATUS_SUCCESS )
-        {
-          statusRec->data = attrRec.attr.dataPtr;
-          statusRec->dataType = attrRec.attr.dataType;
-        }
-      }
-      else
-      {
-        statusRec->status = ZCL_STATUS_WRITE_ONLY;
-      }
-    }
-    else
-    {
-      statusRec->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
-    }
-  }
-
-  // Build and send Read Response command
-  zcl_SendReadRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr), pInMsg->msg->clusterId,
-                   readRspCmd, !pInMsg->hdr.fc.direction,
-                   true, pInMsg->hdr.transSeqNum );
-  zcl_mem_free( readRspCmd );
-
-  return TRUE;
+	return TRUE;
 }
 #endif // ZCL_READ
 
@@ -4176,100 +3711,61 @@ static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg )
  *
  * @return  TRUE if command processed. FALSE, otherwise.
  */
-static uint8 zclProcessInWriteCmd( zclIncoming_t *pInMsg )
-{
-  zclWriteCmd_t *writeCmd;
-  zclWriteRspCmd_t *writeRspCmd;
-  uint8 sendRsp = FALSE;
-  uint8 j = 0;
-  uint8 i;
+static uint8 zclProcessInWriteCmd( zclIncoming_t *pInMsg ){
+	 zclWriteCmd_t *writeCmd;
+ 	zclWriteRspCmd_t *writeRspCmd;
+ 	uint8 sendRsp = FALSE;
+ 	uint8 i;
 
-  writeCmd = (zclWriteCmd_t *)pInMsg->attrCmd;
-  if ( pInMsg->hdr.commandID == ZCL_CMD_WRITE )
-  {
-    // We need to send a response back - allocate space for it
-    writeRspCmd = (zclWriteRspCmd_t *)zcl_mem_alloc( sizeof( zclWriteRspCmd_t )
-            + sizeof( zclWriteRspStatus_t ) * writeCmd->numAttr );
-    if ( writeRspCmd == NULL )
-    {
-      return FALSE; // EMBEDDED RETURN
-    }
+ 	writeCmd = (zclWriteCmd_t *)pInMsg->attrCmd;
+ 	if ( pInMsg->hdr.commandID == ZCL_CMD_WRITE ) {
+		// We need to send a response back - allocate space for it
+		writeRspCmd = (zclWriteRspCmd_t *)zcl_mem_alloc( sizeof( zclWriteRspCmd_t ) + sizeof( zclWriteRspStatus_t ) * writeCmd->numAttr );
+    	if ( writeRspCmd == NULL ) {
+			return FALSE; // EMBEDDED RETURN
+		}
+		sendRsp = TRUE;
+	}
+	
+	uint8 endpoint = pInMsg->msg->endPoint;
+	uint16 clusterId = pInMsg->msg->clusterId;
+	WriteAttributeFn writeAttributeFn;
+	ZclWriteAttribute_t writeAttribute;
+	zclWriteRec_t *statusRec = &(writeCmd->attrList[0]);
+	zclWriteRspStatus_t  * rspStatus =  &writeRspCmd->attrList[0];
+	uint8 errorCount=0;
 
-    sendRsp = TRUE;
-  }
+	for ( i = 0; i < writeCmd->numAttr; i++ ){
+		writeAttribute.attrId = statusRec->attrID;
+		writeAttribute.dataPtr =statusRec->attrData;
+		writeAttribute.dataType = statusRec->dataType;
+		writeAttribute.len = zclGetAttrDataLength(writeAttribute.dataType, writeAttribute.dataPtr );
+        
+		writeAttributeFn = findWriteAttributeFn(endpoint, clusterId);
+		writeAttributeFn(&writeAttribute);
+		rspStatus->status = writeAttribute.status;
+        rspStatus->attrID = writeAttribute.attrId;
+		if (writeAttribute.status != ZCL_STATUS_SUCCESS){
+			errorCount++;
+		}
 
-  for ( i = 0; i < writeCmd->numAttr; i++ )
-  {
-    zclAttrRec_t attrRec;
-    zclWriteRec_t *statusRec = &(writeCmd->attrList[i]);
+		statusRec++;
+		rspStatus++;
+		
+ 	} // for loop
 
-    if ( zclFindAttrRec( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                         statusRec->attrID, &attrRec ) )
-    {
-      if ( statusRec->dataType == attrRec.attr.dataType )
-      {
-        uint8 status;
+  	if ( sendRsp ){
+    	if (errorCount == 0 ) {
+      		// Since all records were written successful, include a single status record/ in the resonse command with the status field set to SUCCESS and the attribute ID field omitted.
+      		writeRspCmd->attrList[0].status = ZCL_STATUS_SUCCESS;
+      		writeRspCmd->numAttr = 1;
+    	}
 
-        // Write the new attribute value
-        if ( attrRec.attr.dataPtr != NULL )
-        {
-          status = zclWriteAttrData( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                                     &attrRec, statusRec );
-        }
-        else // Use CB
-        {
-          status = zclWriteAttrDataUsingCB( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                                            &attrRec, statusRec->attrData );
-        }
+    	zcl_SendWriteRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),  pInMsg->msg->clusterId, writeRspCmd, !pInMsg->hdr.fc.direction, true, pInMsg->hdr.transSeqNum );
+    	zcl_mem_free( writeRspCmd );
+  	}
 
-        // If successful, a write attribute status record shall NOT be generated
-        if ( sendRsp && status != ZCL_STATUS_SUCCESS )
-        {
-          // Attribute is read only - move on to the next write attribute record
-          writeRspCmd->attrList[j].status = status;
-          writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-        }
-      }
-      else
-      {
-        // Attribute data type is incorrect - move on to the next write attribute record
-        if ( sendRsp )
-        {
-          writeRspCmd->attrList[j].status = ZCL_STATUS_INVALID_DATA_TYPE;
-          writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-        }
-      }
-    }
-    else
-    {
-      // Attribute is not supported - move on to the next write attribute record
-      if ( sendRsp )
-      {
-        writeRspCmd->attrList[j].status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
-        writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-      }
-    }
-  } // for loop
-
-  if ( sendRsp )
-  {
-    writeRspCmd->numAttr = j;
-    if ( writeRspCmd->numAttr == 0 )
-    {
-      // Since all records were written successful, include a single status record
-      // in the resonse command with the status field set to SUCCESS and the
-      // attribute ID field omitted.
-      writeRspCmd->attrList[0].status = ZCL_STATUS_SUCCESS;
-      writeRspCmd->numAttr = 1;
-    }
-
-    zcl_SendWriteRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                      pInMsg->msg->clusterId, writeRspCmd, !pInMsg->hdr.fc.direction,
-                      true, pInMsg->hdr.transSeqNum );
-    zcl_mem_free( writeRspCmd );
-  }
-
-  return TRUE;
+  	return TRUE;
 }
 
 /*********************************************************************
@@ -4283,35 +3779,23 @@ static uint8 zclProcessInWriteCmd( zclIncoming_t *pInMsg )
  *
  * @return  none
  */
-static void zclRevertWriteUndividedCmd( zclIncoming_t *pInMsg,
-                                    zclWriteRec_t *curWriteRec, uint16 numAttr )
-{
-  uint8 i;
-
-  for ( i = 0; i < numAttr; i++ )
-  {
-    zclAttrRec_t attrRec;
-    zclWriteRec_t *statusRec = &(curWriteRec[i]);
-
-    if ( !zclFindAttrRec( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                          statusRec->attrID, &attrRec ) )
-    {
-      break; // should never happen
-    }
-
-    if ( attrRec.attr.dataPtr != NULL )
-    {
-      // Just copy the old data back - no need to validate the data
-      uint16 dataLen = zclGetAttrDataLength( attrRec.attr.dataType, statusRec->attrData );
-      zcl_memcpy( attrRec.attr.dataPtr, statusRec->attrData, dataLen );
-    }
-    else // Use CB
-    {
-      // Write the old data back
-      zclWriteAttrDataUsingCB( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                               &attrRec, statusRec->attrData );
-    }
-  } // for loop
+static void zclRevertWriteUndividedCmd( zclIncoming_t *pInMsg,  zclWriteRec_t *curWriteRec, uint16 numAttr ){
+	uint8 i;
+	WriteAttributeFn writeAttributeFn;
+	ZclWriteAttribute_t writeAttribute;
+	uint8 endpoint = pInMsg->msg->endPoint;
+	uint16 clusterId =pInMsg->msg->clusterId;
+	
+	for ( i = 0; i < numAttr; i++ ){
+		writeAttributeFn = findWriteAttributeFn(endpoint, clusterId);
+		
+		writeAttribute.attrId = curWriteRec->attrID;
+		writeAttribute.dataPtr = curWriteRec->attrData;
+		writeAttribute.dataType = curWriteRec->dataType;
+		writeAttribute.len = zclGetAttrDataLength( curWriteRec->dataType, curWriteRec->attrData );
+		writeAttributeFn(&writeAttribute);
+		curWriteRec++;
+  }
 }
 
 /*********************************************************************
@@ -4323,11 +3807,13 @@ static void zclRevertWriteUndividedCmd( zclIncoming_t *pInMsg,
  *
  * @return  TRUE if command processed. FALSE, otherwise.
  */
-static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg )
-{
+static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg ){
   zclWriteCmd_t *writeCmd;
   zclWriteRspCmd_t *writeRspCmd;
   zclAttrRec_t attrRec;
+  ZclWriteAttribute_t writeAttribute;
+  ReadAttributeFn readAttributeFn;
+  WriteAttributeFn writeAttributeFn;
   uint16 dataLen;
   uint16 curLen = 0;
   uint8 j = 0;
@@ -4343,159 +3829,124 @@ static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg )
     return FALSE; // EMBEDDED RETURN
   }
 
-  // If any attribute cannot be written, no attribute values are changed. Hence,
-  // make sure all the attributes are supported and writable
-  for ( i = 0; i < writeCmd->numAttr; i++ )
-  {
-    zclWriteRec_t *statusRec = &(writeCmd->attrList[i]);
+  // If any attribute cannot be written, no attribute values are changed. Hence, make sure all the attributes are supported and writable
+	for ( i = 0; i < writeCmd->numAttr; i++ ) {
+    	zclWriteRec_t *statusRec = &(writeCmd->attrList[i]);
 
-    if ( !zclFindAttrRec( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                          statusRec->attrID, &attrRec ) )
-    {
-      // Attribute is not supported - stop here
-      writeRspCmd->attrList[j].status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
-      writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-      break;
-    }
+		attrRec.attr.attrId = statusRec->attrID;
+		readAttributeFn = findReadAttributeFn(pInMsg->msg->endPoint, pInMsg->msg->clusterId);
+		readAttributeFn( &attrRec );
+		if (attrRec.attr.status == ZCL_STATUS_UNSUPPORTED_ATTRIBUTE){
+			 // Attribute is not supported - stop here
+			writeRspCmd->attrList[j].status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
+			break;
+		}
 
-    if ( statusRec->dataType != attrRec.attr.dataType )
-    {
-      // Attribute data type is incorrect - stope here
-      writeRspCmd->attrList[j].status = ZCL_STATUS_INVALID_DATA_TYPE;
-      writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-      break;
-    }
+		if ( statusRec->dataType != attrRec.attr.dataType ) {
+			// Attribute data type is incorrect - stope here
+			writeRspCmd->attrList[j].status = ZCL_STATUS_INVALID_DATA_TYPE;
+			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
+			break;
+		}
 
-    if ( !zcl_AccessCtrlWrite( attrRec.attr.accessControl ) )
-    {
-      // Attribute is not writable - stop here
-      writeRspCmd->attrList[j].status = ZCL_STATUS_READ_ONLY;
-      writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-      break;
-    }
+		if ( !zcl_AccessCtrlWrite( attrRec.attr.accessControl ) ) {
+			writeRspCmd->attrList[j].status = ZCL_STATUS_READ_ONLY;
+			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
+			break;
+		}
 
-    if ( zcl_AccessCtrlAuthWrite( attrRec.attr.accessControl ) )
-    {
-      // Not authorized to write - stop here
-      writeRspCmd->attrList[j].status = ZCL_STATUS_NOT_AUTHORIZED;
-      writeRspCmd->attrList[j++].attrID = statusRec->attrID;
-      break;
-    }
+		if ( zcl_AccessCtrlAuthWrite( attrRec.attr.accessControl ) ) {
+			writeRspCmd->attrList[j].status = ZCL_STATUS_NOT_AUTHORIZED;
+			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
+			break;
+		}
 
-    // Attribute Data length
-    if ( attrRec.attr.dataPtr != NULL )
-    {
-      dataLen = zclGetAttrDataLength( attrRec.attr.dataType, attrRec.attr.dataPtr );
-    }
-    else // Use CB
-    {
-      dataLen = zclGetAttrDataLengthUsingCB( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                                             statusRec->attrID );
-    }
+		dataLen = zclGetAttrDataLength( attrRec.attr.dataType, attrRec.attr.dataPtr );
 
-    // add padding if needed
-    if ( PADDING_NEEDED( dataLen ) )
-    {
-      dataLen++;
-    }
+		// add padding if needed
+		if ( PADDING_NEEDED( dataLen ) ) {
+		  dataLen++;
+		}
 
-    curLen += dataLen;
-  } // for loop
+		curLen += dataLen;
+	} // for loop
 
-  writeRspCmd->numAttr = j;
-  if ( writeRspCmd->numAttr == 0 ) // All attributes can be written
-  {
-    uint8 *curDataPtr;
-    zclWriteRec_t *curWriteRec;
+	writeRspCmd->numAttr = i;
+	if ( writeRspCmd->numAttr == writeCmd->numAttr ) {// All attributes can be written
+  
+    	uint8 *curDataPtr;
+    	zclWriteRec_t *curWriteRec; // containg data and meta-data of written attributes
 
-    // calculate the length of the current data header
-    uint8 hdrLen = j * sizeof( zclWriteRec_t );
+    	uint8 hdrLen =sizeof( zclWriteRec_t )*  writeCmd->numAttr;
 
-    // Allocate space to keep a copy of the current data
-    curWriteRec = (zclWriteRec_t *) zcl_mem_alloc( hdrLen + curLen );
-    if ( curWriteRec == NULL )
-    {
-      zcl_mem_free(writeRspCmd );
-      return FALSE; // EMBEDDED RETURN
-    }
+    	curWriteRec = (zclWriteRec_t *) zcl_mem_alloc(  hdrLen+ curLen );
+    	if ( curWriteRec == NULL ){
+			zcl_mem_free(writeRspCmd );
+			return FALSE; // EMBEDDED RETURN
+		}
 
-    curDataPtr = (uint8 *)((uint8 *)curWriteRec + hdrLen);
+		curDataPtr = (uint8 *)((uint8 *)curWriteRec + hdrLen);
 
-    // Write the new data over
-    for ( i = 0; i < writeCmd->numAttr; i++ )
-    {
-      uint8 status;
-      zclWriteRec_t *statusRec = &(writeCmd->attrList[i]);
-      zclWriteRec_t *curStatusRec = &(curWriteRec[i]);
+		// Write the new data over
+		zclWriteRec_t *statusRec = &(writeCmd->attrList[0]);
+		zclWriteRec_t *curStatusRec = curWriteRec;
+		for ( i = 0; i < writeCmd->numAttr; i++ ) {
+			attrRec.attr.attrId = statusRec->attrID;
+			readAttributeFn = findReadAttributeFn(pInMsg->msg->endPoint,pInMsg->msg->clusterId );
+			readAttributeFn(&attrRec);	
+												 
+	
+			dataLen = zclGetAttrDataLength( attrRec.attr.dataType, (uint8*)(attrRec.attr.dataPtr) );
+			// Keep a copy of the current data before before writing the new data over
+			curStatusRec->dataLen = dataLen;
+			curStatusRec->attrID = statusRec->attrID;
+			curStatusRec->attrData = curDataPtr;
+			curStatusRec->dataType = attrRec.attr.dataType;
+  			zcl_memcpy(curDataPtr, attrRec.attr.dataPtr, dataLen );
+			
+			writeAttribute.attrId = statusRec->attrID;
+			writeAttribute.dataPtr = statusRec->attrData;
+			writeAttribute.dataType = statusRec->dataType;
+			writeAttribute.len = dataLen;
+			
+			writeAttributeFn = findWriteAttributeFn(pInMsg->msg->endPoint,pInMsg->msg->clusterId);
+			writeAttributeFn(&writeAttribute);			  
 
-      if ( !zclFindAttrRec( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                            statusRec->attrID, &attrRec ) )
-      {
-        break; // should never happen
-      }
+			// If successful, a write attribute status record shall NOT be generated
+			if ( writeAttribute.status != ZCL_STATUS_SUCCESS ) {
+				writeRspCmd->attrList[j].status = writeAttribute.status;
+				writeRspCmd->attrList[j++].attrID = statusRec->attrID;
 
-      // Keep a copy of the current data before before writing the new data over
-      curStatusRec->attrID = statusRec->attrID;
-      curStatusRec->attrData = curDataPtr;
+				// Since this write failed, we need to revert all the pervious writes
+				zclRevertWriteUndividedCmd( pInMsg, curWriteRec, i);
+				break;
+			}
 
-      if ( attrRec.attr.dataPtr != NULL )
-      {
-        // Read the current value
-        zclReadAttrData( curDataPtr, &attrRec, &dataLen );
+			// add padding if needed
+			if ( PADDING_NEEDED( dataLen ) ) {
+				dataLen++;
+			}
 
-        // Write the new attribute value
-        status = zclWriteAttrData( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                                   &attrRec, statusRec );
-      }
-      else // Use CBs
-      {
-        // Read the current value
-        zclReadAttrDataUsingCB( pInMsg->msg->endPoint, pInMsg->msg->clusterId,
-                                statusRec->attrID, curDataPtr, &dataLen );
-        // Write the new attribute value
-        status = zclWriteAttrDataUsingCB( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                                          &attrRec, statusRec->attrData );
-      }
+			curDataPtr += dataLen;
+			statusRec++;
+			curStatusRec++;
+		} // for loop
 
-      // If successful, a write attribute status record shall NOT be generated
-      if ( status != ZCL_STATUS_SUCCESS )
-      {
-        writeRspCmd->attrList[j].status = status;
-        writeRspCmd->attrList[j++].attrID = statusRec->attrID;
+    	writeRspCmd->numAttr = j;
+    	if ( writeRspCmd->numAttr  == 0 )  {
+      		// Since all records were written successful, include a single status record in the resonse command with the status field set to SUCCESS and the attribute ID field omitted.
+      		writeRspCmd->attrList[0].status = ZCL_STATUS_SUCCESS;
+      		writeRspCmd->numAttr = 1;
+    	}
 
-        // Since this write failed, we need to revert all the pervious writes
-        zclRevertWriteUndividedCmd( pInMsg, curWriteRec, i);
-        break;
-      }
+    	zcl_mem_free( curWriteRec );
+  	}
 
-      // add padding if needed
-      if ( PADDING_NEEDED( dataLen ) )
-      {
-        dataLen++;
-      }
+  	zcl_SendWriteRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr), pInMsg->msg->clusterId, writeRspCmd, !pInMsg->hdr.fc.direction, true, pInMsg->hdr.transSeqNum );
+  	zcl_mem_free( writeRspCmd );
 
-      curDataPtr += dataLen;
-    } // for loop
-
-    writeRspCmd->numAttr = j;
-    if ( writeRspCmd->numAttr  == 0 )
-    {
-      // Since all records were written successful, include a single status record
-      // in the resonse command with the status field set to SUCCESS and the
-      // attribute ID field omitted.
-      writeRspCmd->attrList[0].status = ZCL_STATUS_SUCCESS;
-      writeRspCmd->numAttr = 1;
-    }
-
-    zcl_mem_free( curWriteRec );
-  }
-
-  zcl_SendWriteRsp( pInMsg->msg->endPoint, &(pInMsg->msg->srcAddr),
-                    pInMsg->msg->clusterId, writeRspCmd, !pInMsg->hdr.fc.direction,
-                    true, pInMsg->hdr.transSeqNum );
-  zcl_mem_free( writeRspCmd );
-
-  return TRUE;
+  	return TRUE;
 }
 #endif // ZCL_WRITE
 

@@ -23,6 +23,8 @@
 #include "hal_lcd.h"
 #include "hal_led.h"
 #include "hal_key.h"
+#include "zclReadAttributeFn.h"
+#include "zclWriteAttributeFn.h"
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterOnOff.h"
@@ -53,9 +55,14 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 void powerMeter_Init( byte task_id ){
 	zPowerMeterTaskID = task_id;
 	zclHA_Init( &OnOff_SimpleDesc );
-	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
- 	zcl_registerAttrList(ENDPOINT_ONOFF, onOffAttrs );
-  	zcl_registerForMsg( zPowerMeterTaskID );
+	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC, handleClusterCommands );
+ 	
+	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterWriteAttribute);
+
+	zcl_registerForMsg( zPowerMeterTaskID );
   
   	EA=1;
  	identifyInit(zPowerMeterTaskID);

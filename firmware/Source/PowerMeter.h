@@ -19,7 +19,7 @@ extern "C"
 extern SimpleDescriptionFormat_t OnOff_SimpleDesc;
 extern SimpleDescriptionFormat_t PowerMetering_SimpleDesc;
 
-extern CONST zclAttrRec_t onOffAttrs[];
+extern CONST zclAttrRec_t powerMeterAttrs[];
 
 extern void powerMeter_Init( byte task_id );
 

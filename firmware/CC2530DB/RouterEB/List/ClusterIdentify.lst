@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR C/C++ Compiler V8.30.1.41636 for 8051             15/Oct/2015  21:15:45 #
+# IAR C/C++ Compiler V8.30.1.41636 for 8051             04/Nov/2015  21:35:19 #
 # Copyright 2004-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Core               =  plain                                              #
@@ -140,7 +140,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
      17          
 
    \                                 In  segment XDATA_Z, align 1, keep-with-next
-     18          uint16 identifyTime=0;
+     18          static uint16 identifyTime=0;
    \                     identifyTime:
    \   000000                DS 2
    \   000002                REQUIRE __INIT_XDATA_Z
@@ -189,40 +189,171 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \                     _A_P0SEL_7:
    \   000000                DS 1
      45          
+     46          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     46          void identifyInit(byte taskId){
-   \                     identifyInit:
+     47          void identifyClusterReadAttribute(zclAttrRec_t * attribute){
+   \                     identifyClusterReadAttribute:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-     47          	DIR0_1 = 1;
-   \   000004   43FD40       ORL     0xfd,#0x40
-     48           	P0SEL_1 = 0;
-   \   000007   53F3BF       ANL     0xf3,#0xbf
-     49           	P0_1 = 0;
-   \   00000A   C281         CLR     0x80.1
-     50          	mainAppTaskId = taskId;
-   \   00000C   E9           MOV     A,R1
-   \   00000D   90....       MOV     DPTR,#mainAppTaskId
-   \   000010   F0           MOVX    @DPTR,A
-     51          }
-   \   000011                REQUIRE ?Subroutine0
-   \   000011                REQUIRE _A_DIR0_7
-   \   000011                REQUIRE _A_P0SEL_7
-   \   000011                REQUIRE _A_P0
-   \   000011                ; // Fall through to label ?Subroutine0
+     48          	if (attribute == NULL){
+   \   000004   EA           MOV     A,R2
+   \   000005   4B           ORL     A,R3
+   \   000006   6040         JZ      ??identifyClusterReadAttribute_0
+     49          		return;
+     50          	}
+     51          	
+     52          	if (attribute->attr.attrId == ATTRID_IDENTIFY_TIME){
+   \   000008   EA           MOV     A,R2
+   \   000009   240A         ADD     A,#0xa
+   \   00000B   F8           MOV     R0,A
+   \   00000C   E4           CLR     A
+   \   00000D   3B           ADDC    A,R3
+   \   00000E   F9           MOV     R1,A
+   \   00000F   8A82         MOV     DPL,R2
+   \   000011   8B83         MOV     DPH,R3
+   \   000013   A3           INC     DPTR
+   \   000014   A3           INC     DPTR
+   \   000015   E0           MOVX    A,@DPTR
+   \   000016   FC           MOV     R4,A
+   \   000017   A3           INC     DPTR
+   \   000018   E0           MOVX    A,@DPTR
+   \   000019   FD           MOV     R5,A
+   \   00001A   EC           MOV     A,R4
+   \   00001B   4D           ORL     A,R5
+   \   00001C   7023         JNZ     ??identifyClusterReadAttribute_1
+     53          		attribute->attr.dataType = ZCL_DATATYPE_UINT16;
+   \   00001E   8A82         MOV     DPL,R2
+   \   000020   8B83         MOV     DPH,R3
+   \   000022   A3           INC     DPTR
+   \   000023   A3           INC     DPTR
+   \   000024   A3           INC     DPTR
+   \   000025   A3           INC     DPTR
+   \   000026   7421         MOV     A,#0x21
+   \   000028   F0           MOVX    @DPTR,A
+     54          		attribute->attr.dataPtr = (void *)&identifyTime;
+   \   000029   8A82         MOV     DPL,R2
+   \   00002B   8B83         MOV     DPH,R3
+   \   00002D   A3           INC     DPTR
+   \   00002E   A3           INC     DPTR
+   \   00002F   A3           INC     DPTR
+   \   000030   A3           INC     DPTR
+   \   000031   A3           INC     DPTR
+   \   000032   A3           INC     DPTR
+   \   000033   74..         MOV     A,#identifyTime & 0xff
+   \   000035   F0           MOVX    @DPTR,A
+   \   000036   A3           INC     DPTR
+   \   000037   74..         MOV     A,#(identifyTime >> 8) & 0xff
+   \   000039   F0           MOVX    @DPTR,A
+     55          		attribute->attr.status = ZCL_STATUS_SUCCESS;
+   \   00003A   8882         MOV     DPL,R0
+   \   00003C   8983         MOV     DPH,R1
+   \   00003E   E4           CLR     A
+   \   00003F   8006         SJMP    ??identifyClusterReadAttribute_2
+     56          	} else {
+     57          		attribute->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+   \                     ??identifyClusterReadAttribute_1:
+   \   000041   8882         MOV     DPL,R0
+   \   000043   8983         MOV     DPH,R1
+   \   000045   7486         MOV     A,#-0x7a
+   \                     ??identifyClusterReadAttribute_2:
+   \   000047   F0           MOVX    @DPTR,A
+     58          	}
+     59          }
+   \                     ??identifyClusterReadAttribute_0:
+   \   000048   80..         SJMP    ?Subroutine0
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine0:
    \   000000   D083         POP     DPH
    \   000002   D082         POP     DPL
    \   000004   02....       LJMP    ?BRET
-     52          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     53          uint16 identifyLoop(uint16 events){
+     60          void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
+   \                     identifyClusterWriteAttribute:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     61          	if (writeAttribute == NULL){
+   \   000004   EA           MOV     A,R2
+   \   000005   4B           ORL     A,R3
+   \   000006   6028         JZ      ??identifyClusterWriteAttribute_0
+     62          		
+     63          		return;
+     64          	}
+     65          	
+     66          	if(writeAttribute->attrId == ATTRID_IDENTIFY_TIME){
+   \   000008   EA           MOV     A,R2
+   \   000009   2406         ADD     A,#0x6
+   \   00000B   F8           MOV     R0,A
+   \   00000C   E4           CLR     A
+   \   00000D   3B           ADDC    A,R3
+   \   00000E   F9           MOV     R1,A
+   \   00000F   8A82         MOV     DPL,R2
+   \   000011   8B83         MOV     DPH,R3
+   \   000013   E0           MOVX    A,@DPTR
+   \   000014   FA           MOV     R2,A
+   \   000015   A3           INC     DPTR
+   \   000016   E0           MOVX    A,@DPTR
+   \   000017   FB           MOV     R3,A
+   \   000018   EA           MOV     A,R2
+   \   000019   4B           ORL     A,R3
+   \   00001A   700D         JNZ     ??identifyClusterWriteAttribute_1
+     67          		identifyTime = *(uint16 *)writeAttribute;
+   \   00001C   90....       MOV     DPTR,#identifyTime
+   \   00001F   E4           CLR     A
+   \   000020   F0           MOVX    @DPTR,A
+   \   000021   A3           INC     DPTR
+   \   000022   F0           MOVX    @DPTR,A
+     68          		writeAttribute->status=ZCL_STATUS_SUCCESS;
+   \   000023   8882         MOV     DPL,R0
+   \   000025   8983         MOV     DPH,R1
+   \   000027   8006         SJMP    ??identifyClusterWriteAttribute_2
+     69          	} else {
+     70          		writeAttribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+   \                     ??identifyClusterWriteAttribute_1:
+   \   000029   8882         MOV     DPL,R0
+   \   00002B   8983         MOV     DPH,R1
+   \   00002D   7486         MOV     A,#-0x7a
+   \                     ??identifyClusterWriteAttribute_2:
+   \   00002F   F0           MOVX    @DPTR,A
+     71          	}
+     72          }
+   \                     ??identifyClusterWriteAttribute_0:
+   \   000030   80..         SJMP    ?Subroutine0
+     73          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     74          void identifyInit(byte taskId){
+   \                     identifyInit:
+   \   000000   C082         PUSH    DPL
+   \   000002   C083         PUSH    DPH
+   \   000004                ; Saved register size: 2
+   \   000004                ; Auto size: 0
+     75          	DIR0_1 = 1;
+   \   000004   43FD40       ORL     0xfd,#0x40
+     76           	P0SEL_1 = 0;
+   \   000007   53F3BF       ANL     0xf3,#0xbf
+     77           	P0_1 = 0;
+   \   00000A   C281         CLR     0x80.1
+     78          	mainAppTaskId = taskId;
+   \   00000C   E9           MOV     A,R1
+   \   00000D   90....       MOV     DPTR,#mainAppTaskId
+   \   000010   F0           MOVX    @DPTR,A
+     79          }
+   \   000011                REQUIRE ?Subroutine0
+   \   000011                REQUIRE _A_DIR0_7
+   \   000011                REQUIRE _A_P0SEL_7
+   \   000011                REQUIRE _A_P0
+   \   000011                ; // Fall through to label ?Subroutine0
+     80          
+
+   \                                 In  segment BANKED_CODE, align 1, keep-with-next
+     81          uint16 identifyLoop(uint16 events){
    \                     identifyLoop:
    \   000000   74F7         MOV     A,#-0x9
    \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
@@ -232,11 +363,11 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000006   FE           MOV     R6,A
    \   000007   EB           MOV     A,R3
    \   000008   FF           MOV     R7,A
-     54          	if (onOff){
+     82          	if (onOff){
    \   000009   90....       MOV     DPTR,#onOff
    \   00000C   E0           MOVX    A,@DPTR
    \   00000D   6020         JZ      ??identifyLoop_0
-     55          		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
+     83          		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
    \   00000F                ; Setup parameters for call to function osal_start_timerEx
    \   00000F   90....       MOV     DPTR,#__Constant_190
    \   000012   12....       LCALL   ?PUSH_XSTACK8_X_FOUR
@@ -248,25 +379,25 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   00001E   12....       LCALL   ??osal_start_timerEx?relay; Banked call to: osal_start_timerEx
    \   000021   7404         MOV     A,#0x4
    \   000023   12....       LCALL   ?DEALLOC_XSTACK8
-     56          		onOff=0;
+     84          		onOff=0;
    \   000026   90....       MOV     DPTR,#onOff
    \   000029   E4           CLR     A
    \   00002A   F0           MOVX    @DPTR,A
-     57          		P0_0 = 1;
+     85          		P0_0 = 1;
    \   00002B   D280         SETB    0x80.0
    \   00002D   8041         SJMP    ??identifyLoop_1
-     58          	} else {
-     59          		onOff=1;
+     86          	} else {
+     87          		onOff=1;
    \                     ??identifyLoop_0:
    \   00002F   7401         MOV     A,#0x1
    \   000031   F0           MOVX    @DPTR,A
-     60          		if ( identifyTime > 0 ){
+     88          		if ( identifyTime > 0 ){
    \   000032   12....       LCALL   ?Subroutine1 & 0xFFFF
    \                     ??CrossCallReturnLabel_0:
    \   000035   602D         JZ      ??identifyLoop_2
-     61              		identifyTime--;
-     62          		}
-     63              	if (identifyTime>0){
+     89              		identifyTime--;
+     90          		}
+     91              	if (identifyTime>0){
    \   000037   90....       MOV     DPTR,#identifyTime
    \   00003A   E0           MOVX    A,@DPTR
    \   00003B   24FF         ADD     A,#-0x1
@@ -280,7 +411,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000045   E8           MOV     A,R0
    \   000046   49           ORL     A,R1
    \   000047   601B         JZ      ??identifyLoop_2
-     64          			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+     92          			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
    \   000049                ; Setup parameters for call to function osal_start_timerEx
    \   000049   90....       MOV     DPTR,#__Constant_258
    \   00004C   12....       LCALL   ?PUSH_XSTACK8_X_FOUR
@@ -292,13 +423,13 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000058   12....       LCALL   ??osal_start_timerEx?relay; Banked call to: osal_start_timerEx
    \   00005B   7404         MOV     A,#0x4
    \   00005D   12....       LCALL   ?DEALLOC_XSTACK8
-     65          			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
+     93          			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
    \   000060                ; Setup parameters for call to function osal_pwrmgr_task_state
    \   000060   7A01         MOV     R2,#0x1
    \   000062   8002         SJMP    ??identifyLoop_3
-     66          			P0_0 = 0;
-     67          		} else{
-     68          			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
+     94          			P0_0 = 0;
+     95          		} else{
+     96          			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
    \                     ??identifyLoop_2:
    \   000064                ; Setup parameters for call to function osal_pwrmgr_task_state
    \   000064   7A00         MOV     R2,#0x0
@@ -307,11 +438,11 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000069   E0           MOVX    A,@DPTR
    \   00006A   F9           MOV     R1,A
    \   00006B   12....       LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
-     69          			P0_0 = 0;
+     97          			P0_0 = 0;
    \   00006E   C280         CLR     0x80.0
-     70          		}
-     71          	}
-     72              return ( events ^ IDENTIFY_TIMEOUT_EVT );
+     98          		}
+     99          	}
+    100              return ( events ^ IDENTIFY_TIMEOUT_EVT );
    \                     ??identifyLoop_1:
    \   000070   EE           MOV     A,R6
    \   000071   6401         XRL     A,#0x1
@@ -321,7 +452,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000076   7F01         MOV     R7,#0x1
    \   000078   02....       LJMP    ?BANKED_LEAVE_XDATA
    \   00007B                REQUIRE _A_P0
-     73          }
+    101          }
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
    \                     ?Subroutine1:
@@ -334,30 +465,30 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000008   E8           MOV     A,R0
    \   000009   49           ORL     A,R1
    \   00000A   22           RET
-     74          
-     75          
-     76          /*********************************************************************
-     77           * @fn      processIdentifyTimeChange
-     78           *
-     79           * @brief   Called to process any change to the IdentifyTime attribute.
-     80           *
-     81           * @param   none
-     82           *
-     83           * @return  none
-     84           */
+    102          
+    103          
+    104          /*********************************************************************
+    105           * @fn      processIdentifyTimeChange
+    106           *
+    107           * @brief   Called to process any change to the IdentifyTime attribute.
+    108           *
+    109           * @param   none
+    110           *
+    111           * @return  none
+    112           */
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     85          void processIdentifyTimeChange( void ){
+    113          void processIdentifyTimeChange( void ){
    \                     processIdentifyTimeChange:
    \   000000   C082         PUSH    DPL
    \   000002   C083         PUSH    DPH
    \   000004                ; Saved register size: 2
    \   000004                ; Auto size: 0
-     86          	if ( identifyTime > 0 ) {
+    114          	if ( identifyTime > 0 ) {
    \   000004   12....       LCALL   ?Subroutine1 & 0xFFFF
    \                     ??CrossCallReturnLabel_1:
    \   000007   6022         JZ      ??processIdentifyTimeChange_0
-     87          		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+    115          		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
    \   000009                ; Setup parameters for call to function osal_start_timerEx
    \   000009   90....       MOV     DPTR,#__Constant_258
    \   00000C   12....       LCALL   ?PUSH_XSTACK8_X_FOUR
@@ -369,18 +500,18 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000018   12....       LCALL   ??osal_start_timerEx?relay; Banked call to: osal_start_timerEx
    \   00001B   7404         MOV     A,#0x4
    \   00001D   12....       LCALL   ?DEALLOC_XSTACK8
-     88          		onOff=1;
+    116          		onOff=1;
    \   000020   90....       MOV     DPTR,#onOff
    \   000023   7401         MOV     A,#0x1
    \   000025   F0           MOVX    @DPTR,A
-     89          		P0_0 = 1;
+    117          		P0_0 = 1;
    \   000026   D280         SETB    0x80.0
-     90          		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
+    118          		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
    \   000028                ; Setup parameters for call to function osal_pwrmgr_task_state
    \   000028   FA           MOV     R2,A
    \   000029   800E         SJMP    ??processIdentifyTimeChange_1
-     91          	}  else {
-     92          		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
+    119          	}  else {
+    120          		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
    \                     ??processIdentifyTimeChange_0:
    \   00002B                ; Setup parameters for call to function osal_stop_timerEx
    \   00002B   7A01         MOV     R2,#0x1
@@ -389,7 +520,7 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000032   E0           MOVX    A,@DPTR
    \   000033   F9           MOV     R1,A
    \   000034   12....       LCALL   ??osal_stop_timerEx?relay; Banked call to: osal_stop_timerEx
-     93          		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
+    121          		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
    \   000037                ; Setup parameters for call to function osal_pwrmgr_task_state
    \   000037   7A00         MOV     R2,#0x0
    \                     ??processIdentifyTimeChange_1:
@@ -397,14 +528,14 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   00003C   E0           MOVX    A,@DPTR
    \   00003D   F9           MOV     R1,A
    \   00003E   12....       LCALL   ??osal_pwrmgr_task_state?relay; Banked call to: osal_pwrmgr_task_state
-     94          	}
-     95          }
+    122          	}
+    123          }
    \   000041   02....       LJMP    ?Subroutine0 & 0xFFFF
    \   000044                REQUIRE _A_P0
-     96          
+    124          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-     97          ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg ){
+    125          ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg ){
    \                     processIdentifyClusterServerCommands:
    \   000000                REQUIRE ?V0
    \   000000                REQUIRE ?V1
@@ -412,8 +543,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000002   12....       LCALL   ?BANKED_ENTER_XDATA
    \   000005                ; Saved register size: 10
    \   000005                ; Auto size: 0
-     98          
-     99          	switch(pInMsg->hdr.commandID){
+    126          
+    127          	switch(pInMsg->hdr.commandID){
    \   000005   8A82         MOV     DPL,R2
    \   000007   8B83         MOV     DPH,R3
    \   000009   A3           INC     DPTR
@@ -428,8 +559,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000013   14           DEC     A
    \   000014   602A         JZ      ??processIdentifyClusterServerCommands_1
    \   000016   02....       LJMP    ??processIdentifyClusterServerCommands_2 & 0xFFFF
-    100          	case COMMAND_IDENTIFY:
-    101          		identifyTime = BUILD_UINT16( pInMsg->pData[0], pInMsg->pData[1] );
+    128          	case COMMAND_IDENTIFY:
+    129          		identifyTime = BUILD_UINT16( pInMsg->pData[0], pInMsg->pData[1] );
    \                     ??processIdentifyClusterServerCommands_0:
    \   000019   8A82         MOV     DPL,R2
    \   00001B   8B83         MOV     DPH,R3
@@ -459,20 +590,20 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   000038   A3           INC     DPTR
    \   000039   E9           MOV     A,R1
    \   00003A   F0           MOVX    @DPTR,A
-    102          		processIdentifyTimeChange();
+    130          		processIdentifyTimeChange();
    \   00003B                ; Setup parameters for call to function processIdentifyTimeChange
    \   00003B   12....       LCALL   ??processIdentifyTimeChange?relay; Banked call to: processIdentifyTimeChange
-    103          		return ZSuccess;
+    131          		return ZSuccess;
    \   00003E   807A         SJMP    ??processIdentifyClusterServerCommands_3
-    104          	case COMMAND_IDENTIFY_QUERY:
-    105          		if ( identifyTime > 0 ) {
+    132          	case COMMAND_IDENTIFY_QUERY:
+    133          		if ( identifyTime > 0 ) {
    \                     ??processIdentifyClusterServerCommands_1:
    \   000040   12....       LCALL   ?Subroutine1 & 0xFFFF
    \                     ??CrossCallReturnLabel_2:
    \   000043   6075         JZ      ??processIdentifyClusterServerCommands_3
-    106          			zcl_SendCommand( pInMsg->msg->endPoint, &pInMsg->msg->srcAddr, ZCL_CLUSTER_ID_GEN_IDENTIFY,
-    107                                   COMMAND_IDENTIFY_QUERY_RSP, TRUE,
-    108                                   ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, pInMsg->hdr.transSeqNum, 2, (uint8 *) &identifyTime );
+    134          			zcl_SendCommand( pInMsg->msg->endPoint, &pInMsg->msg->srcAddr, ZCL_CLUSTER_ID_GEN_IDENTIFY,
+    135                                   COMMAND_IDENTIFY_QUERY_RSP, TRUE,
+    136                                   ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, pInMsg->hdr.transSeqNum, 2, (uint8 *) &identifyTime );
    \   000045   8A82         MOV     DPL,R2
    \   000047   8B83         MOV     DPH,R3
    \   000049   E0           MOVX    A,@DPTR
@@ -534,38 +665,38 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \   0000AE   12....       LCALL   ??zcl_SendCommand?relay; Banked call to: zcl_SendCommand
    \   0000B1   740B         MOV     A,#0xb
    \   0000B3   12....       LCALL   ?DEALLOC_XSTACK8
-    109          			return  ZCL_STATUS_CMD_HAS_RSP;
+    137          			return  ZCL_STATUS_CMD_HAS_RSP;
    \   0000B6   79FF         MOV     R1,#-0x1
    \   0000B8   8006         SJMP    ??processIdentifyClusterServerCommands_4
-    110          	    } else {
-    111          			return ZSuccess;
+    138          	    } else {
+    139          			return ZSuccess;
    \                     ??processIdentifyClusterServerCommands_3:
    \   0000BA   7900         MOV     R1,#0x0
    \   0000BC   8002         SJMP    ??processIdentifyClusterServerCommands_4
-    112          		}
-    113          	default:
-    114              	return ZFailure;   // Error ignore the command
+    140          		}
+    141          	default:
+    142              	return ZFailure;   // Error ignore the command
    \                     ??processIdentifyClusterServerCommands_2:
    \   0000BE   7901         MOV     R1,#0x1
    \                     ??processIdentifyClusterServerCommands_4:
    \   0000C0   7F02         MOV     R7,#0x2
    \   0000C2   02....       LJMP    ?BANKED_LEAVE_XDATA
-    115          	}
-    116          }
-    117          
+    143          	}
+    144          }
+    145          
 
    \                                 In  segment BANKED_CODE, align 1, keep-with-next
-    118          ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg ){
+    146          ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg ){
    \                     processIdentifyClusterClientCommands:
    \   000000                ; Saved register size: 0
    \   000000                ; Auto size: 0
-    119          	if ( pInMsg->hdr.commandID != COMMAND_IDENTIFY_QUERY_RSP )
-    120          		return ZFailure;
-    121          
-    122          	return ZFailure;
+    147          	if ( pInMsg->hdr.commandID != COMMAND_IDENTIFY_QUERY_RSP )
+    148          		return ZFailure;
+    149          
+    150          	return ZFailure;
    \   000000   7901         MOV     R1,#0x1
    \   000002   02....       LJMP    ?BRET
-    123          }
+    151          }
 
    \                                 In  segment XDATA_ROM_C, align 1
    \                     __Constant_190:
@@ -574,6 +705,16 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \                                 In  segment XDATA_ROM_C, align 1
    \                     __Constant_258:
    \   000000   58020000     DD 600
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??identifyClusterReadAttribute?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    identifyClusterReadAttribute
+
+   \                                 In  segment BANK_RELAYS, align 1
+   \                     ??identifyClusterWriteAttribute?relay:
+   \   000000   12....       LCALL   ?BDISPATCH
+   \   000003   ......       DC24    identifyClusterWriteAttribute
 
    \                                 In  segment BANK_RELAYS, align 1
    \                     ??identifyInit?relay:
@@ -599,12 +740,14 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
    \                     ??processIdentifyClusterClientCommands?relay:
    \   000000   12....       LCALL   ?BDISPATCH
    \   000003   ......       DC24    processIdentifyClusterClientCommands
-    124          
+    152          
 
    Maximum stack usage in bytes:
 
    ISTACK XSTACK Function
    ------ ------ --------
+      2      0   identifyClusterReadAttribute
+      2      0   identifyClusterWriteAttribute
       2      0   identifyInit
       0     13   identifyLoop
         0      9   -> osal_pwrmgr_task_state
@@ -623,6 +766,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
 
    Bytes  Function/Label
    -----  --------------
+       6  ??identifyClusterReadAttribute?relay
+       6  ??identifyClusterWriteAttribute?relay
        6  ??identifyInit?relay
        6  ??identifyLoop?relay
        6  ??processIdentifyClusterClientCommands?relay
@@ -635,6 +780,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
        1  _A_P0SEL_7
        4  __Constant_190
        4  __Constant_258
+      74  identifyClusterReadAttribute
+      50  identifyClusterWriteAttribute
       17  identifyInit
      123  identifyLoop
        2  identifyTime
@@ -645,13 +792,13 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterIden
       68  processIdentifyTimeChange
 
  
- 428 bytes in segment BANKED_CODE
-  30 bytes in segment BANK_RELAYS
+ 552 bytes in segment BANKED_CODE
+  42 bytes in segment BANK_RELAYS
    3 bytes in segment SFR_AN
    8 bytes in segment XDATA_ROM_C
    4 bytes in segment XDATA_Z
  
- 458 bytes of CODE  memory
+ 594 bytes of CODE  memory
    0 bytes of CONST memory (+ 8 bytes shared)
    0 bytes of DATA  memory (+ 3 bytes shared)
    4 bytes of XDATA memory

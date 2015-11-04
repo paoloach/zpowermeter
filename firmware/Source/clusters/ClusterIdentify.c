@@ -15,7 +15,7 @@
 #define ON_TIME 600
 #define OFF_TIME 400
 
-uint16 identifyTime=0;
+static uint16 identifyTime=0;
 
 static byte mainAppTaskId;
 
@@ -42,6 +42,33 @@ __sfr __no_init volatile struct  {
 	unsigned char P0SEL_1: 1;
 	unsigned char P0SEL_0: 1;
 } @ 0xF3;
+
+
+void identifyClusterReadAttribute(zclAttrRec_t * attribute){
+	if (attribute == NULL){
+		return;
+	}
+	
+	if (attribute->attr.attrId == ATTRID_IDENTIFY_TIME){
+		attribute->attr.dataType = ZCL_DATATYPE_UINT16;
+		attribute->attr.dataPtr = (void *)&identifyTime;
+		attribute->attr.status = ZCL_STATUS_SUCCESS;
+	} else {
+		attribute->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
+}
+void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
+	if (writeAttribute == NULL){
+		return;
+	}
+	
+	if(writeAttribute->attrId == ATTRID_IDENTIFY_TIME){
+		identifyTime = *(uint16 *)writeAttribute;
+		writeAttribute->status=ZCL_STATUS_SUCCESS;
+	} else {
+		writeAttribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
+}
 
 void identifyInit(byte taskId){
 	DIR0_1 = 1;
