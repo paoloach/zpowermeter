@@ -4,6 +4,9 @@ gEDA/*.sch~
 *.ko
 *.obj
 *.elf
+*.r51
+*.pbi
+
 
 # Precompiled Headers
 *.gch
