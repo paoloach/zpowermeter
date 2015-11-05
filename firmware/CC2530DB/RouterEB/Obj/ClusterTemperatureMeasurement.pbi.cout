@@ -1,5 +1,5 @@
-"C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.c"
--std=c99
+"C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Source\clusters\ClusterTemperatureMeasurement.cpp"
+-std=c++98
 -ferror-limit=100
 -I
 C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\CC2530DB
@@ -404,10 +404,14 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\zmac\f8w
 -D__HAS_LOCATED_DECLARATION__=1
 -D__IAR_COMPILERBASE__=593409
 -D__DATE__="Nov  5 2015"
--D__TIME__="08:32:02"
+-D__TIME__="18:29:36"
 -D__STDC__=1
--D__STDC_VERSION__=199901L
--D__STDC_HOSTED__=1
+-D__cplusplus=199711L
+-D__iar_extended_embedded_cplusplus=1
+-D__embedded_cplusplus=1
+-D__WCHAR_T=1
+-D__BOOL=1
+-D__ARRAY_OPERATORS=1
 -D__EDG_TYPE_TRAITS_ENABLED=1
 -D__EDG__=1
 -D__EDG_VERSION__=403
