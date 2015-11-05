@@ -111,15 +111,6 @@ typedef struct zclCmdRecsList
   CONST zclCommandRec_t *pCmdRecs;
 } zclCmdRecsList_t;
 
-// Attribute record list item
-typedef struct zclAttrRecsList
-{
-  struct zclAttrRecsList *next;
-  uint8                  endpoint;      // Used to link it into the endpoint descriptor
-  zclReadWriteCB_t       pfnReadWriteCB;// Read or Write attribute value callback function
-  zclAuthorizeCB_t       pfnAuthorizeCB;// Authorize Read or Write operation
-  CONST zclAttrRec_t     *attrs;        // attribute records
-} zclAttrRecsList;
 
 // Cluster option list item
 typedef struct zclClusterOptionList
@@ -152,8 +143,6 @@ typedef struct
   uint8 zcl_RegisteredMsgTaskID = TASK_NO_TASK;
 #endif
 
-// The Application should register its attribute data validation function
-zclValidateAttrData_t zcl_ValidateAttrDataCB = (zclValidateAttrData_t)NULL;
 
 // ZCL Sequence number
 uint8 zcl_SeqNum = 0x00;
@@ -631,21 +620,6 @@ ZStatus_t zcl_registerClusterOptionList( uint8 endpoint, uint8 numOption, zclOpt
   return ( ZSuccess );
 }
 
-/*********************************************************************
- * @fn          zcl_registerValidateAttrData
- *
- * @brief       Add a validation function for attribute data
- *
- * @param       pfnValidateAttrData - function pointer to validate routine
- *
- * @return      ZSuccess if OK
- */
-ZStatus_t zcl_registerValidateAttrData( zclValidateAttrData_t pfnValidateAttrData )
-{
-  zcl_ValidateAttrDataCB = pfnValidateAttrData;
-
-  return ( ZSuccess );
-}
 
 /*********************************************************************
  * @fn      zcl_DeviceOperational
@@ -662,7 +636,6 @@ ZStatus_t zcl_registerValidateAttrData( zclValidateAttrData_t pfnValidateAttrDat
  */
 static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameType, uint8 cmd, uint16 profileID ){
 	zclAttrRec_t attrRec;
-	uint8 deviceEnabled = DEVICE_ENABLED; // default value
 
 	(void)profileID;  // Intentionally unreferenced parameter
 
@@ -681,8 +654,7 @@ static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameTy
   // Is device enabled?
 	ReadAttributeFn callback = findReadAttributeFn(srcEP, ZCL_CLUSTER_ID_GEN_BASIC);
 	callback(&attrRec);
-	zclReadAttrData( &deviceEnabled, &attrRec, NULL );
-	return ( deviceEnabled == DEVICE_ENABLED ? TRUE : FALSE );
+	return ( *(uint8 *)attrRec.dataPtr == DEVICE_ENABLED ? TRUE : FALSE );
 }
 
 /*********************************************************************
@@ -2767,42 +2739,6 @@ uint16 zclGetAttrDataLength( uint8 dataType, uint8 *pData )
 
 #ifdef ZCL_READ
 /*********************************************************************
- * @fn      zclReadAttrData
- *
- * @brief   Read the attribute's current value into pAttrData.
- *          NOTE - Not compatible with application's attributes callbacks.
- *
- * @param   pAttrData - where to put attribute data
- * @param   pAttr - pointer to attribute
- * @param   pDataLen - where to put attribute data length
- *
- * @return Success
- */
-ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataLen )
-{
-  uint16 dataLen;
-
-  if ( pAttr->attr.dataPtr == NULL )
-  {
-    return ( ZCL_STATUS_FAILURE );
-  }
-
-  dataLen = zclGetAttrDataLength( pAttr->attr.dataType, (uint8*)(pAttr->attr.dataPtr) );
-  zcl_memcpy( pAttrData, pAttr->attr.dataPtr, dataLen );
-
-  if ( pDataLen != NULL )
-  {
-    *pDataLen = dataLen;
-  }
-
-  return ( ZCL_STATUS_SUCCESS );
-}
-
-
-#endif // ZCL_READ
-
-#ifdef ZCL_READ
-/*********************************************************************
  * @fn      zclParseInReadCmd
  *
  * @brief   Parse the "Profile" Read Commands
@@ -2814,24 +2750,24 @@ ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataL
  *
  * @return  pointer to the parsed command structure
  */
-void *zclParseInReadCmd( zclParseCmd_t *pCmd )
-{
-  zclReadCmd_t *readCmd;
-  uint8 *pBuf = pCmd->pData;
+void *zclParseInReadCmd( zclParseCmd_t *pCmd ){
+	zclReadCmd_t *readCmd;
+	uint8 *pBuf = pCmd->pData;
+	uint8 *pBufEnd = pCmd->pData+pCmd->dataLen;
+	uint16 * iterAttr;
 
-  readCmd = (zclReadCmd_t *)zcl_mem_alloc( sizeof ( zclReadCmd_t ) + pCmd->dataLen );
-  if ( readCmd != NULL )
-  {
-    uint8 i;
-    readCmd->numAttr = pCmd->dataLen / 2; // Atrribute ID
-    for ( i = 0; i < readCmd->numAttr; i++ )
-    {
-      readCmd->attrID[i] = BUILD_UINT16( pBuf[0], pBuf[1] );
-      pBuf += 2;
-    }
-  }
+	readCmd = (zclReadCmd_t *)zcl_mem_alloc( sizeof ( zclReadCmd_t ) + pCmd->dataLen );
+	if ( readCmd != NULL ){
+		readCmd->numAttr = pCmd->dataLen / 2; // Atrribute ID
+		iterAttr = &(readCmd->attrID[0]);
+		while (pBuf < pBufEnd){
+			*iterAttr = BUILD_UINT16( pBuf[0], pBuf[1] );
+			pBuf += 2;
+			iterAttr++;
+		}
+	}
 
-  return ( (void *)readCmd );
+	return ( (void *)readCmd );
 }
 
 /*********************************************************************
@@ -3687,9 +3623,9 @@ static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg ){
     	statusRec->attrID = readCmd->attrID[i];
 		ReadAttributeFn callback = findReadAttributeFn(pInMsg->msg->endPoint, pInMsg->msg->clusterId);
 		callback(&attribute);
-		statusRec->data = attribute.attr.dataPtr;
-		statusRec->dataType = attribute.attr.dataType;
-		statusRec->status = attribute.attr.status;
+		statusRec->data = attribute.dataPtr;
+		statusRec->dataType = attribute.dataType;
+		statusRec->status = attribute.status;
 	}
 
 	// Build and send Read Response command
@@ -3832,36 +3768,36 @@ static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg ){
 	for ( i = 0; i < writeCmd->numAttr; i++ ) {
     	zclWriteRec_t *statusRec = &(writeCmd->attrList[i]);
 
-		attrRec.attr.attrId = statusRec->attrID;
+		attrRec.attrId = statusRec->attrID;
 		readAttributeFn = findReadAttributeFn(pInMsg->msg->endPoint, pInMsg->msg->clusterId);
 		readAttributeFn( &attrRec );
-		if (attrRec.attr.status == ZCL_STATUS_UNSUPPORTED_ATTRIBUTE){
+		if (attrRec.status == ZCL_STATUS_UNSUPPORTED_ATTRIBUTE){
 			 // Attribute is not supported - stop here
 			writeRspCmd->attrList[j].status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
 			break;
 		}
 
-		if ( statusRec->dataType != attrRec.attr.dataType ) {
+		if ( statusRec->dataType != attrRec.dataType ) {
 			// Attribute data type is incorrect - stope here
 			writeRspCmd->attrList[j].status = ZCL_STATUS_INVALID_DATA_TYPE;
 			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
 			break;
 		}
 
-		if ( !zcl_AccessCtrlWrite( attrRec.attr.accessControl ) ) {
+		if ( !zcl_AccessCtrlWrite( attrRec.accessControl ) ) {
 			writeRspCmd->attrList[j].status = ZCL_STATUS_READ_ONLY;
 			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
 			break;
 		}
 
-		if ( zcl_AccessCtrlAuthWrite( attrRec.attr.accessControl ) ) {
+		if ( zcl_AccessCtrlAuthWrite( attrRec.accessControl ) ) {
 			writeRspCmd->attrList[j].status = ZCL_STATUS_NOT_AUTHORIZED;
 			writeRspCmd->attrList[j++].attrID = statusRec->attrID;
 			break;
 		}
 
-		dataLen = zclGetAttrDataLength( attrRec.attr.dataType, attrRec.attr.dataPtr );
+		dataLen = zclGetAttrDataLength( attrRec.dataType, attrRec.dataPtr );
 
 		// add padding if needed
 		if ( PADDING_NEEDED( dataLen ) ) {
@@ -3891,18 +3827,18 @@ static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg ){
 		zclWriteRec_t *statusRec = &(writeCmd->attrList[0]);
 		zclWriteRec_t *curStatusRec = curWriteRec;
 		for ( i = 0; i < writeCmd->numAttr; i++ ) {
-			attrRec.attr.attrId = statusRec->attrID;
+			attrRec.attrId = statusRec->attrID;
 			readAttributeFn = findReadAttributeFn(pInMsg->msg->endPoint,pInMsg->msg->clusterId );
 			readAttributeFn(&attrRec);	
 												 
 	
-			dataLen = zclGetAttrDataLength( attrRec.attr.dataType, (uint8*)(attrRec.attr.dataPtr) );
+			dataLen = zclGetAttrDataLength( attrRec.dataType, (uint8*)(attrRec.dataPtr) );
 			// Keep a copy of the current data before before writing the new data over
 			curStatusRec->dataLen = dataLen;
 			curStatusRec->attrID = statusRec->attrID;
 			curStatusRec->attrData = curDataPtr;
-			curStatusRec->dataType = attrRec.attr.dataType;
-  			zcl_memcpy(curDataPtr, attrRec.attr.dataPtr, dataLen );
+			curStatusRec->dataType = attrRec.dataType;
+  			zcl_memcpy(curDataPtr, attrRec.dataPtr, dataLen );
 			
 			writeAttribute.attrId = statusRec->attrID;
 			writeAttribute.dataPtr = statusRec->attrData;

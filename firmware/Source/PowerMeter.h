@@ -19,8 +19,6 @@ extern "C"
 extern SimpleDescriptionFormat_t OnOff_SimpleDesc;
 extern SimpleDescriptionFormat_t PowerMetering_SimpleDesc;
 
-extern CONST zclAttrRec_t powerMeterAttrs[];
-
 extern void powerMeter_Init( byte task_id );
 
 extern UINT16 powerMeterEventLoop( byte task_id, UINT16 events );

@@ -46,5 +46,5 @@ ReadAttributeFn findReadAttributeFn(uint8 endpoint, uint16 clusterId){
 }
 
 void readAttributeFnDefault(zclAttrRec_t * status){
-	status->attr.status=ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	status->status=ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 }

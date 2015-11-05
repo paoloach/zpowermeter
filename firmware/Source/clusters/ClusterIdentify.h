@@ -9,15 +9,10 @@
 #ifndef __CLUSTER_IDENTIFY__H_
 #define __CLUSTER_IDENTIFY__H_
 
-#include "zcl_general.h"
 #include "zcl.h"
-#include "ClusterOSALEvents.h"
 #include "zclReadAttributeFn.h"
 #include "zclWriteAttributeFn.h"
 
-
-
-#define IDENTIFY_ATTRIBUTES  { ZCL_CLUSTER_ID_GEN_IDENTIFY, {  ATTRID_IDENTIFY_TIME,  ZCL_DATATYPE_UINT16, ACCESS_CONTROL_R_W, (void *)&identifyTime, &processIdentifyTimeChange  }  },
 
 void identifyInit(byte taskId);
 void processIdentifyTimeChange( void );

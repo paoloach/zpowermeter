@@ -2240,7 +2240,7 @@
         <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Source\clusters\ClusterTemperatureMeasurement.c</name>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.c</name>
       </file>
     </group>
     <file>

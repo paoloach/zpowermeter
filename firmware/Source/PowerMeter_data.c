@@ -34,11 +34,12 @@
 /*********************************************************************
  * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
  */
+	 /*
 CONST zclAttrRec_t powerMeterAttrs[] = {
 	POWER_ATTRIBUTES
 	ONOF_ATTRIBUTES
  	LAST_CLUSTER_ATTRIBUTE
-};
+};*/
 
 /*********************************************************************
  * SIMPLE DESCRIPTOR

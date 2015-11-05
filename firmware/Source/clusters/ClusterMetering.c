@@ -12,7 +12,3 @@
 
 #include "ClusterMetering.h"
 
-
-uint16 mainVoltage=0;
-uint16 batteryVoltage=0;
-uint8  batteryAlarmMask=0;

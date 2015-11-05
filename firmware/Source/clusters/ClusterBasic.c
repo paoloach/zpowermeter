@@ -8,6 +8,9 @@
 
 #include "ClusterBasic.h"
 #include "osal.h"
+#include "zcl_general.h"
+#include "zcl.h"
+
 
 
 const uint8 HWRevision = 1;
@@ -67,49 +70,49 @@ void basicClusterReadAttribute(zclAttrRec_t * statusRec){
 	if (statusRec == NULL){
 		return;
 	}
-	statusRec->attr.accessControl = ACCESS_CONTROL_READ;
-	switch(statusRec->attr.attrId){
+	statusRec->accessControl = ACCESS_CONTROL_READ;
+	switch(statusRec->attrId){
 	case ATTRID_BASIC_HW_VERSION:
-		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
-		statusRec->attr.dataPtr = (void *)&HWRevision;
+		statusRec->dataType = ZCL_DATATYPE_UINT8;
+		statusRec->dataPtr = (void *)&HWRevision;
 		break;
 	case ATTRID_BASIC_ZCL_VERSION:
-		statusRec->attr.dataType = ZCL_DATATYPE_UINT8;
-		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+		statusRec->dataType = ZCL_DATATYPE_UINT8;
+		statusRec->dataPtr = (void *)&ZCLVersion;
 		break;
 	case ATTRID_BASIC_MANUFACTURER_NAME:
-		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
-		statusRec->attr.dataPtr = (void *)&ZCLVersion;
+		statusRec->dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->dataPtr = (void *)&ZCLVersion;
 		break;
 	case ATTRID_BASIC_MODEL_ID:
-		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
-		statusRec->attr.dataPtr = (void *)&modelId;
+		statusRec->dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->dataPtr = (void *)&modelId;
 		break;
 	case ATTRID_BASIC_DATE_CODE:
-		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
-		statusRec->attr.dataPtr = (void *)&dateCode;
+		statusRec->dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->dataPtr = (void *)&dateCode;
 		break;
 	case ATTRID_BASIC_POWER_SOURCE:
-		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
-		statusRec->attr.dataPtr = (void *)&powerSource;
+		statusRec->dataType = ZCL_DATATYPE_ENUM8;
+		statusRec->dataPtr = (void *)&powerSource;
 		break;
 	case ATTRID_BASIC_LOCATION_DESC:
-		statusRec->attr.dataType = ZCL_DATATYPE_CHAR_STR;
-		statusRec->attr.dataPtr = (void *)&locationDescription;
-		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		statusRec->dataType = ZCL_DATATYPE_CHAR_STR;
+		statusRec->dataPtr = (void *)&locationDescription;
+		statusRec->accessControl = ACCESS_CONTROL_R_W; 
 		break;
 	case ATTRID_BASIC_PHYSICAL_ENV:
-		statusRec->attr.dataType = ZCL_DATATYPE_ENUM8;
-		statusRec->attr.dataPtr = (void *)&physicalEnvironment;
-		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		statusRec->dataType = ZCL_DATATYPE_ENUM8;
+		statusRec->dataPtr = (void *)&physicalEnvironment;
+		statusRec->accessControl = ACCESS_CONTROL_R_W; 
 		break;
 	case ATTRID_BASIC_DEVICE_ENABLED:
-		statusRec->attr.dataType = ZCL_DATATYPE_BOOLEAN;
-		statusRec->attr.dataPtr = (void *)&deviceEnable;
-		statusRec->attr.accessControl = ACCESS_CONTROL_R_W; 
+		statusRec->dataType = ZCL_DATATYPE_BOOLEAN;
+		statusRec->dataPtr = (void *)&deviceEnable;
+		statusRec->accessControl = ACCESS_CONTROL_R_W; 
 		break;
 	default:
-		statusRec->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+		statusRec->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 	}
 }
 

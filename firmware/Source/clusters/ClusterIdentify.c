@@ -11,6 +11,9 @@
 #include "hal_led.h"
 
 #include "ClusterIdentify.h"
+#include "zcl_general.h"
+#include "ClusterOSALEvents.h"
+
 
 #define ON_TIME 600
 #define OFF_TIME 400
@@ -49,12 +52,12 @@ void identifyClusterReadAttribute(zclAttrRec_t * attribute){
 		return;
 	}
 	
-	if (attribute->attr.attrId == ATTRID_IDENTIFY_TIME){
-		attribute->attr.dataType = ZCL_DATATYPE_UINT16;
-		attribute->attr.dataPtr = (void *)&identifyTime;
-		attribute->attr.status = ZCL_STATUS_SUCCESS;
+	if (attribute->attrId == ATTRID_IDENTIFY_TIME){
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&identifyTime;
+		attribute->status = ZCL_STATUS_SUCCESS;
 	} else {
-		attribute->attr.status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 	}
 }
 void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){

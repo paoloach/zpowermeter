@@ -25,8 +25,10 @@
 #include "hal_key.h"
 #include "zclReadAttributeFn.h"
 #include "zclWriteAttributeFn.h"
+#include "clusters/ClusterOSALEvents.h"
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
+#include "clusters/ClusterPower.h"
 #include "clusters/ClusterOnOff.h"
 
 static byte zPowerMeterTaskID;
@@ -61,6 +63,7 @@ void powerMeter_Init( byte task_id ){
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 
 	zcl_registerForMsg( zPowerMeterTaskID );
   
