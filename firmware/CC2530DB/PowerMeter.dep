@@ -3280,7 +3280,7 @@
       <outputs>
         <tool>
           <name>ICC8051</name>
-          <file> 390</file>
+          <file> 392 390 402</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -3418,7 +3418,7 @@
       <outputs>
         <tool>
           <name>ICC8051</name>
-          <file> 195</file>
+          <file> 191 195 413</file>
         </tool>
         <tool>
           <name>BICOMP</name>
