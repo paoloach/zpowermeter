@@ -30,6 +30,9 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterPower.h"
 #include "clusters/ClusterOnOff.h"
+#include "clusters/ClusterMetering.h"
+#include "clusters/ClusterOnOff.h"
+#include "clusters/ClusterElectricityMeasure.h"
 
 static byte zPowerMeterTaskID;
 
@@ -61,10 +64,20 @@ void powerMeter_Init( byte task_id ){
  	
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,identifyClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_ONOFF,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-
+	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+	
+	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_METERING,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+	addReadAttributeFn(ENDPOINT_METERING,ZCL_CLUSTER_ID_GEN_POWER_CFG,meteringClusterReadAttribute);
+	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT,electricityMeasureClusterReadAttribute);
+	
 	zcl_registerForMsg( zPowerMeterTaskID );
   
   	EA=1;

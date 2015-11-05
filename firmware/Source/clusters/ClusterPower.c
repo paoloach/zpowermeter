@@ -24,6 +24,7 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 		return;
 	}
 	attribute->accessControl = ACCESS_CONTROL_READ;
+	attribute->status = ZCL_STATUS_SUCCESS;
 	switch(attribute->attrId){
 	case ATTRID_POWER_CFG_MAINS_VOLTAGE:
 		attribute->dataType = ZCL_DATATYPE_UINT16;

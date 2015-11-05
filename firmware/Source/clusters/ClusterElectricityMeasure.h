@@ -3,6 +3,8 @@
 
 #include "ClusterElectricityMeasure_constant.h"
 #include <hal_types.h>
+#include "zclReadAttributeFn.h"
+
 
 extern uint32 measurementType;
 extern uint16 frequency;
@@ -69,6 +71,8 @@ extern uint16 acPowerDiv;
 	{ ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT, {  ATTRID_ELECTRICITY_MEASURE_AC_POWER_MULT   ,  ZCL_DATATYPE_UINT16, ACCESS_CONTROL_READ, (void *)&acPowerMult, NULL  }  },\
 	{ ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT, {  ATTRID_ELECTRICITY_MEASURE_AC_POWER_DIV    ,  ZCL_DATATYPE_UINT16, ACCESS_CONTROL_READ, (void *)&acPowerDiv, NULL  }  },
 	
+void electricityMeasureClusterReadAttribute(zclAttrRec_t *);
+
 		
 
 #endif

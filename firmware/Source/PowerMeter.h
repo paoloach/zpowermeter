@@ -14,6 +14,8 @@ extern "C"
 #include "zcl.h"
 
 #define ENDPOINT_ONOFF            13
+	
+#define ENDPOINT_METERING            15
 
 
 extern SimpleDescriptionFormat_t OnOff_SimpleDesc;

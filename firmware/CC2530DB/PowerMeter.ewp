@@ -2209,13 +2209,16 @@
           <name>$PROJ_DIR$\..\Source\clusters\ClusterBasic.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure_constant.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.h</name>
@@ -2234,10 +2237,16 @@
         <name>$PROJ_DIR$\..\Source\clusters\ClusterBasic.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterElectricityMeasure.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.c</name>

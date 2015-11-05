@@ -32,3 +32,7 @@ uint16 acCurrentMult;
 uint16 acCurrentDiv;
 uint16 acPowerMult;
 uint16 acPowerDiv;
+
+void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
+	
+}
