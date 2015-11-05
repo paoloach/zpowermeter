@@ -8,6 +8,13 @@ gEDA/*.sch~
 *.pbi
 *.s51
 *.lst
+*.map
+*.pbd
+firmware/CC2530DB/RouterEB/List/*
+firmware/CC2530DB/RouterEB/Obj/*
+
+
+
 
 
 # Precompiled Headers

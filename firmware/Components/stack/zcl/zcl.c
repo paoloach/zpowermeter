@@ -179,7 +179,6 @@ static zclLibPlugin_t *plugins = (zclLibPlugin_t *)NULL;
   static zclCmdRecsList_t *gpCmdList = (zclCmdRecsList_t *)NULL;
 #endif
 
-static zclAttrRecsList *attrList = (zclAttrRecsList *)NULL;
 static zclClusterOptionList *clusterOptionList = (zclClusterOptionList *)NULL;
 
 static afIncomingMSGPacket_t *rawAFMsg = (afIncomingMSGPacket_t *)NULL;
