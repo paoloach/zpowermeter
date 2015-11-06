@@ -55,6 +55,11 @@ __sfr __no_init volatile struct  {
 	unsigned char P0SEL_0: 1;
 } @ 0xF3;
 
+union CS5463Reg {
+	uint32	value;
+	uint8	bytes[4];
+};
+
 void CS5463_Init(void ){
 	U0_ACTIVE=0;
 	U0BAUD=0;
@@ -86,5 +91,37 @@ void CS5463_startConversion(void) {
 	asm("NOP");
 	asm("NOP");
 	P0_7=1;
+}
+
+int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
+	union CS5463Reg result;
+
+	P0_7=0;
+	asm("NOP");
+	asm("NOP");
+	uint8 index = (regIndex << 2);
+	U0DBUF=index;
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	result.bytes[3] = 0;
+	U0DBUF=0xFF;
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	
+	result.bytes[2] = U0DBUF;
+		
+	U0DBUF=0xFF;
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	result.bytes[1] = U0DBUF;
+	U0DBUF=0xFF;
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	result.bytes[0] = U0DBUF;
+	asm("NOP");
+	asm("NOP");
+	P0_7=1;
+	
+	return result.value;
 }
 

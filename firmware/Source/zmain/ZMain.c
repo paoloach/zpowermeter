@@ -67,9 +67,6 @@ static void zmain_cert_init( void );
 static void zmain_dev_info( void );
 static void zmain_vdd_check( void );
 
-#ifdef LCD_SUPPORTED
-static void zmain_lcd_init( void );
-#endif
 
 /*********************************************************************
  * @fn      main
@@ -126,11 +123,6 @@ int main( void )
 
   // Display information about this device
   zmain_dev_info();
-
-  /* Display the device info on the LCD */
-#ifdef LCD_SUPPORTED
-  zmain_lcd_init();
-#endif
 
 #ifdef WDT_IN_PM1
   /* If WDT is used, this is a good place to enable it. */
