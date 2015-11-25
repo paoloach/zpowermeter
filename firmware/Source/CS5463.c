@@ -15,44 +15,44 @@
 
 // U0GCR
 __sfr __no_init volatile struct  {
-	unsigned char U0_CPOL: 1;
-	unsigned char U0_CPHA: 1;
-	unsigned char U0_ORDER: 1;
 	unsigned char U0_BAUD_E: 5;
+	unsigned char U0_ORDER: 1;
+	unsigned char U0_CPHA: 1;
+	unsigned char U0_CPOL: 1;
 } @ 0xC5;
 
 // U0CSR
 __sfr __no_init volatile struct  {
-	unsigned char U0_MODE: 1;
-	unsigned char U0_RE: 1;
-	unsigned char U0_SLAVE: 1;
-	unsigned char U0_FE: 1;
-	unsigned char U0_ERR: 1;
-	unsigned char U0_RX_BYTE: 1;
-	unsigned char U0_TX_BYTE: 1;
 	unsigned char U0_ACTIVE: 1;
+	unsigned char U0_TX_BYTE: 1;
+	unsigned char U0_RX_BYTE: 1;
+	unsigned char U0_ERR: 1;
+	unsigned char U0_FE: 1;
+	unsigned char U0_SLAVE: 1;
+	unsigned char U0_RE: 1;
+	unsigned char U0_MODE: 1;
 } @ 0x86;
 
 __sfr __no_init volatile struct  {
-	unsigned char DIR0_7: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_1: 1;
 	unsigned char DIR0_0: 1;
+	unsigned char DIR0_1: 1;
+	unsigned char DIR0_2: 1;
+	unsigned char DIR0_3: 1;
+	unsigned char DIR0_4: 1;
+	unsigned char DIR0_5: 1;
+	unsigned char DIR0_6: 1;
+	unsigned char DIR0_7: 1;
 } @ 0xFD;
 
 __sfr __no_init volatile struct  {
-	unsigned char P0SEL_7: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_1: 1;
 	unsigned char P0SEL_0: 1;
+	unsigned char P0SEL_1: 1;
+	unsigned char P0SEL_2: 1;
+	unsigned char P0SEL_3: 1;
+	unsigned char P0SEL_4: 1;
+	unsigned char P0SEL_5: 1;
+	unsigned char P0SEL_6: 1;
+	unsigned char P0SEL_7: 1;
 } @ 0xF3;
 
 union CS5463Reg {
@@ -99,7 +99,7 @@ int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
 	P0_7=0;
 	asm("NOP");
 	asm("NOP");
-	uint8 index = (regIndex << 2);
+	uint8 index = (regIndex << 1);
 	U0DBUF=index;
 	asm("NOP");
 	while(U0_TX_BYTE==0);
@@ -121,6 +121,10 @@ int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
 	asm("NOP");
 	asm("NOP");
 	P0_7=1;
+	asm("NOP");
+	asm("NOP");
+	asm("NOP");
+	asm("NOP");
 	
 	return result.value;
 }

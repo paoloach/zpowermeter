@@ -13,43 +13,49 @@
 
 #include "zcl.h"
 #include "ClusterElectricityMeasure.h"
+#include "CS5463.h"
 
 
-uint32 measurementType=0x0107;
-uint16 frequency=220;
-int32 totalActivePower=0;
-int32 totalReactivePower=0;
-uint32 totalApparentPower=0;
-uint16 frequencyMult=1;
-uint16 frequencyDiv=1;
-uint32 powerMult=1;
-uint32 powerDivisor=1;
+static uint32 measurementType=0x0107;
+static uint16 frequency=220;
+static uint16 frequencyMult=1;
+static uint16 frequencyDiv=1;
+static uint32 powerMult=1;
+static uint32 powerDivisor=1;
 
-uint16 acVoltMult=1;
-uint16 acVoltDiv=1;
-uint16 acCurrentMult=1;
-uint16 acCurrentDiv=1;
-uint16 acPowerMult=1;
-uint16 acPowerDiv=1;
+/*
+  From the schematic, the voltage is divided by 2000 first to send to cs5463
+  So 220V ->110mv, that is 0.44 of the full scale voltage (250 mv)
+
+  The value read by CS5463 is multiply for 0x1000, in order to obtaion a value from -0x1000 to 0x1000, where 0x1000 is 250mv, so to obtain the value read from cs5463
+  
+  val /(4*0x1000)
+
+  Because the value read by cs5462 was divided by 2000, then it's need to multiplay for the same value.
+  
+*/
+static uint16 acVoltMult=2000;
+static uint16 acVoltDiv=0x4000;
+
+/*
+  From the schematic, the voltage is divided by 2000 first to send to cs5463
+  So 220V ->110mv, that is 0.44 of the full scale voltage (250 mv)
+
+  The value read by CS5463 is multiply for 0x1000, in order to obtaion a value from -0x1000 to 0x1000, where 0x1000 is 250mv, so to obtain the value read from cs5463
+  
+  val /(4*0x1000)
+
+  Because the value read by cs5462 was divided by 2000, then it's need to multiplay for the same value.
+  
+*/
+static uint16 acCurrentMult=1;
+static uint16 acCurrentDiv=1;
+static uint16 acPowerMult=1;
+static uint16 acPowerDiv=1;
 
 uint16 tmp;
 
-uint16 lineCurrent;
-int16 activeCurrent;
-int16 reactiveCurrent;
-uint16 RMSVolt;
-uint16 RMSVoltMin;
-uint16 RMSVoltMax;
-uint16 RMSCurrent;
-uint16 RMSCurrentMinx;
-uint16 RMSCurrentMax;
-int16 ActivePower;
-int16 ActivePowerMinx;
-int16 ActivePowerMax;
-int16 ReactivePower;
-uint16 ApparentPower;
-int8 PowerFactor;
-uint16 averageRmsVolrPeriod;
+static uint16 averageRmsVolrPeriod;
 
 
 void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
@@ -67,18 +73,6 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 		attribute->dataType = ZCL_DATATYPE_UINT16;
 		attribute->dataPtr = (void *)&frequency;
 		break;		
-	case ATTRID_ELECTRICITY_MEASURE_TOTAL_ACTIVE_POWER:
-		attribute->dataType = ZCL_DATATYPE_INT32;
-		attribute->dataPtr = (void *)&totalActivePower;
-		break;	
-	case ATTRID_ELECTRICITY_MEASURE_TOTAL_REACTIVE_POWER:
-		attribute->dataType = ZCL_DATATYPE_INT32;
-		attribute->dataPtr = (void *)&totalReactivePower;
-		break;		
-	case ATTRID_ELECTRICITY_MEASURE_TOTAL_APPARENT_POWER:
-		attribute->dataType = ZCL_DATATYPE_INT32;
-		attribute->dataPtr = (void *)&totalApparentPower;
-		break;
 	case ATTRID_ELECTRICITY_MEASURE_AC_FREQ_MULT:
 		attribute->dataType = ZCL_DATATYPE_UINT16;
 		attribute->dataPtr = (void *)&frequencyMult;
@@ -95,6 +89,35 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 		attribute->dataType = ZCL_DATATYPE_UINT32;
 		attribute->dataPtr = (void *)&powerDivisor;
 		break;
+	case ATTRID_ELECTRICITY_MEASURE_AV_RMS_VOLT_PERIOD:
+		attribute->dataType = ZCL_DATATYPE_UINT32;
+		attribute->dataPtr = (void *)&averageRmsVolrPeriod;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_VOLT_MULT:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acVoltMult;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_VOLT_DIV:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acVoltDiv;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_CURRENT_MULT:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acCurrentMult;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_CURRENT_DIV:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acCurrentDiv;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_POWER_MULT:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acPowerMult;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_AC_POWER_DIV:
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&acPowerDiv;
+		break;
+		
 	case ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT:
 		tmp = getCS5463RegisterValue(IstantaneoCurrent) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
@@ -103,6 +126,36 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 	case ATTRID_ELECTRICITY_MEASURE_RMS_VOLT:
 		tmp = getCS5463RegisterValue(RMSVolt) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT:
+		tmp = getCS5463RegisterValue(RMSCurrent) >> 8;
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT_MAX:
+		tmp = getCS5463RegisterValue(PeakCurrent) >> 8;
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_ACTIVE_POWER:
+		tmp = getCS5463RegisterValue(ActivePower) >> 8;
+		attribute->dataType = ZCL_DATATYPE_INT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_REACTIVE_POWER:
+		tmp = getCS5463RegisterValue(IstantaneusReactivePower) >> 8;
+		attribute->dataType = ZCL_DATATYPE_INT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_APPARENT_POWER:
+		tmp = getCS5463RegisterValue(ApparentPower) >> 8;
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&tmp;
+		break;
+	case ATTRID_ELECTRICITY_MEASURE_POWER_FACTOR:
+		tmp = getCS5463RegisterValue(PowerFactor) >> 8;
+		attribute->dataType = ZCL_DATATYPE_INT8;
 		attribute->dataPtr = (void *)&tmp;
 		break;
 	default:

@@ -679,125 +679,73 @@ static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameTy
  *
  * @return  ZSuccess if OK
  */
-ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *destAddr,
-                           uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction,
-                           uint8 disableDefaultRsp, uint16 manuCode, uint8 seqNum,
-                           uint16 cmdFormatLen, uint8 *cmdFormat )
-{
-  endPointDesc_t *epDesc;
-  zclFrameHdr_t hdr;
-  uint8 *msgBuf;
-  uint16 msgLen;
-  uint8 *pBuf;
-  uint8 options;
-  ZStatus_t status;
+ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *destAddr, uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction, uint8 disableDefaultRsp,
+						  uint16 manuCode, uint8 seqNum, uint16 cmdFormatLen, uint8 *cmdFormat ){
+	endPointDesc_t *epDesc;
+	zclFrameHdr_t hdr;
+	uint8 *msgBuf;
+	uint16 msgLen;
+	uint8 *pBuf;
+	uint8 options;
+	ZStatus_t status;
 
-  epDesc = afFindEndPointDesc( srcEP );
-  if ( epDesc == NULL )
-  {
-    return ( ZInvalidParameter ); // EMBEDDED RETURN
-  }
+	epDesc = afFindEndPointDesc( srcEP );
+	if ( epDesc == NULL ){
+    	return ( ZInvalidParameter ); // EMBEDDED RETURN
+  	}
 
 #if defined ( INTER_PAN )
-  if ( StubAPS_InterPan( destAddr->panId, destAddr->endPoint ) )
-  {
-    options = AF_TX_OPTIONS_NONE;
-  }
-  else
+	if ( StubAPS_InterPan( destAddr->panId, destAddr->endPoint ) ){
+		options = AF_TX_OPTIONS_NONE;
+	} else
 #endif
-  {
-    options = zclGetClusterOption( srcEP, clusterID );
+	{
+		options = zclGetClusterOption( srcEP, clusterID );
 
-    // The cluster might not have been defined to use security but if this message
-    // is in response to another message that was using APS security this message
-    // will be sent with APS security
-    if ( !( options & AF_EN_SECURITY ) )
-    {
-      afIncomingMSGPacket_t *origPkt = zcl_getRawAFMsg();
+		// The cluster might not have been defined to use security but if this message is in response to another message that was using APS security this message
+    	// will be sent with APS security
+    	if ( !( options & AF_EN_SECURITY ) ){
+			afIncomingMSGPacket_t *origPkt = zcl_getRawAFMsg();
+			if ( ( origPkt != NULL ) && ( origPkt->SecurityUse == TRUE ) ) {
+				options |= AF_EN_SECURITY;
+      		}
+		}
+	}
 
-      if ( ( origPkt != NULL ) && ( origPkt->SecurityUse == TRUE ) )
-      {
-        options |= AF_EN_SECURITY;
-      }
-    }
-  }
+	zcl_memset( &hdr, 0, sizeof( zclFrameHdr_t ) );
+	// Not Profile wide command (like READ, WRITE)
+	hdr.fc.type = specific ? ZCL_FRAME_TYPE_SPECIFIC_CMD : ZCL_FRAME_TYPE_PROFILE_CMD;
 
-  zcl_memset( &hdr, 0, sizeof( zclFrameHdr_t ) );
+	if ( ( epDesc->simpleDesc == NULL ) || ( zcl_DeviceOperational( srcEP, clusterID, hdr.fc.type, cmd, epDesc->simpleDesc->AppProfId ) == FALSE ) ) {
+		return ZFailure; // EMBEDDED RETURN
+	}
 
-  // Not Profile wide command (like READ, WRITE)
-  if ( specific )
-  {
-    hdr.fc.type = ZCL_FRAME_TYPE_SPECIFIC_CMD;
-  }
-  else
-  {
-    hdr.fc.type = ZCL_FRAME_TYPE_PROFILE_CMD;
-  }
+	// Fill in the Maufacturer Code
+	if ( manuCode != 0 ){
+		hdr.fc.manuSpecific = 1;
+		hdr.manuCode = manuCode;
+  	}
 
-  if ( ( epDesc->simpleDesc == NULL ) ||
-       ( zcl_DeviceOperational( srcEP, clusterID, hdr.fc.type,
-                                cmd, epDesc->simpleDesc->AppProfId ) == FALSE ) )
-  {
-    return ( ZFailure ); // EMBEDDED RETURN
-  }
+	hdr.fc.direction  = direction ? ZCL_FRAME_SERVER_CLIENT_DIR : ZCL_FRAME_CLIENT_SERVER_DIR;
+	hdr.fc.disableDefaultRsp = disableDefaultRsp ? 1:0;
+	hdr.transSeqNum = seqNum;
+	hdr.commandID = cmd;
 
-  // Fill in the Maufacturer Code
-  if ( manuCode != 0 )
-  {
-    hdr.fc.manuSpecific = 1;
-    hdr.manuCode = manuCode;
-  }
+	msgLen = zclCalcHdrSize( &hdr );
+	msgLen += cmdFormatLen;
 
-  // Set the Command Direction
-  if ( direction )
-  {
-    hdr.fc.direction = ZCL_FRAME_SERVER_CLIENT_DIR;
-  }
-  else
-  {
-    hdr.fc.direction = ZCL_FRAME_CLIENT_SERVER_DIR;
-  }
+	msgBuf = zcl_mem_alloc( msgLen );
+	if (msgBuf == NULL){
+		return ZMemError;
+	}
+	pBuf = zclBuildHdr( &hdr, msgBuf );
 
-  // Set the Disable Default Response field
-  if ( disableDefaultRsp )
-  {
-    hdr.fc.disableDefaultRsp = 1;
-  }
-  else
-  {
-    hdr.fc.disableDefaultRsp = 0;
-  }
+	// Fill in the command frame
+   	zcl_memcpy( pBuf, cmdFormat, cmdFormatLen );
 
-  // Fill in the Transaction Sequence Number
-  hdr.transSeqNum = seqNum;
-
-  // Fill in the command
-  hdr.commandID = cmd;
-
-  // calculate the needed buffer size
-  msgLen = zclCalcHdrSize( &hdr );
-  msgLen += cmdFormatLen;
-
-  // Allocate the buffer needed
-  msgBuf = zcl_mem_alloc( msgLen );
-  if ( msgBuf != NULL )
-  {
-    // Fill in the ZCL Header
-    pBuf = zclBuildHdr( &hdr, msgBuf );
-
-    // Fill in the command frame
-    zcl_memcpy( pBuf, cmdFormat, cmdFormatLen );
-
-    status = AF_DataRequest( destAddr, epDesc, clusterID, msgLen, msgBuf,
-                             &zcl_TransID, options, AF_DEFAULT_RADIUS );
-    zcl_mem_free ( msgBuf );
-  }
-  else
-  {
-    status = ZMemError;
-  }
-
-  return ( status );
+	status = AF_DataRequest( destAddr, epDesc, clusterID, msgLen, msgBuf, &zcl_TransID, options, AF_DEFAULT_RADIUS );
+	zcl_mem_free ( msgBuf );
+	return status;
 }
 
 #ifdef ZCL_READ
@@ -872,45 +820,44 @@ ZStatus_t zcl_SendReadRsp( uint8 srcEP, afAddrType_t *dstAddr,  uint16 clusterID
  	uint8 i;
 
  	// calculate the size of the command
+	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[0]);
 	for ( i = 0; i < readRspCmd->numAttr; i++ ) {
-    	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
-
-    	len += 2 + 1; // Attribute ID + Status
-
+	   	len += 2 + 1; // Attribute ID + Status
     	if ( statusRec->status == ZCL_STATUS_SUCCESS ) {
       		len++; // Attribute Data Type length
-
        		len += zclGetAttrDataLength( statusRec->dataType, statusRec->data );
     	}
+		statusRec++;
   	}
 
   	buf = zcl_mem_alloc( len );
-  	if ( buf != NULL ){
-    	// Load the buffer - serially
-    	uint8 *pBuf = buf;
-
-    	for ( i = 0; i < readRspCmd->numAttr; i++ ){
-      		zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
-
-      		*pBuf++ = LO_UINT16( statusRec->attrID );
-      		*pBuf++ = HI_UINT16( statusRec->attrID );
-      		*pBuf++ = statusRec->status;
-
-      		if ( statusRec->status == ZCL_STATUS_SUCCESS ) {
-        		*pBuf++ = statusRec->dataType;
-
-	          // Copy attribute data to the buffer to be sent out
-	          pBuf = zclSerializeData( statusRec->dataType, statusRec->data, pBuf );
-    		}
-    	} // for loop
-
-    	status = zcl_SendCommand( srcEP, dstAddr, clusterID, ZCL_CMD_READ_RSP, FALSE,  direction, disableDefaultRsp, 0, seqNum, len, buf );
-    	zcl_mem_free( buf );
-	} else {
-    	status = ZMemError;
+	if ( buf == NULL ){
+		return ZMemError;
 	}
+  	// Load the buffer - serially
+   	uint8 *pBuf = buf;
+	statusRec = &(readRspCmd->attrList[0]);
+   	for ( i = 0; i < readRspCmd->numAttr; i++ ){
+   		*pBuf++ = LO_UINT16( statusRec->attrID );
+   		*pBuf++ = HI_UINT16( statusRec->attrID );
+   		*pBuf++ = statusRec->status;
 
-	return ( status );
+   		if ( statusRec->status == ZCL_STATUS_SUCCESS ) {
+       		*pBuf++ = statusRec->dataType;
+			// Copy attribute data to the buffer to be sent out
+			pBuf = zclSerializeData( statusRec->dataType, statusRec->data, pBuf );
+   		}
+		statusRec++;
+   	}
+	// buf contains, for every attribute:
+	// 2 bytes attribute ID
+	// 1 byte status
+	// if status==SUCCESS
+	//   1 byte data type
+	//   n byte data serialization
+   	status = zcl_SendCommand( srcEP, dstAddr, clusterID, ZCL_CMD_READ_RSP, FALSE,  direction, disableDefaultRsp, 0, seqNum, len, buf );
+   	zcl_mem_free( buf );
+	return status;
 }
 #endif // ZCL_READ
 
@@ -3617,15 +3564,16 @@ static uint8 zclProcessInReadCmd( zclIncoming_t *pInMsg ){
 	}
 
 	readRspCmd->numAttr = readCmd->numAttr;
-	
+	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[0]);
 	for ( i = 0; i < readCmd->numAttr; i++ )  {
-    	zclReadRspStatus_t *statusRec = &(readRspCmd->attrList[i]);
-    	statusRec->attrID = readCmd->attrID[i];
 		ReadAttributeFn callback = findReadAttributeFn(pInMsg->msg->endPoint, pInMsg->msg->clusterId);
+		attribute.attrId = readCmd->attrID[i];
 		callback(&attribute);
+		statusRec->attrID = attribute.attrId;
 		statusRec->data = attribute.dataPtr;
 		statusRec->dataType = attribute.dataType;
 		statusRec->status = attribute.status;
+		statusRec++;
 	}
 
 	// Build and send Read Response command

@@ -2575,7 +2575,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>11111</state>
+          <state>00000</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2708,7 +2708,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -2717,7 +2717,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CompilerMisraRules04</name>
@@ -3338,9 +3338,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c</name>
-        <excluded>
-          <configuration>testCS5463</configuration>
-        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterMetering.c</name>
@@ -3350,9 +3347,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
-        <excluded>
-          <configuration>testCS5463</configuration>
-        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.c</name>
@@ -4152,6 +4146,10 @@
     <name>test</name>
     <file>
       <name>$PROJ_DIR$\..\Source\test\mainTestcs5463.c</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+        <configuration>EndDeviceEB</configuration>
+      </excluded>
     </file>
   </group>
   <group>
@@ -4165,11 +4163,15 @@
     <file>
       <name>$PROJ_DIR$\..\Tools\f8wCoord.cfg</name>
       <excluded>
+        <configuration>RouterEB</configuration>
         <configuration>EndDeviceEB</configuration>
       </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Tools\f8wEndev.cfg</name>
+      <excluded>
+        <configuration>RouterEB</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Tools\f8wRouter.cfg</name>

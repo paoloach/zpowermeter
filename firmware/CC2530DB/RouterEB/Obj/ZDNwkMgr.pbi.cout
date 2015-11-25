@@ -403,8 +403,8 @@ C:\Users\paolo\Documents\GitHub\zpowermeter\firmware\Components\zmac\f8w
 -D__PLAIN_INT_BITFIELD_IS_SIGNED__=1
 -D__HAS_LOCATED_DECLARATION__=1
 -D__IAR_COMPILERBASE__=593409
--D__DATE__="Nov  5 2015"
--D__TIME__="21:06:45"
+-D__DATE__="Nov 21 2015"
+-D__TIME__="18:15:36"
 -D__STDC__=1
 -D__STDC_VERSION__=199901L
 -D__STDC_HOSTED__=1

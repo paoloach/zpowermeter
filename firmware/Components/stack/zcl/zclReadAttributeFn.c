@@ -38,9 +38,10 @@ void addReadAttributeFn(uint8 endpoint, uint16 cluster, ReadAttributeFn callback
 ReadAttributeFn findReadAttributeFn(uint8 endpoint, uint16 clusterId){
 	struct ReadAttributeFnList * iter = head;
 	while (iter != NULL){
-		if (iter->endpoint == endpoint && clusterId == clusterId){
+		if (iter->endpoint == endpoint && iter->clusterId == clusterId){
 			return iter->callback;
 		}
+		iter = iter->next;
 	}
 	return &readAttributeFnDefault;
 }

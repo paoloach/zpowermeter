@@ -39,9 +39,10 @@ void addWriteAttributeFn(uint8 endpoint, uint16 cluster, WriteAttributeFn callba
 WriteAttributeFn findWriteAttributeFn(uint8 endpoint, uint16 clusterId){
 	struct WriteAttributeFnList * iter = head;
 	while (iter != NULL){
-		if (iter->endpoint == endpoint && clusterId == clusterId){
+		if (iter->endpoint == endpoint && iter->clusterId == clusterId){
 			return iter->callback;
 		}
+		iter = iter->next;
 	}
 	return &writeAttributeFnDefault;
 }

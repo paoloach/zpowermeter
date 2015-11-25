@@ -71,6 +71,7 @@ void basicClusterReadAttribute(zclAttrRec_t * statusRec){
 		return;
 	}
 	statusRec->accessControl = ACCESS_CONTROL_READ;
+	statusRec->status=ZCL_STATUS_SUCCESS;
 	switch(statusRec->attrId){
 	case ATTRID_BASIC_HW_VERSION:
 		statusRec->dataType = ZCL_DATATYPE_UINT8;

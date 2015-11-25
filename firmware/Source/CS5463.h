@@ -15,7 +15,14 @@
 
 enum CS5463Register {
 	IstantaneoCurrent=7,
-	RMSVolt = 12
+	RMSVolt = 12,
+	PeakVoltage=23,
+	RMSCurrent = 11,
+	PeakCurrent=22,
+	ActivePower=10,
+	IstantaneusReactivePower=20,
+	ApparentPower=27,
+	PowerFactor=25
 };
 
 extern void CS5463_Init(void);

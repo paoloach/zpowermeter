@@ -20,7 +20,13 @@
 #include "OSAL.h"
 #include "OSAL_Nv.h"
 
+#include "clusters/ClusterIdentify.h"
+#include "clusters/ClusterOnOff.h"
 #include "CS5463.h"
+
+
+static void identifyLED(void);
+static void onOff(void);
 
 /*********************************************************************
  * @fn      zmain_vdd_check
@@ -35,6 +41,8 @@ static void zmain_vdd_check( void )
     while (!HalAdcCheckVdd(VDD_MIN_RUN));
   } while (--cnt);
 }
+
+uint32 value5463;
 
 int main() {
 	 // Turn off interrupts
@@ -62,12 +70,38 @@ int main() {
 
   // Final board initialization
  // InitBoard( OB_READY );
-  
+
+//  identifyLED();
+ 
+ // onOff();
   CS5463_Init();
   CS5463_startConversion();
   while(1){
-  	uint32 value = getCS5463RegisterValue(IstantaneoCurrent);
+  	value5463 = getCS5463RegisterValue(13);
   }
   
 }
 
+
+static void identifyLED(void) {
+	identifyInit(1);
+	P0_1 = 0;	
+	while(1){
+		if (P1_2 == 1){
+			P0_1 = 0;	
+		} else {
+			P0_1 = 1;
+		}
+	}
+}
+
+static void onOff(void) {
+	onOffInit();
+	while(1){
+		if (P1_2 == 1){
+			setLightStatus(LIGHT_ON);
+		} else {
+			setLightStatus(LIGHT_OFF);
+		}
+	}
+}

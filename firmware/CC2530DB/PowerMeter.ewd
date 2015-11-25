@@ -628,7 +628,7 @@
         </option>
         <option>
           <name>SimEnablePSP</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>SimPspOverrideConfig</name>
@@ -636,7 +636,7 @@
         </option>
         <option>
           <name>SimPspConfigFile</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\config\test.psp.config</state>
         </option>
       </data>
     </settings>
@@ -1950,7 +1950,7 @@
         </option>
         <option>
           <name>SimPspConfigFile</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\config\test.psp.config</state>
         </option>
       </data>
     </settings>
