@@ -59,9 +59,10 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
  */
 void powerMeter_Init( byte task_id ){
 	zPowerMeterTaskID = task_id;
-	zclHA_Init( &OnOff_SimpleDesc );
+	
 	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC, handleClusterCommands );
  	
+	zclHA_Init( &OnOff_SimpleDesc );
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
@@ -70,6 +71,7 @@ void powerMeter_Init( byte task_id ){
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
 	
+	zclHA_Init( &PowerMetering_SimpleDesc );
 	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);

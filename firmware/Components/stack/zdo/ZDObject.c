@@ -692,44 +692,33 @@ void ZDO_ProcessPowerDescReq( zdoIncomingMsg_t *inMsg )
  *
  * @return      none
  */
-void ZDO_ProcessSimpleDescReq( zdoIncomingMsg_t *inMsg )
-{
-  SimpleDescriptionFormat_t *sDesc = NULL;
-  uint16 aoi = BUILD_UINT16( inMsg->asdu[0], inMsg->asdu[1] );
-  byte endPoint = inMsg->asdu[2];
-  byte free = false;
-  byte stat = ZDP_SUCCESS;
+void ZDO_ProcessSimpleDescReq( zdoIncomingMsg_t *inMsg ){
+	SimpleDescriptionFormat_t *sDesc = NULL;
+	uint16 aoi = BUILD_UINT16( inMsg->asdu[0], inMsg->asdu[1] );
+	byte endPoint = inMsg->asdu[2];
+	byte free = false;
+	byte stat = ZDP_SUCCESS;
 
-  if ( (endPoint == ZDO_EP) || (endPoint > MAX_ENDPOINTS) )
-  {
-    stat = ZDP_INVALID_EP;
-  }
-  else if ( aoi == ZDAppNwkAddr.addr.shortAddr )
-  {
-    free = afFindSimpleDesc( &sDesc, endPoint );
-    if ( sDesc == NULL )
-    {
-      stat = ZDP_NOT_ACTIVE;
-    }
-  }
-  else
-  {
-    if ( ZSTACK_ROUTER_BUILD )
-    {
-      stat = ZDP_DEVICE_NOT_FOUND;
-    }
-    else if ( ZSTACK_END_DEVICE_BUILD )
-    {
-      stat = ZDP_INVALID_REQTYPE;
-    }
-  }
+	if ( (endPoint == ZDO_EP) || (endPoint > MAX_ENDPOINTS) ){
+		stat = ZDP_INVALID_EP;
+	} else if ( aoi == ZDAppNwkAddr.addr.shortAddr ){
+    	free = afFindSimpleDesc( &sDesc, endPoint );
+    	if ( sDesc == NULL ){
+			stat = ZDP_NOT_ACTIVE;
+		}
+	} else {
+		if ( ZSTACK_ROUTER_BUILD ){
+			stat = ZDP_DEVICE_NOT_FOUND;
+		} else if ( ZSTACK_END_DEVICE_BUILD ) {
+			stat = ZDP_INVALID_REQTYPE;
+		}
+	}
 
-  ZDP_SimpleDescMsg( inMsg, stat, sDesc );
+	ZDP_SimpleDescMsg( inMsg, stat, sDesc );
 
-  if ( free && sDesc )
-  {
-    osal_mem_free( sDesc );
-  }
+	if ( free && sDesc ){
+		osal_mem_free( sDesc );
+	}
 }
 
 /*********************************************************************
@@ -742,26 +731,21 @@ void ZDO_ProcessSimpleDescReq( zdoIncomingMsg_t *inMsg )
  *
  * @return      none
  */
-void ZDO_ProcessActiveEPReq( zdoIncomingMsg_t *inMsg )
-{
-  byte cnt = 0;
-  uint16 aoi;
-  byte stat = ZDP_SUCCESS;
+void ZDO_ProcessActiveEPReq( zdoIncomingMsg_t *inMsg ){
+	byte cnt = 0;
+	uint16 aoi;
+	byte stat = ZDP_SUCCESS;
 
-  aoi = BUILD_UINT16( inMsg->asdu[0], inMsg->asdu[1] );
+	aoi = BUILD_UINT16( inMsg->asdu[0], inMsg->asdu[1] );
 
-  if ( aoi == NLME_GetShortAddr() )
-  {
-    cnt = afNumEndPoints() - 1;  // -1 for ZDO endpoint descriptor
-    afEndPoints( (uint8 *)ZDOBuildBuf, true );
-  }
-  else
-  {
-    stat = ZDP_INVALID_REQTYPE;
-  }
+	if ( aoi == NLME_GetShortAddr() ) {
+		cnt = afNumEndPoints() - 1;  // -1 for ZDO endpoint descriptor
+		afEndPoints( (uint8 *)ZDOBuildBuf, true );
+	} else {
+		stat = ZDP_INVALID_REQTYPE;
+	}
 
-  ZDP_ActiveEPRsp( inMsg->TransSeq, &(inMsg->srcAddr), stat,
-                  aoi, cnt, (uint8 *)ZDOBuildBuf, inMsg->SecurityUse );
+	ZDP_ActiveEPRsp( inMsg->TransSeq, &(inMsg->srcAddr), stat,  aoi, cnt, (uint8 *)ZDOBuildBuf, inMsg->SecurityUse );
 }
 
 /*********************************************************************

@@ -977,22 +977,20 @@ uint8 afSetMatch( uint8 ep, uint8 action )
  *
  * @return  number of endpoints
  */
-uint8 afNumEndPoints( void )
-{
-  epList_t *epSearch;
-  uint8 endpoints;
+uint8 afNumEndPoints( void ){
+	epList_t *epSearch;
+	uint8 endpoints;
 
-  // Start at the beginning
-  epSearch = epList;
-  endpoints = 0;
+	// Start at the beginning
+	epSearch = epList;
+	endpoints = 0;
 
-  while ( epSearch )
-  {
-    endpoints++;
-    epSearch = epSearch->nextDesc;
-  }
+	while ( epSearch ){
+		endpoints++;
+		epSearch = epSearch->nextDesc;
+	}
 
-  return ( endpoints );
+	return ( endpoints );
 }
 
 /*********************************************************************
