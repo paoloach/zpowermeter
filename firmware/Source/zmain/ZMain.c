@@ -67,9 +67,32 @@ static void zmain_cert_init( void );
 static void zmain_dev_info( void );
 static void zmain_vdd_check( void );
 
-#ifdef LCD_SUPPORTED
-static void zmain_lcd_init( void );
-#endif
+
+static void BOARD_INIT(void)                                         
+{                                                                
+  uint16 i;                                                      
+                                                                 
+  SLEEPCMD &= ~OSC_PD;                       /* turn on 16MHz RC and 32MHz XOSC */                
+  while (!(SLEEPSTA & XOSC_STB));            /* wait for 32MHz XOSC stable */                     
+  asm("NOP");                                /* chip bug workaround */                            
+  for (i=0; i<504; i++) asm("NOP");          /* Require 63us delay for all revs */                
+  CLKCONCMD = (CLKCONCMD_32MHZ | OSC_32KHZ); /* Select 32MHz XOSC and the source for 32K clock */ 
+  while (CLKCONSTA != (CLKCONCMD_32MHZ | OSC_32KHZ)); /* Wait for the change to be effective */   
+  SLEEPCMD |= OSC_PD;                        /* turn off 16MHz RC */                              
+                                                                 
+  /* Turn on cache prefetch mode */                              
+  PREFETCH_ENABLE();                                             
+                                                                 
+  HAL_TURN_OFF_LED1();                                           
+  LED1_DDR |= LED1_BV;                                           
+  HAL_TURN_OFF_LED2();                                           
+  LED2_DDR |= LED2_BV;                                           
+  HAL_TURN_OFF_LED3();                                           
+  LED3_DDR |= LED3_BV;                                           
+                                                                 
+  /* configure tristates */                                      
+  P0INP |= PUSH2_BV;                                             
+}
 
 /*********************************************************************
  * @fn      main
@@ -82,7 +105,7 @@ int main( void )
   osal_int_disable( INTS_ALL );
 
   // Initialization for board related stuff such as LEDs
-  HAL_BOARD_INIT();
+  BOARD_INIT();
 
   // Make sure supply voltage is high enough to run
   zmain_vdd_check();
@@ -126,11 +149,6 @@ int main( void )
 
   // Display information about this device
   zmain_dev_info();
-
-  /* Display the device info on the LCD */
-#ifdef LCD_SUPPORTED
-  zmain_lcd_init();
-#endif
 
 #ifdef WDT_IN_PM1
   /* If WDT is used, this is a good place to enable it. */

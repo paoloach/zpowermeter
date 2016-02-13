@@ -11,8 +11,6 @@
 
 #define CLUSTER_EVENT
 
-#include "OSAL.h"
-
 #define IDENTIFY_TIMEOUT_EVT     0x0001
 #define LEVEL_MOVEMENT           0x0002
 #define READ_TEMP_EVT	         0x0004

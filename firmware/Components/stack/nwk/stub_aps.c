@@ -111,8 +111,7 @@ static void StubNWK_ParseMsg( uint8 *buf, uint8 bufLength, NLDE_FrameFormat_t *s
 static void StubAPS_ParseMsg( NLDE_FrameFormat_t *snff, aps_FrameFormat_t *saff );
 static void StubNWK_BuildMsg( uint8 *nwkHdr );
 static void StubAPS_BuildMsg( uint8 *apsHdr, uint8 frmCtrl, uint16 groupID, APSDE_DataReq_t *req );
-static ZStatus_t StubAPS_BuildFrameControl( uint8 *frmCtrl, zAddrType_t *dstAddr,
-                                            uint16 *groupID, APSDE_DataReq_t *req );
+static ZStatus_t StubAPS_BuildFrameControl( uint8 *frmCtrl, zAddrType_t *dstAddr, uint16 *groupID, APSDE_DataReq_t *req );
 static ZStatus_t StubAPS_SetNewChannel( uint8 channel );
 static void StubAPS_NotifyApp( uint8 status );
 

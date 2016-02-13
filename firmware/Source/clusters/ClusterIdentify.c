@@ -11,25 +11,78 @@
 #include "hal_led.h"
 
 #include "ClusterIdentify.h"
+#include "zcl_general.h"
+#include "ClusterOSALEvents.h"
+
 
 #define ON_TIME 600
 #define OFF_TIME 400
 
-uint16 identifyTime=0;
+static uint16 identifyTime=0;
 
-extern byte temperatureSensorTaskID;
+static byte mainAppTaskId;
 
 static uint8  onOff;
 
-void identifyInit(){
-	P0DIR |= 1;
- 	P0SEL &= 0xFE;
- 	P0_0 = 0;
+__sfr __no_init volatile struct  {
+	unsigned char DIR0_0: 1;
+	unsigned char DIR0_1: 1;
+	unsigned char DIR0_2: 1;
+	unsigned char DIR0_3: 1;
+	unsigned char DIR0_4: 1;
+	unsigned char DIR0_5: 1;
+	unsigned char DIR0_6: 1;
+	unsigned char DIR0_7: 1;
+} @ 0xFD;
+
+__sfr __no_init volatile struct  {
+	unsigned char P0SEL_0: 1;
+	unsigned char P0SEL_1: 1;
+	unsigned char P0SEL_2: 1;
+	unsigned char P0SEL_3: 1;
+	unsigned char P0SEL_4: 1;
+	unsigned char P0SEL_5: 1;
+	unsigned char P0SEL_6: 1;
+	unsigned char P0SEL_7: 1;
+} @ 0xF3;
+
+
+void identifyClusterReadAttribute(zclAttrRec_t * attribute){
+	if (attribute == NULL){
+		return;
+	}
+	
+	if (attribute->attrId == ATTRID_IDENTIFY_TIME){
+		attribute->dataType = ZCL_DATATYPE_UINT16;
+		attribute->dataPtr = (void *)&identifyTime;
+		attribute->status = ZCL_STATUS_SUCCESS;
+	} else {
+		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
+}
+void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
+	if (writeAttribute == NULL){
+		return;
+	}
+	
+	if(writeAttribute->attrId == ATTRID_IDENTIFY_TIME){
+		identifyTime = *(uint16 *)writeAttribute;
+		writeAttribute->status=ZCL_STATUS_SUCCESS;
+	} else {
+		writeAttribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+	}
+}
+
+void identifyInit(byte taskId){
+	DIR0_1 = 1;
+ 	P0SEL_1 = 0;
+ 	P0_1 = 0;
+	mainAppTaskId = taskId;
 }
 
 uint16 identifyLoop(uint16 events){
 	if (onOff){
-		osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
 		onOff=0;
 		P0_0 = 1;
 	} else {
@@ -38,11 +91,11 @@ uint16 identifyLoop(uint16 events){
     		identifyTime--;
 		}
     	if (identifyTime>0){
-			osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, ON_TIME );
-			osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 			P0_0 = 0;
 		} else{
-			osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
 			P0_0 = 0;
 		}
 	}
@@ -61,13 +114,13 @@ uint16 identifyLoop(uint16 events){
  */
 void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
-		osal_start_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 		onOff=1;
 		P0_0 = 1;
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
-		osal_stop_timerEx( temperatureSensorTaskID, IDENTIFY_TIMEOUT_EVT );
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
+		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
 	}
 }
 

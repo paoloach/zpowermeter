@@ -861,71 +861,57 @@ afStatus_t ZDP_PowerDescMsg( zdoIncomingMsg_t *inMsg,
  *
  * @return      afStatus_t
  */
-afStatus_t ZDP_SimpleDescMsg( zdoIncomingMsg_t *inMsg, byte Status,
-                              SimpleDescriptionFormat_t *pSimpleDesc )
-{
-  uint8 *pBuf = ZDP_TmpBuf;
-  uint8 i, len;
+afStatus_t ZDP_SimpleDescMsg( zdoIncomingMsg_t *inMsg, byte Status, SimpleDescriptionFormat_t *pSimpleDesc ){
+	uint8 *pBuf = ZDP_TmpBuf;
+	uint8 i, len;
 
-  if ( Status == ZDP_SUCCESS && pSimpleDesc )
-  {
-    // Status + NWKAddrOfInterest + desc length + empty simple descriptor.
-    len = 1 + 2 + 1 + 8;
-    len += (pSimpleDesc->AppNumInClusters + pSimpleDesc->AppNumOutClusters) * sizeof ( uint16 );
-  }
-  else
-  {
-    len = 1 + 2 + 1; // Status + desc length
-  }
-  if ( len >= ZDP_BUF_SZ-1 )
-  {
-    return afStatus_MEM_FAIL;
-  }
+	if ( Status == ZDP_SUCCESS && pSimpleDesc ) {
+		// Status + NWKAddrOfInterest + desc length + empty simple descriptor.
+    	len = 1 + 2 + 1 + 8;
+    	len += (pSimpleDesc->AppNumInClusters + pSimpleDesc->AppNumOutClusters) * sizeof ( uint16 );
+  	} else {
+    	len = 1 + 2 + 1; // Status + desc length
+  	}
+  	if ( len >= ZDP_BUF_SZ-1 ){
+    	return afStatus_MEM_FAIL;
+ 	}
 
-  *pBuf++ = Status;
+	*pBuf++ = Status;
 
-  *pBuf++ = LO_UINT16( ZDAppNwkAddr.addr.shortAddr );
-  *pBuf++ = HI_UINT16( ZDAppNwkAddr.addr.shortAddr );
+	*pBuf++ = LO_UINT16( ZDAppNwkAddr.addr.shortAddr );
+	*pBuf++ = HI_UINT16( ZDAppNwkAddr.addr.shortAddr );
 
-  if ( len > 4 )
-  {
-    *pBuf++ = len - 4;   // Simple descriptor length
+	if ( len > 4 ){
+		*pBuf++ = len - 4;   // Simple descriptor length
 
-    *pBuf++ = pSimpleDesc->EndPoint;
-    *pBuf++ = LO_UINT16( pSimpleDesc->AppProfId );
-    *pBuf++ = HI_UINT16( pSimpleDesc->AppProfId );
-    *pBuf++ = LO_UINT16( pSimpleDesc->AppDeviceId );
-    *pBuf++ = HI_UINT16( pSimpleDesc->AppDeviceId );
+		*pBuf++ = pSimpleDesc->EndPoint;
+		*pBuf++ = LO_UINT16( pSimpleDesc->AppProfId );
+		*pBuf++ = HI_UINT16( pSimpleDesc->AppProfId );
+		*pBuf++ = LO_UINT16( pSimpleDesc->AppDeviceId );
+		*pBuf++ = HI_UINT16( pSimpleDesc->AppDeviceId );
 
-    *pBuf++ = (byte)(pSimpleDesc->AppDevVer & 0x0F);
+		*pBuf++ = (byte)(pSimpleDesc->AppDevVer & 0x0F);
 
-    *pBuf++ = pSimpleDesc->AppNumInClusters;
-    if ( pSimpleDesc->AppNumInClusters )
-    {
-      for (i=0; i<pSimpleDesc->AppNumInClusters; ++i)
-      {
-        *pBuf++ = LO_UINT16( pSimpleDesc->pAppInClusterList[i] );
-        *pBuf++ = HI_UINT16( pSimpleDesc->pAppInClusterList[i] );
-      }
-    }
+		*pBuf++ = pSimpleDesc->AppNumInClusters;
+		if ( pSimpleDesc->AppNumInClusters ){
+			for (i=0; i<pSimpleDesc->AppNumInClusters; ++i) {
+				*pBuf++ = LO_UINT16( pSimpleDesc->pAppInClusterList[i] );
+				*pBuf++ = HI_UINT16( pSimpleDesc->pAppInClusterList[i] );
+			}
+		}
 
-    *pBuf++ = pSimpleDesc->AppNumOutClusters;
-    if ( pSimpleDesc->AppNumOutClusters )
-    {
-      for (i=0; i<pSimpleDesc->AppNumOutClusters; ++i)
-      {
-        *pBuf++ = LO_UINT16( pSimpleDesc->pAppOutClusterList[i] );
-        *pBuf++ = HI_UINT16( pSimpleDesc->pAppOutClusterList[i] );
-      }
-    }
-  }
+		*pBuf++ = pSimpleDesc->AppNumOutClusters;
+		if ( pSimpleDesc->AppNumOutClusters ){
+			for (i=0; i<pSimpleDesc->AppNumOutClusters; ++i) {
+				*pBuf++ = LO_UINT16( pSimpleDesc->pAppOutClusterList[i] );
+				*pBuf++ = HI_UINT16( pSimpleDesc->pAppOutClusterList[i] );
+			}
+		}
+	} else{
+		*pBuf = 0; // Description Length = 0;
+	}
 
-  else
-  {
-    *pBuf = 0; // Description Length = 0;
-  }
-
-  return fillAndSend( &(inMsg->TransSeq), &(inMsg->srcAddr), Simple_Desc_rsp, len );
+	return fillAndSend( &(inMsg->TransSeq), &(inMsg->srcAddr), Simple_Desc_rsp, len );
 }
 
 /*********************************************************************

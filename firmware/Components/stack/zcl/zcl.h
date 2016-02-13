@@ -40,6 +40,8 @@
 #ifndef ZCL_H
 #define ZCL_H
 
+#include "zclReadAttributeFn.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -56,6 +58,7 @@ extern "C"
 
 #include "AF.h"
 #include "aps_groups.h"
+
 
 /*********************************************************************
  * CONSTANTS
@@ -454,7 +457,6 @@ typedef struct
                              // be allocated with the appropriate number of attributes.
 } zclReadCmd_t;
 
-// Read Attribute Response Status record
 typedef struct
 {
   uint16 attrID;            // attribute ID
@@ -473,12 +475,12 @@ typedef struct
 #endif // ZCL_READ
 
 // Write Attribute record
-typedef struct
-{
-  uint16 attrID;             // attribute ID
-  uint8  dataType;           // attribute data type
-  uint8  *attrData;          // this structure is allocated, so the data is HERE
-                             //  - the size depends on the attribute data type
+typedef struct {
+	uint16 attrID;             // attribute ID
+	uint8  dataType;           // attribute data type
+	uint8  *attrData;          // this structure is allocated, so the data is HERE
+	uint8 dataLen;
+ 
 } zclWriteRec_t;
 
 // Write Attribute Command format
@@ -717,55 +719,6 @@ typedef struct
   uint8    flag;  // one of CMD_DIR_CLIENT_GENERATED, CMD_DIR_CLIENT_RECEIVED, CMD_DIR_SERVER_GENERATED, CMD_DIR_SERVER_RECEIVED
 } zclCommandRec_t;
 
-typedef void (*AttributeWriteCB)(void);
-
-// Attribute record
-typedef struct
-{
-  uint16  attrId;         // Attribute ID
-  uint8   dataType;       // Data Type - defined in AF.h
-  uint8   accessControl;  // Read/write - bit field
-  void    *dataPtr;       // Pointer to data field
-  AttributeWriteCB writeCB; // The callback called when write attribute command is received for that attribute
-} zclAttribute_t;
-
-typedef struct
-{
-  uint16          clusterID;    // Real cluster ID
-  zclAttribute_t  attr;
-} zclAttrRec_t;
-
-// Function pointer type to validate attribute data.
-//
-//   pAttr - where data to be written
-//   pAttrInfo - pointer to attribute info
-//
-//   return  TRUE if data valid. FALSE, otherwise.
-typedef uint8 (*zclValidateAttrData_t)( zclAttrRec_t *pAttr, zclWriteRec_t *pAttrInfo );
-
-// Function pointer type to read/write attribute data.
-//
-//   clusterId - cluster that attribute belongs to
-//   attrId - attribute to be read or written
-//   oper - ZCL_OPER_LEN, ZCL_OPER_READ, or ZCL_OPER_WRITE
-//   pValue - pointer to attribute (length) value
-//   pLen - length of attribute value read
-//
-//   return  ZCL_STATUS_SUCCESS: Operation successful
-//           ZCL Error Status: Operation not successful
-typedef ZStatus_t (*zclReadWriteCB_t)( uint16 clusterId, uint16 attrId, uint8 oper,
-                                       uint8 *pValue, uint16 *pLen );
-
-// Callback function prototype to authorize a Read or Write operation
-//   on a given attribute.
-//
-//   srcAddr - source Address
-//   pAttr - pointer to attribute
-//   oper - ZCL_OPER_READ, or ZCL_OPER_WRITE
-//
-//   return  ZCL_STATUS_SUCCESS: Operation authorized
-//           ZCL_STATUS_NOT_AUTHORIZED: Operation not authorized
-typedef ZStatus_t (*zclAuthorizeCB_t)( afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper );
 
 typedef struct
 {
@@ -780,6 +733,8 @@ typedef struct
   uint16 dataLen;
   uint8  *pData;
 } zclParseCmd_t;
+
+
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -881,25 +836,9 @@ extern ZStatus_t zcl_registerPlugin( uint16 startLogCluster, uint16 endLogCluste
 extern ZStatus_t zcl_registerCmdList( uint8 endpoint, CONST uint8 cmdListSize, CONST zclCommandRec_t newCmdList[] );
 
 /*
- *  Register Application's Attribute table
- */
-extern ZStatus_t zcl_registerAttrList( uint8 endpoint, CONST zclAttrRec_t attrList[] );
-
-/*
  *  Register Application's Cluster Option table
  */
 extern ZStatus_t zcl_registerClusterOptionList( uint8 endpoint, uint8 numOption, zclOptionRec_t optionList[] );
-
-/*
- *  Register Application's attribute data validation callback routine
- */
-extern ZStatus_t zcl_registerValidateAttrData( zclValidateAttrData_t pfnValidateAttrData );
-
-/*
- *  Register the application's callback function to read/write attribute data.
- */
-extern ZStatus_t zcl_registerReadWriteCB( uint8 endpoint, zclReadWriteCB_t pfnReadWriteCB,
-                                          zclAuthorizeCB_t pfnAuthorizeCB );
 
 /*
  *  Process incoming ZCL messages
@@ -1101,12 +1040,7 @@ extern uint8 *zclParseHdr( zclFrameHdr_t *hdr, uint8 *pData );
 /*
  * Function to find the attribute record that matchs the parameters
  */
-extern uint8 zclFindAttrRec( uint8 endpoint, uint16 realClusterID, uint16 attrId, zclAttrRec_t *pAttr );
-
-/*
- * Function to read the attribute's current value
- */
-extern ZStatus_t zclReadAttrData( uint8 *pAttrData, zclAttrRec_t *pAttr, uint16 *pDataLen );
+//extern uint8 zclFindAttrRec( uint8 endpoint, uint16 realClusterID, uint16 attrId, zclAttrRec_t *pAttr );
 
 /*
  * Function to return the length of the datatype in length.
