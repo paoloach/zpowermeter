@@ -18,6 +18,7 @@ enum CS5463Register {
 	RMSVolt = 12,
 	PeakVoltage=23,
 	RMSCurrent = 11,
+	status = 15,
 	PeakCurrent=22,
 	ActivePower=10,
 	IstantaneusReactivePower=20,
@@ -28,8 +29,10 @@ enum CS5463Register {
 extern void CS5463_Init(void);
 
 extern void CS5463_startConversion(void);
+extern void CS5463_reset(void);
 
 extern int32 getCS5463RegisterValue(enum CS5463Register regIndex);
+extern void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char byte1,unsigned char  byte2,unsigned char  byte3);
 
 
 #endif

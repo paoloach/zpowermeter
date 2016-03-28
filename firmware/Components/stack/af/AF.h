@@ -253,8 +253,7 @@ typedef struct
   osal_event_hdr_t hdr;     /* OSAL Message header */
   uint16 groupId;           /* Message's group ID - 0 if not set */
   uint16 clusterId;         /* Message's cluster ID */
-  afAddrType_t srcAddr;     /* Source Address, if endpoint is STUBAPS_INTER_PAN_EP,
-                               it's an InterPAN message */
+  afAddrType_t srcAddr;     /* Source Address, if endpoint is STUBAPS_INTER_PAN_EP it's an InterPAN message */
   uint16 macDestAddr;       /* MAC header destination short address */
   uint8 endPoint;           /* destination endpoint */
   uint8 wasBroadcast;       /* TRUE if network destination was a broadcast address */

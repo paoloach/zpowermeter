@@ -53,7 +53,7 @@ static uint16 acCurrentDiv=1;
 static uint16 acPowerMult=1;
 static uint16 acPowerDiv=1;
 
-uint16 tmp;
+static uint16 tmp;
 
 static uint16 averageRmsVolrPeriod;
 
@@ -90,7 +90,7 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 		attribute->dataPtr = (void *)&powerDivisor;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_AV_RMS_VOLT_PERIOD:
-		attribute->dataType = ZCL_DATATYPE_UINT32;
+		attribute->dataType = ZCL_DATATYPE_UINT16;
 		attribute->dataPtr = (void *)&averageRmsVolrPeriod;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_AC_VOLT_MULT:

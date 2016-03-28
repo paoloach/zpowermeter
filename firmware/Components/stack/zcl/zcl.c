@@ -1665,230 +1665,180 @@ ZStatus_t zcl_SendDiscoverAttrsExtRsp( uint8 srcEP, afAddrType_t *dstAddr,
  *
  * @return  zclProcMsgStatus_t
  */
-zclProcMsgStatus_t zcl_ProcessMessageMSG( afIncomingMSGPacket_t *pkt )
-{
-  endPointDesc_t *epDesc;
-  zclIncoming_t inMsg;
-  zclLibPlugin_t *pInPlugin;
-  zclDefaultRspCmd_t defautlRspCmd;
-  uint8 options;
-  uint8 securityEnable;
-  uint8 interPanMsg;
-  ZStatus_t status = ZFailure;
-  uint8 defaultResponseSent = FALSE;
+zclProcMsgStatus_t zcl_ProcessMessageMSG( afIncomingMSGPacket_t *pkt ){
+	endPointDesc_t *epDesc;
+	zclIncoming_t inMsg;
+	zclLibPlugin_t *pInPlugin;
+	zclDefaultRspCmd_t defautlRspCmd;
+	uint8 options;
+	uint8 securityEnable;
+	uint8 interPanMsg;
+	ZStatus_t status = ZFailure;
+	uint8 defaultResponseSent = FALSE;
 
-  if ( pkt->cmd.DataLength == 0 )
-  {
-    return ( ZCL_PROC_INVALID );   // Error, ignore the message
-  }
+	if ( pkt->cmd.DataLength == 0 ){
+		return ( ZCL_PROC_INVALID );   // Error, ignore the message
+	}
 
-  // Initialize
-  rawAFMsg = (afIncomingMSGPacket_t *)pkt;
-  inMsg.msg = pkt;
-  inMsg.attrCmd = NULL;
-  inMsg.pData = NULL;
-  inMsg.pDataLen = 0;
+	// Initialize
+	rawAFMsg = (afIncomingMSGPacket_t *)pkt;
+	inMsg.msg = pkt;
+	inMsg.attrCmd = NULL;
+	inMsg.pData = NULL;
+	inMsg.pDataLen = 0;
 
-  inMsg.pData = zclParseHdr( &(inMsg.hdr), pkt->cmd.Data );
-  inMsg.pDataLen = pkt->cmd.DataLength;
-  inMsg.pDataLen -= (uint16)(inMsg.pData - pkt->cmd.Data);
+	inMsg.pData = zclParseHdr( &(inMsg.hdr), pkt->cmd.Data );
+	inMsg.pDataLen = pkt->cmd.DataLength;
+	inMsg.pDataLen -= (uint16)(inMsg.pData - pkt->cmd.Data);
 
-  // Temporary workaround to allow callback functions access to the 
-  // transaction sequence number.  Callback functions will call 
-  // zcl_getParsedTransSeqNum() to retrieve this number.
-  savedZCLTransSeqNum = inMsg.hdr.transSeqNum;
-  
-  // Find the wanted endpoint
-  epDesc = afFindEndPointDesc( pkt->endPoint );
-  if ( epDesc == NULL )
-  {
-    rawAFMsg = NULL;
-    return ( ZCL_PROC_EP_NOT_FOUND );   // Error, ignore the message
-  }
+	// Temporary workaround to allow callback functions access to the 
+	// transaction sequence number.  Callback functions will call 
+	// zcl_getParsedTransSeqNum() to retrieve this number.
+	savedZCLTransSeqNum = inMsg.hdr.transSeqNum;
 
-  if ( ( epDesc->simpleDesc == NULL ) ||
-       ( zcl_DeviceOperational( pkt->endPoint, pkt->clusterId, inMsg.hdr.fc.type,
-                                inMsg.hdr.commandID, epDesc->simpleDesc->AppProfId ) == FALSE ) )
-  {
-    rawAFMsg = NULL;
-    return ( ZCL_PROC_NOT_OPERATIONAL ); // Error, ignore the message
-  }
+	// Find the wanted endpoint
+	epDesc = afFindEndPointDesc( pkt->endPoint );
+	if ( epDesc == NULL ){
+		rawAFMsg = NULL;
+		return ( ZCL_PROC_EP_NOT_FOUND );   // Error, ignore the message
+	}
+
+	if ( ( epDesc->simpleDesc == NULL ) || ( zcl_DeviceOperational( pkt->endPoint, pkt->clusterId, inMsg.hdr.fc.type, inMsg.hdr.commandID, epDesc->simpleDesc->AppProfId ) == FALSE ) ) {
+		rawAFMsg = NULL;
+		return ( ZCL_PROC_NOT_OPERATIONAL ); // Error, ignore the message
+	}
 
 #if defined ( INTER_PAN )
-  if ( StubAPS_InterPan( pkt->srcAddr.panId, pkt->srcAddr.endPoint ) )
-  {
-    // No foundation command is supported thru Inter-PAN communication.
-    // But the Light Link cluster uses a different Frame Control format
-    // for it's Inter-PAN messages, where the messages could be confused
-    // with the foundation commands.
-    if ( zcl_ProfileCmd( inMsg.hdr.fc.type ) )
-    {
-      rawAFMsg = NULL;
-      return ( ZCL_PROC_INTERPAN_FOUNDATION_CMD );
-    }
+	if ( StubAPS_InterPan( pkt->srcAddr.panId, pkt->srcAddr.endPoint ) ){
+	// No foundation command is supported thru Inter-PAN communication. But the Light Link cluster uses a different Frame Control format for it's Inter-PAN messages, where the messages could be confused with the foundation commands.
+		if ( zcl_ProfileCmd( inMsg.hdr.fc.type ) ){
+			rawAFMsg = NULL;
+			return ( ZCL_PROC_INTERPAN_FOUNDATION_CMD );
+		}
 
-    interPanMsg = TRUE;
-    options = AF_TX_OPTIONS_NONE;
-  }
-  else
+	interPanMsg = TRUE;
+	options = AF_TX_OPTIONS_NONE;
+	} else
 #endif
-  {
-    interPanMsg = FALSE;
-    options = zclGetClusterOption( pkt->endPoint, pkt->clusterId );
-  }
+	{
+		interPanMsg = FALSE;
+		options = zclGetClusterOption( pkt->endPoint, pkt->clusterId );
+	}
 
-  // Find the appropriate plugin
-  pInPlugin = zclFindPlugin( pkt->clusterId, epDesc->simpleDesc->AppProfId );
+	// Find the appropriate plugin
+	pInPlugin = zclFindPlugin( pkt->clusterId, epDesc->simpleDesc->AppProfId );
 
-  // Local and remote Security options must match except for Default Response command
-  if ( ( pInPlugin != NULL ) && !zcl_DefaultRspCmd( inMsg.hdr ) )
-  {
-    securityEnable = ( options & AF_EN_SECURITY ) ? TRUE : FALSE;
+	// Local and remote Security options must match except for Default Response command
+	if ( ( pInPlugin != NULL ) && !zcl_DefaultRspCmd( inMsg.hdr ) ){
+		securityEnable = ( options & AF_EN_SECURITY ) ? TRUE : FALSE;
 
-    // Make sure that Clusters specifically defined to use security are received secure,
-    // any other cluster that wants to use APS security will be allowed
-    if ( ( securityEnable == TRUE ) && ( pkt->SecurityUse == FALSE ) )
-    {
-      if ( UNICAST_MSG( inMsg.msg ) )
-      {
-        // Send a Default Response command back with no Application Link Key security
-        zclSetSecurityOption( pkt->endPoint, pkt->clusterId, FALSE );
+		// Make sure that Clusters specifically defined to use security are received secure, any other cluster that wants to use APS security will be allowed
+		if ( ( securityEnable == TRUE ) && ( pkt->SecurityUse == FALSE ) ){
+			if ( UNICAST_MSG( inMsg.msg ) )	{
+				// Send a Default Response command back with no Application Link Key security
+				zclSetSecurityOption( pkt->endPoint, pkt->clusterId, FALSE );
 
-        defautlRspCmd.statusCode = status;
-        defautlRspCmd.commandID = inMsg.hdr.commandID;
-        zcl_SendDefaultRspCmd( inMsg.msg->endPoint, &(inMsg.msg->srcAddr),
-                               inMsg.msg->clusterId, &defautlRspCmd,
-                               !inMsg.hdr.fc.direction, true,
-                               inMsg.hdr.manuCode, inMsg.hdr.transSeqNum );
+				defautlRspCmd.statusCode = status;
+				defautlRspCmd.commandID = inMsg.hdr.commandID;
+				zcl_SendDefaultRspCmd( inMsg.msg->endPoint, &(inMsg.msg->srcAddr), inMsg.msg->clusterId, &defautlRspCmd, !inMsg.hdr.fc.direction, true, inMsg.hdr.manuCode, inMsg.hdr.transSeqNum );
 
-        zclSetSecurityOption( pkt->endPoint, pkt->clusterId, TRUE );
-      }
+				zclSetSecurityOption( pkt->endPoint, pkt->clusterId, TRUE );
+			}
 
-      rawAFMsg = NULL;
-      return ( ZCL_PROC_NOT_SECURE );   // Error, ignore the message
-    }
-  }
+			rawAFMsg = NULL;
+			return ( ZCL_PROC_NOT_SECURE );   // Error, ignore the message
+		}
+	}
 
-  // Is this a foundation type message
-  if ( !interPanMsg && zcl_ProfileCmd( inMsg.hdr.fc.type ) )
-  {
-    if ( inMsg.hdr.fc.manuSpecific )
-    {
-      // We don't support any manufacturer specific command
-      status = ZCL_STATUS_UNSUP_MANU_GENERAL_COMMAND;
-    }
-    else if ( ( inMsg.hdr.commandID <= ZCL_CMD_MAX ) &&
-              ( zclCmdTable[inMsg.hdr.commandID].pfnParseInProfile != NULL ) )
-    {
-      zclParseCmd_t parseCmd;
+  	// Is this a foundation type message
+	if ( !interPanMsg && zcl_ProfileCmd( inMsg.hdr.fc.type ) ){
+		if ( inMsg.hdr.fc.manuSpecific ) {
+			// We don't support any manufacturer specific command
+			status = ZCL_STATUS_UNSUP_MANU_GENERAL_COMMAND;
+		}else if ( ( inMsg.hdr.commandID <= ZCL_CMD_MAX ) && ( zclCmdTable[inMsg.hdr.commandID].pfnParseInProfile != NULL ) ){
+			zclParseCmd_t parseCmd;
 
-      parseCmd.endpoint = pkt->endPoint;
-      parseCmd.dataLen = inMsg.pDataLen;
-      parseCmd.pData = inMsg.pData;
+			parseCmd.endpoint = pkt->endPoint;
+			parseCmd.dataLen = inMsg.pDataLen;
+			parseCmd.pData = inMsg.pData;
+			parseCmd.LinkQuality = pkt->LinkQuality;
+			parseCmd.correlation = pkt->correlation;
+			parseCmd.rssi = pkt->rssi;
 
-      // Parse the command, remember that the return value is a pointer to allocated memory
-      inMsg.attrCmd = zclParseCmd( inMsg.hdr.commandID, &parseCmd );
-      if ( (inMsg.attrCmd != NULL) && (zclCmdTable[inMsg.hdr.commandID].pfnProcessInProfile != NULL) )
-      {
-        // Process the command
-        if ( zclProcessCmd( inMsg.hdr.commandID, &inMsg ) == FALSE )
-        {
-          // Couldn't find attribute in the table.
-        }
-      }
+			// Parse the command, remember that the return value is a pointer to allocated memory
+			inMsg.attrCmd = zclParseCmd( inMsg.hdr.commandID, &parseCmd );
+			if ( (inMsg.attrCmd != NULL) && (zclCmdTable[inMsg.hdr.commandID].pfnProcessInProfile != NULL) ){
+				// Process the command
+				if ( zclProcessCmd( inMsg.hdr.commandID, &inMsg ) == FALSE ){
+				  // Couldn't find attribute in the table.
+				}
+			}
 
-      // Free the buffer
-      if ( inMsg.attrCmd )
-      {
-        zcl_mem_free( inMsg.attrCmd );
-      }
+			// Free the buffer
+			if ( inMsg.attrCmd ){
+				zcl_mem_free( inMsg.attrCmd );
+			}
 
-      if ( CMD_HAS_RSP( inMsg.hdr.commandID ) )
-      {
-        rawAFMsg = NULL;
-        return ( ZCL_PROC_SUCCESS ); // We're done
-      }
+			if ( CMD_HAS_RSP( inMsg.hdr.commandID ) ){
+				rawAFMsg = NULL;
+				return ( ZCL_PROC_SUCCESS ); // We're done
+			}
 
-      status = ZSuccess;
-    }
-    else
-    {
-      // Unsupported message
-      status = ZCL_STATUS_UNSUP_GENERAL_COMMAND;
-    }
-  }
-  else  // Not a foundation type message, so it must be specific to the cluster ID.
-  {
-    if ( pInPlugin && pInPlugin->pfnIncomingHdlr )
-    {
-      // The return value of the plugin function will be
-      //  ZSuccess - Supported and need default response
-      //  ZFailure - Unsupported
-      //  ZCL_STATUS_CMD_HAS_RSP - Supported and do not need default rsp
-      //  ZCL_STATUS_INVALID_FIELD - Supported, but the incoming msg is wrong formatted
-      //  ZCL_STATUS_INVALID_VALUE - Supported, but the request not achievable by the h/w
-      //  ZCL_STATUS_SOFTWARE_FAILURE - Supported but ZStack memory allocation fails
-      status = pInPlugin->pfnIncomingHdlr( &inMsg );
-      if ( status == ZCL_STATUS_CMD_HAS_RSP || ( interPanMsg && status == ZSuccess ) )
-      {
-        rawAFMsg = NULL;
-        return ( ZCL_PROC_SUCCESS ); // We're done
-      }
-    }
+			status = ZSuccess;
+		}else	{
+		  	// Unsupported message
+		  	status = ZCL_STATUS_UNSUP_GENERAL_COMMAND;
+		}
+	} else { // Not a foundation type message, so it must be specific to the cluster ID.
+		if ( pInPlugin && pInPlugin->pfnIncomingHdlr )	{
+			// The return value of the plugin function will be
+			//  ZSuccess - Supported and need default response
+			//  ZFailure - Unsupported
+			//  ZCL_STATUS_CMD_HAS_RSP - Supported and do not need default rsp
+			//  ZCL_STATUS_INVALID_FIELD - Supported, but the incoming msg is wrong formatted
+			//  ZCL_STATUS_INVALID_VALUE - Supported, but the request not achievable by the h/w
+			//  ZCL_STATUS_SOFTWARE_FAILURE - Supported but ZStack memory allocation fails
+			status = pInPlugin->pfnIncomingHdlr( &inMsg );
+			if ( status == ZCL_STATUS_CMD_HAS_RSP || ( interPanMsg && status == ZSuccess ) ){
+				rawAFMsg = NULL;
+				return ( ZCL_PROC_SUCCESS ); // We're done
+			}
+		}
 
-    if ( status == ZFailure )
-    {
-      // Unsupported message
-      if ( inMsg.hdr.fc.manuSpecific )
-      {
-        status = ZCL_STATUS_UNSUP_MANU_CLUSTER_COMMAND;
-      }
-      else
-      {
-        status = ZCL_STATUS_UNSUP_CLUSTER_COMMAND;
-      }
-    }
-  }
+		if ( status == ZFailure ){
+			// Unsupported message
+			if ( inMsg.hdr.fc.manuSpecific ){
+				status = ZCL_STATUS_UNSUP_MANU_CLUSTER_COMMAND;
+			}else{
+				status = ZCL_STATUS_UNSUP_CLUSTER_COMMAND;
+			}
+		}
+	}
 
-  if ( UNICAST_MSG( inMsg.msg ) && inMsg.hdr.fc.disableDefaultRsp == 0 )
-  {
-    // Send a Default Response command back
-    defautlRspCmd.statusCode = status;
-    defautlRspCmd.commandID = inMsg.hdr.commandID;
-    zcl_SendDefaultRspCmd( inMsg.msg->endPoint, &(inMsg.msg->srcAddr),
-                           inMsg.msg->clusterId, &defautlRspCmd,
-                           !inMsg.hdr.fc.direction, true,
-                           inMsg.hdr.manuCode, inMsg.hdr.transSeqNum );
-    defaultResponseSent = TRUE;
-  }
+	if ( UNICAST_MSG( inMsg.msg ) && inMsg.hdr.fc.disableDefaultRsp == 0 ) {
+		// Send a Default Response command back
+		defautlRspCmd.statusCode = status;
+		defautlRspCmd.commandID = inMsg.hdr.commandID;
+		zcl_SendDefaultRspCmd( inMsg.msg->endPoint, &(inMsg.msg->srcAddr),inMsg.msg->clusterId, &defautlRspCmd,!inMsg.hdr.fc.direction, true, inMsg.hdr.manuCode, inMsg.hdr.transSeqNum );
+		defaultResponseSent = TRUE;
+	}
 
-  rawAFMsg = NULL;
-  if ( status == ZSuccess )
-  {
-    return ( ZCL_PROC_SUCCESS );
-  }
-  else if ( status == ZCL_STATUS_UNSUP_MANU_GENERAL_COMMAND )
-  {
-    if ( defaultResponseSent )
-    {
-      return ( ZCL_PROC_MANUFACTURER_SPECIFIC_DR );
-    }
-    else
-    {
-      return ( ZCL_PROC_MANUFACTURER_SPECIFIC );
-    }
-  }
-  else
-  {
-    if ( defaultResponseSent )
-    {
-      return ( ZCL_PROC_NOT_HANDLED_DR );
-    }
-    else
-    {
-      return ( ZCL_PROC_NOT_HANDLED );
-    }
-  }
+	rawAFMsg = NULL;
+	if ( status == ZSuccess ) {
+		return ( ZCL_PROC_SUCCESS );
+	} else if ( status == ZCL_STATUS_UNSUP_MANU_GENERAL_COMMAND ){
+		if ( defaultResponseSent ){
+		  return ( ZCL_PROC_MANUFACTURER_SPECIFIC_DR );
+		}else{
+		  return ( ZCL_PROC_MANUFACTURER_SPECIFIC );
+		}
+	} else {
+		if ( defaultResponseSent )  {
+			return ( ZCL_PROC_NOT_HANDLED_DR );
+		}  else {
+			return ( ZCL_PROC_NOT_HANDLED );
+		}
+	}
 }
 
 /*********************************************************************
@@ -3691,26 +3641,24 @@ static void zclRevertWriteUndividedCmd( zclIncoming_t *pInMsg,  zclWriteRec_t *c
  * @return  TRUE if command processed. FALSE, otherwise.
  */
 static uint8 zclProcessInWriteUndividedCmd( zclIncoming_t *pInMsg ){
-  zclWriteCmd_t *writeCmd;
-  zclWriteRspCmd_t *writeRspCmd;
-  zclAttrRec_t attrRec;
-  ZclWriteAttribute_t writeAttribute;
-  ReadAttributeFn readAttributeFn;
-  WriteAttributeFn writeAttributeFn;
-  uint16 dataLen;
-  uint16 curLen = 0;
-  uint8 j = 0;
-  uint8 i;
+	zclWriteCmd_t *writeCmd;
+	zclWriteRspCmd_t *writeRspCmd;
+	zclAttrRec_t attrRec;
+	ZclWriteAttribute_t writeAttribute;
+	ReadAttributeFn readAttributeFn;
+	WriteAttributeFn writeAttributeFn;
+	uint16 dataLen;
+	uint16 curLen = 0;
+	uint8 j = 0;
+	uint8 i;
 
-  writeCmd = (zclWriteCmd_t *)pInMsg->attrCmd;
+	writeCmd = (zclWriteCmd_t *)pInMsg->attrCmd;
 
-  // Allocate space for Write Response Command
-  writeRspCmd = (zclWriteRspCmd_t *)zcl_mem_alloc( sizeof( zclWriteRspCmd_t )
-                   + sizeof( zclWriteRspStatus_t )* writeCmd->numAttr );
-  if ( writeRspCmd == NULL )
-  {
-    return FALSE; // EMBEDDED RETURN
-  }
+	// Allocate space for Write Response Command
+	writeRspCmd = (zclWriteRspCmd_t *)zcl_mem_alloc( sizeof( zclWriteRspCmd_t )+ sizeof( zclWriteRspStatus_t )* writeCmd->numAttr );
+	if ( writeRspCmd == NULL ){
+		return FALSE; // EMBEDDED RETURN
+	}
 
   // If any attribute cannot be written, no attribute values are changed. Hence, make sure all the attributes are supported and writable
 	for ( i = 0; i < writeCmd->numAttr; i++ ) {

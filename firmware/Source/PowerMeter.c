@@ -13,6 +13,7 @@
 #include "OSAL.h"
 #include "AF.h"
 #include "ZDApp.h"
+#include "ZMAC.h"
 
 #include "zcl.h"
 #include "zcl_general.h"
@@ -33,6 +34,7 @@
 #include "clusters/ClusterMetering.h"
 #include "clusters/ClusterOnOff.h"
 #include "clusters/ClusterElectricityMeasure.h"
+#include "clusters/ClusterTest.h"
 
 static byte zPowerMeterTaskID;
 
@@ -70,12 +72,15 @@ void powerMeter_Init( byte task_id ){
 	addReadAttributeFn(ENDPOINT_ONOFF,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_TEST,testClusterReadAttribute);
 	
 	zclHA_Init( &PowerMetering_SimpleDesc );
 	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT_METERING,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 	addReadAttributeFn(ENDPOINT_METERING,ZCL_CLUSTER_ID_GEN_POWER_CFG,meteringClusterReadAttribute);
 	addReadAttributeFn(ENDPOINT_METERING, ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT,electricityMeasureClusterReadAttribute);
@@ -85,6 +90,7 @@ void powerMeter_Init( byte task_id ){
   	EA=1;
  	identifyInit(zPowerMeterTaskID);
 	onOffInit();
+	ZMacSetTransmitPower(TX_PWR_PLUS_3);
 }
 
 /*********************************************************************
@@ -287,6 +293,7 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 	    case ZCL_CLUSTER_ID_GEN_GROUPS:
     	case ZCL_CLUSTER_ID_GEN_SCENES:
 	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
+			return processOnOffClusterServerCommands( pInMsg );
     	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
 	    case ZCL_CLUSTER_ID_GEN_ALARMS:
     	case ZCL_CLUSTER_ID_GEN_LOCATION:

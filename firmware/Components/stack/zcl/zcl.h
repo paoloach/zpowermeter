@@ -172,7 +172,8 @@ extern "C"
 #define ZCL_CLUSTER_ID_HA_APPLIANCE_STATISTICS               0x0B03
 #define ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT             0x0B04
 #define ZCL_CLUSTER_ID_HA_DIAGNOSTIC                         0x0B05
-	
+
+#define ZCL_CLUSTER_ID_TEST			                         0x0FFE	
 #define ACHDJIAN_LAST_CLUSTER								 0xFFFF
 
 // Light Link cluster
@@ -729,9 +730,12 @@ typedef struct
 // Parse received command
 typedef struct
 {
-  uint8  endpoint;
-  uint16 dataLen;
-  uint8  *pData;
+	uint8  endpoint;
+	uint16 dataLen;
+	uint8  *pData;
+	uint8 LinkQuality;        /* The link quality of the received data frame */
+	uint8 correlation;        /* The raw correlation value of the received data frame */
+	int8  rssi;               /* The received RF power in units dBm */
 } zclParseCmd_t;
 
 

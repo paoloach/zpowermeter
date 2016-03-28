@@ -84,7 +84,7 @@ uint16 identifyLoop(uint16 events){
 	if (onOff){
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
 		onOff=0;
-		P0_0 = 1;
+		P0_1 = 1;
 	} else {
 		onOff=1;
 		if ( identifyTime > 0 ){
@@ -93,10 +93,10 @@ uint16 identifyLoop(uint16 events){
     	if (identifyTime>0){
 			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-			P0_0 = 0;
+			P0_1 = 0;
 		} else{
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-			P0_0 = 0;
+			P0_1 = 0;
 		}
 	}
     return ( events ^ IDENTIFY_TIMEOUT_EVT );
@@ -116,7 +116,7 @@ void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 		onOff=1;
-		P0_0 = 1;
+		P0_1 = 1;
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
 		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
