@@ -73,12 +73,20 @@
 #include "hal_spi.h"
 #endif
 
+#define NO_TASK_ID 0xFF
+
 /**************************************************************************************************
  *                                      GLOBAL VARIABLES
  **************************************************************************************************/
 uint8 Hal_TaskID;
 
+uint8 registeredKeysTaskID=NO_TASK_ID;
+
 extern void HalLedUpdate( void ); /* Notes: This for internal only so it shouldn't be in hal_led.h */
+
+void setRegisteredKeysTaskID(uint8 taskId){
+	registeredKeysTaskID=taskId;
+}
 
 /**************************************************************************************************
  * @fn      Hal_Init
@@ -268,27 +276,28 @@ uint16 Hal_ProcessEvent( uint8 task_id, uint16 events )
  *
  * @return  None
  **************************************************************************************************/
-void Hal_ProcessPoll ()
-{
+void Hal_ProcessPoll (){
 #if defined( POWER_SAVING )
-  /* Allow sleep before the next OSAL event loop */
-  ALLOW_SLEEP_MODE();
-#endif
-  
-  /* UART Poll */
-#if (defined HAL_UART) && (HAL_UART == TRUE)
-  HalUARTPoll();
-#endif
-  
-  /* SPI Poll */
-#if (defined HAL_SPI) && (HAL_SPI == TRUE)
-  HalSpiPoll();
+	/* Allow sleep before the next OSAL event loop */
+	ALLOW_SLEEP_MODE();
 #endif
 
-  /* HID poll */
-#if (defined HAL_HID) && (HAL_HID == TRUE)
-  usbHidProcessEvents();
+	/* UART Poll */
+#if (defined HAL_UART) && (HAL_UART == TRUE)
+	HalUARTPoll();
 #endif
+
+	/* SPI Poll */
+#if (defined HAL_SPI) && (HAL_SPI == TRUE)
+	HalSpiPoll();
+#endif
+
+	/* HID poll */
+#if (defined HAL_HID) && (HAL_HID == TRUE)
+	usbHidProcessEvents();
+#endif
+
+
  
 }
 

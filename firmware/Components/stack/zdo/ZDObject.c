@@ -130,6 +130,7 @@ enum
  * LOCAL VARIABLES
  */
 static uint16 ZDOBuildBuf[26];  // temp area to build data without allocation
+static uint8 x;
 
 #if defined ( REFLECTOR )
 static ZDO_EDBind_t *ZDO_EDBind;     // Null when not used
@@ -561,7 +562,7 @@ static void ZDO_SendEDBindRsp( byte TransSeq, zAddrType_t *dstAddr, byte Status,
 static byte ZDO_CompareClusterLists( byte numList1, uint16 *list1,
                           byte numList2, uint16 *list2, uint16 *pMatches )
 {
-  byte x, y;
+  byte y;
   uint16 z;
   byte numMatches = 0;
 
@@ -600,7 +601,7 @@ static byte ZDO_CompareClusterLists( byte numList1, uint16 *list1,
  */
 byte ZDO_AnyClusterMatches( byte ACnt, uint16 *AList, byte BCnt, uint16 *BList )
 {
-  byte x, y;
+  byte y;
 
   for ( x = 0; x < ACnt; x++ )
   {
@@ -760,8 +761,6 @@ void ZDO_ProcessActiveEPReq( zdoIncomingMsg_t *inMsg ){
  */
 uint8 *ZDO_ConvertOTAClusters( uint8 cnt, uint8 *inBuf, uint16 *outList )
 {
-  uint8 x;
-
   for ( x = 0; x < cnt; x++ )
   {
     // convert ota format to internal
@@ -1250,7 +1249,6 @@ void ZDO_EndDeviceTimeoutCB( void )
  */
 void ZDO_ProcessMgmtLqiReq( zdoIncomingMsg_t *inMsg )
 {
-  byte x;
   byte index;
   byte numItems;
   byte maxItems;
@@ -1602,7 +1600,6 @@ void ZDO_FinishProcessingMgmtNwkDiscReq( void )
  */
 void ZDO_ProcessMgmtRtgReq( zdoIncomingMsg_t *inMsg )
 {
-  byte x;
   byte maxNumItems;
   byte numItems = 0;
   uint8 *pBuf = NULL;
@@ -1680,78 +1677,55 @@ void ZDO_ProcessMgmtRtgReq( zdoIncomingMsg_t *inMsg )
 /*********************************************************************
  * @fn          ZDO_ProcessMgmtBindReq
  *
- * @brief       This function finishes the processing of the Management
- *              Bind Request and generates the response.
+ * @brief       This function finishes the processing of the Management Bind Request and generates the response.
  *
- *   Note:      This function will limit the number of items returned
- *              to ZDO_MAX_BIND_ITEMS items.
+ *   Note:      This function will limit the number of items returned to ZDO_MAX_BIND_ITEMS items.
  *
  * @param       inMsg - incoming message (request)
  *
  * @return      none
  */
-void ZDO_ProcessMgmtBindReq( zdoIncomingMsg_t *inMsg )
-{
-#if defined ( REFLECTOR )
-  byte x;
-  uint16 maxNumItems;
-  uint16 numItems;
-  uint8 *pBuf = NULL;
-  apsBindingItem_t *pList;
-  uint8 StartIndex = inMsg->asdu[0];
-  uint8 status;
+void ZDO_ProcessMgmtBindReq( zdoIncomingMsg_t *inMsg ){
+	uint16 maxNumItems;
+	uint16 numItems;
+	uint8 *pBuf = NULL;
+	apsBindingItem_t *pList;
+	uint8 StartIndex = inMsg->asdu[0];
+	uint8 status;
 
-  // Get the number of table items
-  APSME_GetRequest( apsNumBindingTableEntries, 0, (byte*)(&maxNumItems) );
+	// Get the number of table items
+	APSME_GetRequest( apsNumBindingTableEntries, 0, (byte*)(&maxNumItems) );
 
-  if ( maxNumItems > StartIndex )
-  {
-    numItems = maxNumItems - StartIndex;    // Start at the passed in index
-  }
-  else
-  {
-    numItems = 0;
-  }
+	if ( maxNumItems > StartIndex ) {
+		numItems = maxNumItems - StartIndex;    // Start at the passed in index
+	}  else  {
+		numItems = 0;
+	}
 
-  // limit the size of the list
-  if ( numItems > ZDO_MAX_BIND_ITEMS )
-  {
-    numItems = ZDO_MAX_BIND_ITEMS;
-  }
+	// limit the size of the list
+	if ( numItems > ZDO_MAX_BIND_ITEMS ) {
+		numItems = ZDO_MAX_BIND_ITEMS;
+	}
 
   // Allocate the memory to build the table
-  if ( numItems && (pBuf = osal_mem_alloc( sizeof( apsBindingItem_t ) * numItems )) )
-  {
-    status = ZSuccess;
+	if ( numItems && (pBuf = osal_mem_alloc( sizeof( apsBindingItem_t ) * numItems )) )  {
+		status = ZSuccess;
+		pList = (apsBindingItem_t *)pBuf;
+		for ( x = 0; x < numItems; x++ )  {
+			APSME_GetRequest( apsBindingTable, (x + StartIndex), (void*)pList );
+			pList++;
+		}
+	}  else  {
+		status = ZDP_NOT_PERMITTED;
+		numItems = 0;
+	}
 
-    // Convert buffer to list
-    pList = (apsBindingItem_t *)pBuf;
+	// Send response
+  	ZDP_MgmtBindRsp( inMsg->TransSeq, &(inMsg->srcAddr), status, (byte)maxNumItems, StartIndex,  (byte)numItems, (apsBindingItem_t *)pBuf, false );
 
-    // Loop through items and build list
-    for ( x = 0; x < numItems; x++ )
-    {
-      APSME_GetRequest( apsBindingTable, (x + StartIndex), (void*)pList );
-      pList++;
-    }
-
-  }
-  else
-  {
-    status = ZDP_NOT_PERMITTED;
-    numItems = 0;
-  }
-
-  // Send response
-  ZDP_MgmtBindRsp( inMsg->TransSeq, &(inMsg->srcAddr), status, (byte)maxNumItems, StartIndex,
-                   (byte)numItems, (apsBindingItem_t *)pBuf, false );
-
-  if ( pBuf )
-  {
-    osal_mem_free( pBuf );
-  }
-#else
-  (void)inMsg;
-#endif
+ 	if ( pBuf ) {
+    	osal_mem_free( pBuf );
+	}
 }
 
 /*********************************************************************
@@ -2904,7 +2878,6 @@ ZDO_MgmtLqiRsp_t *ZDO_ParseMgmtLqiRsp( zdoIncomingMsg_t *inMsg )
             sizeof( ZDO_MgmtLqiRsp_t ) + (neighborLqiCount * sizeof( ZDP_MgmtLqiItem_t )) );
   if ( pRsp )
   {
-    uint8 x;
     ZDP_MgmtLqiItem_t *pList = pRsp->list;
     pRsp->status = status;
     pRsp->neighborLqiEntries = neighborLqiEntries;
@@ -2978,7 +2951,6 @@ ZDO_MgmNwkDiscRsp_t *ZDO_ParseMgmNwkDiscRsp( zdoIncomingMsg_t *inMsg )
                                   + (networkListCount * sizeof( mgmtNwkDiscItem_t )) );
   if ( pRsp )
   {
-    uint8 x;
     mgmtNwkDiscItem_t *pList;
 
     pRsp->status = status;
@@ -3042,7 +3014,6 @@ ZDO_MgmtRtgRsp_t *ZDO_ParseMgmtRtgRsp( zdoIncomingMsg_t *inMsg )
           sizeof( ZDO_MgmtRtgRsp_t ) + (rtgListCount * sizeof( rtgItem_t )) );
   if ( pRsp )
   {
-    uint8 x;
     rtgItem_t *pList = pRsp->list;
     pRsp->status = status;
     pRsp->rtgCount = rtgCount;
@@ -3103,7 +3074,6 @@ ZDO_MgmtBindRsp_t *ZDO_ParseMgmtBindRsp( zdoIncomingMsg_t *inMsg )
           (sizeof ( ZDO_MgmtBindRsp_t ) + (bindingListCount * sizeof( apsBindingItem_t ))) );
   if ( pRsp )
   {
-    uint8 x;
     apsBindingItem_t *pList = pRsp->list;
     pRsp->status = status;
     pRsp->bindingCount = bindingCount;

@@ -191,9 +191,9 @@ void ZDConfig_UpdatePowerDescriptor( void )
     else
       ZDO_Config_Power_Descriptor.PowerMode = NODECURPWR_RCVR_STIM;
 
-    ZDO_Config_Power_Descriptor.AvailablePowerSources = NODEAVAILPWR_RECHARGE;
-    ZDO_Config_Power_Descriptor.CurrentPowerSource = NODEAVAILPWR_RECHARGE;
-    ZDO_Config_Power_Descriptor.CurrentPowerSourceLevel = NODEPOWER_LEVEL_66;
+    ZDO_Config_Power_Descriptor.AvailablePowerSources = NODEAVAILPWR_DISPOSE;
+    ZDO_Config_Power_Descriptor.CurrentPowerSource = NODEAVAILPWR_DISPOSE;
+    ZDO_Config_Power_Descriptor.CurrentPowerSourceLevel = NODEPOWER_LEVEL_100;
   }
 }
 

@@ -38,6 +38,8 @@
 /*********************************************************************
  * SIMPLE DESCRIPTOR
  */
+
+
 // This is the Cluster ID List and should be filled with Application specific cluster IDs.
 const cId_t onOff_InClusterList[] ={
   ZCL_CLUSTER_ID_GEN_BASIC,
@@ -66,6 +68,7 @@ const cId_t smartplug_OutClusterList[] ={
   ZCL_CLUSTER_ID_GEN_IDENTIFY
 };
 
+
 SimpleDescriptionFormat_t OnOff_SimpleDesc = {
   ENDPOINT_ONOFF,                  			//  int Endpoint;
   ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
@@ -77,6 +80,7 @@ SimpleDescriptionFormat_t OnOff_SimpleDesc = {
   sizeof(onOff_OutClusterList)/2,           //  byte  AppNumInClusters;
   (cId_t *)onOff_OutClusterList 	//  byte *pAppInClusterList;
 };
+
 
 
 SimpleDescriptionFormat_t PowerMetering_SimpleDesc = {
