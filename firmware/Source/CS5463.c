@@ -64,7 +64,7 @@ void CS5463_Init(void ){
 	U0_ACTIVE=0;
 	U0BAUD=0;
 	U0_BAUD_E=15;
-	U0_CPOL=0;
+	U0_CPOL=1;
 	U0_CPHA=0;
 	U0_ORDER=1;
 	
@@ -75,17 +75,13 @@ void CS5463_Init(void ){
 	P0SEL_3=1;
 	P0SEL_5=1;
 	
-	DIR0_7 = 1;
-	P0SEL_7 = 0;
-	P0_7=1;
-		
+	
 	CS5463_reset();
 	for(uint8 i=0; i < 200; i++);
 	CS5463_startConversion();
 }
 
 void CS5463_startConversion(void) {
-	P0_7=0;
 	asm("NOP");
 	asm("NOP");
 	U0_TX_BYTE=0;
@@ -94,11 +90,9 @@ void CS5463_startConversion(void) {
 	while(U0_TX_BYTE==0);
 	asm("NOP");
 	asm("NOP");
-	P0_7=1;
 }
 
 void CS5463_reset(void) {
-	P0_7=0;
 	asm("NOP");
 	asm("NOP");
 	U0_TX_BYTE = 0;
@@ -106,7 +100,6 @@ void CS5463_reset(void) {
 	while(U0_TX_BYTE==0);
 	asm("NOP");
 	asm("NOP");
-	P0_7=1;
 }
 
 int32 getCS5463RegisterValue(enum CS5463Register regIndex) {

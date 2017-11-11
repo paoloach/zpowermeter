@@ -37,8 +37,6 @@
 #include "clusters/ClusterTest.h"
 
 static byte zPowerMeterTaskID;
-
-
 static void zPowerMeter_ProcessIncomingMsg( zclIncomingMsg_t *msg );
 static uint8 zPowerMeter_ProcessInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 zPowerMeter_ProcessInWriteRspCmd( zclIncomingMsg_t *pInMsg );
@@ -47,6 +45,31 @@ static uint8 zPowerMeter_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 zPowerMeter_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
+
+
+__sfr __no_init volatile struct  {
+	unsigned char DIR1_0: 1;
+	unsigned char DIR1_1: 1;
+	unsigned char DIR1_2: 1;
+	unsigned char DIR1_3: 1;
+	unsigned char DIR1_4: 1;
+	unsigned char DIR1_5: 1;
+	unsigned char DIR1_6: 1;
+	unsigned char DIR1_7: 1;
+} @ 0xFE;
+
+
+__sfr __no_init volatile struct  {
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
+
 /*********************************************************************
  * ZCL General Profile Callback table
  */
@@ -91,6 +114,12 @@ void powerMeter_Init( byte task_id ){
  	identifyInit(zPowerMeterTaskID);
 	onOffInit();
 	ZMacSetTransmitPower(TX_PWR_PLUS_3);
+	
+	DIR1_4 = 1;
+ 	P1SEL_4 = 0;
+ 	
+	osal_start_timerEx( task_id, CONNECTION_FLASH_EVT, 150 );
+	P1_4 = 1;
 }
 
 /*********************************************************************
@@ -104,6 +133,7 @@ void powerMeter_Init( byte task_id ){
  */
 uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
 	afIncomingMSGPacket_t *MSGpkt;
+	devStates_t zclSampleSw_NwkState;
   
 	  (void)task_id;  // Intentionally unreferenced parameter
 	 if ( events & SYS_EVENT_MSG ){
@@ -113,6 +143,12 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
           			// Incoming ZCL Foundation command/response messages
           			zPowerMeter_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
           			break;
+				case ZDO_STATE_CHANGE:
+          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
+					if (zclSampleSw_NwkState == DEV_END_DEVICE){
+						osal_stop_timerEx( task_id, CONNECTION_FLASH_EVT );
+						P1_4 = 0;
+					}		
 		       default:
         		  break;
       		}
@@ -127,8 +163,22 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
 		return identifyLoop(events);
 	}
 	
+	if (events & CONNECTION_FLASH_EVT){
+		if (P1_4){
+			P1_4 = 0;
+			P0_0=0;
+		}else{
+			P1_4 = 1;
+			P0_0=1;
+		}
+		osal_start_timerEx( task_id, CONNECTION_FLASH_EVT, 10000 );
+
+	}
+	
  	return 0;
 }
+
+		   
 
 /****************************************************************************** 
  * 

@@ -73,7 +73,7 @@
         </option>
         <option>
           <name>DynDriver</name>
-          <state>SIM_ID</state>
+          <state>CHIPCON_ID</state>
         </option>
         <option>
           <name>Debugger Extra Options Check</name>

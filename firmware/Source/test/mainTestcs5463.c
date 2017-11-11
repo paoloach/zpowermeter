@@ -25,7 +25,33 @@
 #include "CS5463.h"
 
 
+__sfr __no_init volatile struct  {
+	unsigned char DIR1_0: 1;
+	unsigned char DIR1_1: 1;
+	unsigned char DIR1_2: 1;
+	unsigned char DIR1_3: 1;
+	unsigned char DIR1_4: 1;
+	unsigned char DIR1_5: 1;
+	unsigned char DIR1_6: 1;
+	unsigned char DIR1_7: 1;
+} @ 0xFE;
+
+
+__sfr __no_init volatile struct  {
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
+
 static void identifyLED(void);
+static void connectionLED(void);
+static void onLED(void);
+
 static void onOff(void);
 
 /*********************************************************************
@@ -80,26 +106,26 @@ int main() {
 
   // Final board initialization
  // InitBoard( OB_READY );
-
-  identifyLED();
-	onOffInit();
+	identifyLED();
+	connectionLED();
+	onLED();
   CS5463_Init();
   CS5463_reset();
-  setCS5463RegisterValue(5,0x00, 0x0F, 0xA0);
-  setCS5463RegisterValue(0,0x01, 0x00, 0x01);
-  setCS5463RegisterValue(18,0x00, 0x00, 0x60);
+  setCS5463RegisterValue(CycleCount,0x00, 0x0F, 0xA0);
+  setCS5463RegisterValue(Config,0x01, 0x00, 0x01);
+  setCS5463RegisterValue(Mode,0x00, 0x00, 0x60);
   CS5463_startConversion();
   
   while(1){
-	  reg00 = getCS5463RegisterValue(0);
-	  reg01 = getCS5463RegisterValue(1);
-	  reg02 = getCS5463RegisterValue(2);
-	  reg03 = getCS5463RegisterValue(3);
-	  reg04 = getCS5463RegisterValue(4);
-	  reg05 = getCS5463RegisterValue(5);
+	  reg00 = getCS5463RegisterValue(Config);
+	  reg01 = getCS5463RegisterValue(CurrentDCOffset);
+	  reg02 = getCS5463RegisterValue(CurrentGain);
+	  reg03 = getCS5463RegisterValue(VoltageDcOffset);
+	  reg04 = getCS5463RegisterValue(VoltageGain);
+	  reg05 = getCS5463RegisterValue(CycleCount);
 	  reg11 = getCS5463RegisterValue(RMSCurrent);
 	  reg12 = getCS5463RegisterValue(RMSVolt);
-	  reg18 = getCS5463RegisterValue(18);
+	  reg18 = getCS5463RegisterValue(Mode);
 	  
 	  // MULT = 0.250 * 2000;
 	  // DIV = 0x1000000
@@ -118,8 +144,34 @@ int main() {
 
 static void identifyLED(void) {
 	identifyInit(1);
-	P0_1 = 1;	
+	for(uint8 i=0; i < 20; i++){
+		P1_5 = 1;
+		for(uint16 y=0; y < 10000; y++);
+		P1_5=0;
+		for(uint16 y=0; y < 10000; y++);
+	}
+}
 
+static void connectionLED(void) {
+	DIR1_4 = 1;
+ 	P1SEL_4 = 0;
+	for(uint8 i=0; i < 20; i++){
+		P1_4 = 1;
+		for(uint16 y=0; y < 10000; y++);
+		P1_4=0;
+		for(uint16 y=0; y < 10000; y++);
+	}
+}
+
+static void onLED(void) {
+	DIR1_3 = 1;
+ 	P1SEL_3 = 0;
+	for(uint8 i=0; i < 20; i++){
+		P1_4 = 1;
+		for(uint16 y=0; y < 10000; y++);
+		P1_4=0;
+		for(uint16 y=0; y < 10000; y++);
+	}
 }
 
 static void onOff(void) {

@@ -16,6 +16,6 @@
 #define READ_TEMP_EVT	         0x0004
 #define END_READ_TEMP_EVT        0x0008
 #define READ_TEMP_MASK	         0x000C
-
+#define CONNECTION_FLASH_EVT     0x0010
   
 #endif

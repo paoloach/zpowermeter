@@ -44,3 +44,7 @@ firmware/CC2530DB/testCS5463/*
 
 # Debug files
 *.dSYM/
+*.wsdt
+firmware/CC2530DB/settings/PowerMeter.wsdt
+*.dni
+firmware/CC2530DB/settings/PowerMeter.dbgdt

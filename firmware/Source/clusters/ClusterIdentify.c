@@ -24,28 +24,32 @@ static byte mainAppTaskId;
 
 static uint8  onOff;
 
-__sfr __no_init volatile struct  {
-	unsigned char DIR0_0: 1;
-	unsigned char DIR0_1: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_7: 1;
-} @ 0xFD;
 
 __sfr __no_init volatile struct  {
-	unsigned char P0SEL_0: 1;
-	unsigned char P0SEL_1: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_7: 1;
-} @ 0xF3;
+	unsigned char DIR1_0: 1;
+	unsigned char DIR1_1: 1;
+	unsigned char DIR1_2: 1;
+	unsigned char DIR1_3: 1;
+	unsigned char DIR1_4: 1;
+	unsigned char DIR1_5: 1;
+	unsigned char DIR1_6: 1;
+	unsigned char DIR1_7: 1;
+} @ 0xFE;
 
+
+__sfr __no_init volatile struct  {
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
+
+#define ON() P1_5 = 1
+#define OFF() P1_5 = 0
 
 void identifyClusterReadAttribute(zclAttrRec_t * attribute){
 	if (attribute == NULL){
@@ -74,9 +78,9 @@ void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
 }
 
 void identifyInit(byte taskId){
-	DIR0_1 = 1;
- 	P0SEL_1 = 0;
- 	P0_1 = 0;
+	DIR1_5 = 1;
+ 	P1SEL_5 = 0;
+ 	OFF();
 	mainAppTaskId = taskId;
 }
 
@@ -84,7 +88,7 @@ uint16 identifyLoop(uint16 events){
 	if (onOff){
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
 		onOff=0;
-		P0_1 = 1;
+		OFF();
 	} else {
 		onOff=1;
 		if ( identifyTime > 0 ){
@@ -93,10 +97,10 @@ uint16 identifyLoop(uint16 events){
     	if (identifyTime>0){
 			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-			P0_1 = 0;
+			ON();
 		} else{
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-			P0_1 = 0;
+			OFF();
 		}
 	}
     return ( events ^ IDENTIFY_TIMEOUT_EVT );
@@ -116,7 +120,7 @@ void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 		onOff=1;
-		P0_1 = 1;
+		ON();
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
 		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );

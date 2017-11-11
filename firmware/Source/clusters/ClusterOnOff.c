@@ -22,6 +22,19 @@ __sfr __no_init volatile struct  {
 	unsigned char DIR0_7: 1;
 } @ 0xFD;
 
+
+__sfr __no_init volatile struct  {
+	unsigned char DIR1_0: 1;
+	unsigned char DIR1_1: 1;
+	unsigned char DIR1_2: 1;
+	unsigned char DIR1_3: 1;
+	unsigned char DIR1_4: 1;
+	unsigned char DIR1_5: 1;
+	unsigned char DIR1_6: 1;
+	unsigned char DIR1_7: 1;
+} @ 0xFE;
+
+
 __sfr __no_init volatile struct  {
 	unsigned char P0SEL_0: 1;
 	unsigned char P0SEL_1: 1;
@@ -33,13 +46,27 @@ __sfr __no_init volatile struct  {
 	unsigned char P0SEL_7: 1;
 } @ 0xF3;
 
+__sfr __no_init volatile struct  {
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
+
 uint8  onOffValue = LIGHT_ON;
 static void setIOStatus(void);
 
 void onOffInit(void) {
 	DIR0_0=1;
+	DIR1_3=1;
 	P0SEL_0=0;
+	P1SEL_3=0;
 	P0_0=0;
+	P1_3=0;
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -75,10 +102,13 @@ void onOffClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
 }
 
 void setIOStatus(void){
-	if ( onOffValue  == LIGHT_ON )
+	if ( onOffValue  == LIGHT_ON ){
 	  P0_0=1;
-  	else
+	  P1_3=1;
+  	}else{
 	  P0_0=0;
+	  P1_3=0;
+	}
 }
 
 void setLightStatus(uint8 status){
