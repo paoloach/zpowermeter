@@ -8,7 +8,6 @@
 #ifdef __cplusplus
 
 #include "lcdDriver/GFX.h"
-#include "CS5463.h"
 
 extern "C" void handleMainLoop(void);
 extern "C" void mainLoopInit(void);
@@ -20,8 +19,6 @@ public:
 
 private:
     GFX * graphics;
-
-    void initCS() const;
 
     int32_t getInt(uint32_t regPower) const;
 };
