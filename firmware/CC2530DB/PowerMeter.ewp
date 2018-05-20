@@ -3826,12 +3826,6 @@
             </file>
         </group>
         <file>
-            <name>$PROJ_DIR$\..\Source\CS5463.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Source\CS5463.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Source\OSAL_PowerMeter.c</name>
             <excluded>
                 <configuration>testCS5463</configuration>

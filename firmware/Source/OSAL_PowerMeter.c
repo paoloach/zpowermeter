@@ -32,7 +32,6 @@
 #endif
 
 #include "PowerMeter.h"
-#include "CS5463.h"
 
 /*********************************************************************
  * GLOBAL VARIABLES

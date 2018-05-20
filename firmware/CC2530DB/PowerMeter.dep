@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>3892282518</fileChecksum>
+    <fileChecksum>87309768</fileChecksum>
     <configuration>
         <name>EndDeviceEB</name>
         <outputs>
@@ -730,11 +730,11 @@
             <inputs>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 217 215 219 483 491 324 262 306 109 260 233 497 504 499 502 508 506 496 591 473 475 555 359 592 590 587 494 586 594 589 259 585 24 25 551</file>
+                    <file> 217 215 219 483 491 324 262 306 109 260 233 497 504 499 502 508 506 496 591 473 475 555 359 592 590 587 494 586 594 589 259 585 24 25</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 306 590 508 506 587 324 592 491 109 473 551 499 497 260 591 24 262 502 585 504 233 586 496 589 483 494 475 555 359 594 259 25</file>
+                    <file> 590 504 506 587 262 592 585 586 473 502 260 233 324 24 491 499 508 306 497 109 591 496 589 483 494 475 555 359 594 259 25</file>
                 </tool>
             </inputs>
         </file>
@@ -2422,7 +2422,7 @@
             <outputs>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 229 230 84</file>
+                    <file> 230</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
@@ -2432,11 +2432,11 @@
             <inputs>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 217 215 219 483 491 324 262 306 109 260 233 497 504 499 502 508 506 496 591 473 475 555 359 592 590 587 494 586 594 589 259 585 134 17 551</file>
+                    <file> 217 215 219 483 491 324 262 306 109 260 233 497 504 499 502 508 506 496 591 473 475 555 359 592 590 587 494 586 594 589 259 585 134 17</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 497 473 506 499 17 491 508 324 306 586 590 587 592 134 551 262 502 585 260 504 233 496 589 591 483 109 494 475 555 359 594 259</file>
+                    <file> 504 473 506 502 17 262 585 260 233 496 592 589 591 134 491 499 508 324 306 497 586 590 587 483 109 494 475 555 359 594 259</file>
                 </tool>
             </inputs>
         </file>
@@ -2524,11 +2524,11 @@
             <inputs>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 217 215 219 506 260 324 233 496 234 262 306 109 497 504 502 591 473 475 555 359 592 590 587 494 583 586 594 589 259 252 221 508 469 223 584 545 483 491 499 585 551</file>
+                    <file> 217 215 219 506 260 324 233 496 234 262 306 109 497 504 502 591 473 475 555 359 592 590 587 494 583 586 594 589 259 252 221 508 469 223 584 545 483 491 499 585</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 494 584 259 587 591 233 473 506 586 508 491 262 221 551 260 496 592 594 223 324 234 502 583 545 504 590 252 499 306 497 109 475 555 359 589 469 483 585</file>
+                    <file> 508 584 260 473 506 586 591 494 259 587 585 262 221 496 324 504 592 594 223 234 502 583 545 233 306 497 590 252 109 475 555 359 589 469 483 491 499</file>
                 </tool>
             </inputs>
         </file>
@@ -2944,6 +2944,10 @@
         <forcedrebuild>
             <name>$PROJ_DIR$\..\Components\mt\MT_APP.c</name>
             <tool>ICC8051</tool>
+        </forcedrebuild>
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>XLINK</tool>
         </forcedrebuild>
     </configuration>
     <configuration>
@@ -5006,6 +5010,10 @@
             <name>$PROJ_DIR$\..\Components\osal\common\OSAL_Timers.c</name>
             <tool>ICC8051</tool>
         </forcedrebuild>
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>XLINK</tool>
+        </forcedrebuild>
     </configuration>
     <configuration>
         <name>testCS5463</name>
@@ -5582,5 +5590,9 @@
                 </tool>
             </outputs>
         </file>
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>XLINK</tool>
+        </forcedrebuild>
     </configuration>
 </project>
