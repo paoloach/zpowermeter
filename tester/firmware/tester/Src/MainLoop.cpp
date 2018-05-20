@@ -2,6 +2,7 @@
 // Created by paolo on 31/12/17.
 //
 
+#include "ADE7953.h"
 #include <stm32f103xb.h>
 #include "MainLoop.h"
 #include "lcdDriver/RegisterILI9325.h"
@@ -19,8 +20,8 @@ MainLoop mainLoop;
 uint32_t current[DATA_SIZE];
 uint32_t *iter = current;
 uint32_t *end = current + DATA_SIZE;
-bool newData;
 bool endData;
+ADE7953 ade7953;
 
 void SPITxIsr(struct __SPI_HandleTypeDef *hspi);
 
@@ -33,7 +34,6 @@ void mainLoopInit(void) {
     //   hspi1.TxISR = SPITxIsr;
     HAL_TIM_Base_Start_IT(&htim2);
     end = current + DATA_SIZE;
-    newData = false;
     endData = false;
 }
 
@@ -60,14 +60,16 @@ void MainLoop::init() {
     HAL_Delay(200);
     GPIOA->BSRR = GPIO_PIN_4 << 16;
 
-    graphics->fillRect(Point(0, 0), 320, 280, WHITE);
-
+    graphics->fillRect(Point(0, 0), 320, 280, Color6Bit(0,255,0));
+    ade7953.init();
 }
 
 
 void MainLoop::mainLoop() {
-
-
+    uint8_t  version = ade7953.read(Version);
+    graphics->drawString(Point(0,16), "Silicon Version: ");
+    itoa(version, buffer, 10);
+    graphics->drawString(Point(17*16,16 ), buffer);
 }
 
 int32_t MainLoop::getInt(uint32_t regPower) const {
@@ -84,7 +86,6 @@ int32_t MainLoop::getInt(uint32_t regPower) const {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (endData == false) {
         iter++;
-        newData = true;
         if (iter == end) {
             iter = current;
             endData = true;
@@ -98,6 +99,5 @@ void SPITxIsr(struct __SPI_HandleTypeDef *hspi) {
     iter++;
     if (iter == end) {
         iter = current;
-        newData = true;
     }
 }
