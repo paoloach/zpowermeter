@@ -64,7 +64,7 @@ void CS5463_Init(void ){
 	U0_ACTIVE=0;
 	U0BAUD=0;
 	U0_BAUD_E=15;
-	U0_CPOL=1;
+	U0_CPOL=0;
 	U0_CPHA=0;
 	U0_ORDER=1;
 	
@@ -78,7 +78,18 @@ void CS5463_Init(void ){
 	
 	CS5463_reset();
 	for(uint8 i=0; i < 200; i++);
-	CS5463_startConversion();
+//	CS5463_startConversion();
+}
+
+void CS5463_startCalibration(enum Calibration calibration){
+	asm("NOP");
+	asm("NOP");
+	U0_TX_BYTE=0;
+	U0DBUF=0xC0 | (calibration & 0x01F);
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	asm("NOP");
+	asm("NOP");
 }
 
 void CS5463_startConversion(void) {
@@ -86,6 +97,18 @@ void CS5463_startConversion(void) {
 	asm("NOP");
 	U0_TX_BYTE=0;
 	U0DBUF=0xE8;
+	asm("NOP");
+	while(U0_TX_BYTE==0);
+	asm("NOP");
+	asm("NOP");
+}
+
+
+void CS5463_startSingleConversion(void) {
+	asm("NOP");
+	asm("NOP");
+	U0_TX_BYTE=0;
+	U0DBUF=0xE0;
 	asm("NOP");
 	while(U0_TX_BYTE==0);
 	asm("NOP");
@@ -105,7 +128,6 @@ void CS5463_reset(void) {
 int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
 	union CS5463Reg result;
 
-	P0_7=0;
 	asm("NOP");
 	asm("NOP");
 	uint8 index = (regIndex << 1);
@@ -135,7 +157,6 @@ int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
 	result.bytes[0] = U0DBUF;
 	asm("NOP");
 	asm("NOP");
-	P0_7=1;
 	asm("NOP");
 	asm("NOP");
 	asm("NOP");
@@ -145,10 +166,13 @@ int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
 	return result.value;
 }
 
+extern void setCS5463RegisterValue32(enum CS5463Register regIndex,uint32 value) {
+	setCS5463RegisterValue(regIndex, (value & 0xFF0000) >> 16, (value & 0xFF00) >> 8, (value & 0xFF));
+}
+
 void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char  byte1,unsigned  char byte2,unsigned  char byte3){
 	union CS5463Reg result;
 
-	P0_7=0;
 	asm("NOP");
 	asm("NOP");
 	uint8 index = (regIndex << 1);
@@ -178,7 +202,6 @@ void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char  byte1,un
 	result.bytes[0] = U0DBUF;
 	asm("NOP");
 	asm("NOP");
-	P0_7=1;
 	asm("NOP");
 	asm("NOP");
 	asm("NOP");

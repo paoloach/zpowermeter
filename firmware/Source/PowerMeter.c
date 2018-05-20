@@ -85,8 +85,8 @@ __sfr __no_init volatile struct  {
 void powerMeter_Init( byte task_id ){
 	zPowerMeterTaskID = task_id;
 	
-	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC, handleClusterCommands );
- 	
+	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT+1, handleClusterCommands );
+
 	zclHA_Init( &OnOff_SimpleDesc );
 	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
 	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
@@ -114,6 +114,8 @@ void powerMeter_Init( byte task_id ){
  	identifyInit(zPowerMeterTaskID);
 	onOffInit();
 	ZMacSetTransmitPower(TX_PWR_PLUS_3);
+	electricityMeasureClusterInit();
+	
 	
 	DIR1_4 = 1;
  	P1SEL_4 = 0;
@@ -133,7 +135,7 @@ void powerMeter_Init( byte task_id ){
  */
 uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
 	afIncomingMSGPacket_t *MSGpkt;
-	devStates_t zclSampleSw_NwkState;
+	devStates_t nwkState;
   
 	  (void)task_id;  // Intentionally unreferenced parameter
 	 if ( events & SYS_EVENT_MSG ){
@@ -144,10 +146,13 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
           			zPowerMeter_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
           			break;
 				case ZDO_STATE_CHANGE:
-          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-					if (zclSampleSw_NwkState == DEV_END_DEVICE){
+          			nwkState = (devStates_t)(MSGpkt->hdr.status);
+					if (nwkState == DEV_NWK_DISC)
+						break;
+					if (nwkState == DEV_END_DEVICE || nwkState==DEV_ROUTER){
 						osal_stop_timerEx( task_id, CONNECTION_FLASH_EVT );
 						P1_4 = 0;
+						P1_5=1;
 					}		
 		       default:
         		  break;
@@ -166,12 +171,10 @@ uint16 powerMeterEventLoop( uint8 task_id, uint16 events ){
 	if (events & CONNECTION_FLASH_EVT){
 		if (P1_4){
 			P1_4 = 0;
-			P0_0=0;
 		}else{
 			P1_4 = 1;
-			P0_0=1;
 		}
-		osal_start_timerEx( task_id, CONNECTION_FLASH_EVT, 10000 );
+		osal_start_timerEx( task_id, CONNECTION_FLASH_EVT, 150 );
 
 	}
 	
@@ -344,6 +347,8 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
     	case ZCL_CLUSTER_ID_GEN_SCENES:
 	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
 			return processOnOffClusterServerCommands( pInMsg );
+		case ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT:
+			return processElectricityMeasureClusterServerCommands(pInMsg);
     	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
 	    case ZCL_CLUSTER_ID_GEN_ALARMS:
     	case ZCL_CLUSTER_ID_GEN_LOCATION:

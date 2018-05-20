@@ -48,8 +48,8 @@ __sfr __no_init volatile struct  {
 	unsigned char P1SEL_7: 1;
 } @ 0xF4;
 
-#define ON() P1_5 = 1
-#define OFF() P1_5 = 0
+#define ON() P1_2 = 1
+#define OFF() P1_2 = 0
 
 void identifyClusterReadAttribute(zclAttrRec_t * attribute){
 	if (attribute == NULL){
@@ -78,8 +78,8 @@ void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
 }
 
 void identifyInit(byte taskId){
-	DIR1_5 = 1;
- 	P1SEL_5 = 0;
+	DIR1_2 = 1;
+ 	P1SEL_2 = 0;
  	OFF();
 	mainAppTaskId = taskId;
 }

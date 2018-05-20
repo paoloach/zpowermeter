@@ -91,7 +91,6 @@ void osalInitTasks( void )
 #endif
   zcl_Init( taskID++ );
   powerMeter_Init( taskID++ );
-  CS5463_Init();
 }
 
 /*********************************************************************

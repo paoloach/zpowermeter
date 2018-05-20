@@ -61,12 +61,12 @@ uint8  onOffValue = LIGHT_ON;
 static void setIOStatus(void);
 
 void onOffInit(void) {
-	DIR0_0=1;
-	DIR1_3=1;
-	P0SEL_0=0;
-	P1SEL_3=0;
-	P0_0=0;
-	P1_3=0;
+	DIR1_5=1;
+	DIR1_1=1;
+	P1SEL_5=0;
+	P1SEL_5=0;
+	P1_5=1;
+	P1_1=0;
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -76,7 +76,7 @@ void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
 	attribute->accessControl = ACCESS_CONTROL_R_W;
 	attribute->status =  ZCL_STATUS_SUCCESS;
 	switch(attribute->attrId){
-	case ATTRID_ON_OFF:
+	case ATTRID_ON_OFF:\
 		attribute->dataType = ZCL_DATATYPE_BOOLEAN;
 		attribute->dataPtr = (void *)&onOffValue;
 		break;
@@ -103,11 +103,11 @@ void onOffClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
 
 void setIOStatus(void){
 	if ( onOffValue  == LIGHT_ON ){
-	  P0_0=1;
-	  P1_3=1;
+	  P1_1=0;
+	  P1_5=1;
   	}else{
-	  P0_0=0;
-	  P1_3=0;
+	  P1_1=1;
+	  P1_5=0;
 	}
 }
 

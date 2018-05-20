@@ -26,6 +26,17 @@
 
 
 __sfr __no_init volatile struct  {
+	unsigned char DIR0_0: 1;
+	unsigned char DIR0_1: 1;
+	unsigned char DIR0_2: 1;
+	unsigned char DIR0_3: 1;
+	unsigned char DIR0_4: 1;
+	unsigned char DIR0_5: 1;
+	unsigned char DIR0_6: 1;
+	unsigned char DIR0_7: 1;
+} @ 0xFD;
+
+__sfr __no_init volatile struct  {
 	unsigned char DIR1_0: 1;
 	unsigned char DIR1_1: 1;
 	unsigned char DIR1_2: 1;
@@ -36,6 +47,17 @@ __sfr __no_init volatile struct  {
 	unsigned char DIR1_7: 1;
 } @ 0xFE;
 
+
+__sfr __no_init volatile struct  {
+	unsigned char P0SEL_0: 1;
+	unsigned char P0SEL_1: 1;
+	unsigned char P0SEL_2: 1;
+	unsigned char P0SEL_3: 1;
+	unsigned char P0SEL_4: 1;
+	unsigned char P0SEL_5: 1;
+	unsigned char P0SEL_6: 1;
+	unsigned char P0SEL_7: 1;
+} @ 0xF3;
 
 __sfr __no_init volatile struct  {
 	unsigned char P1SEL_0: 1;
@@ -106,19 +128,22 @@ int main() {
 
   // Final board initialization
  // InitBoard( OB_READY );
-	identifyLED();
-	connectionLED();
-	onLED();
+//	identifyLED();
+//	connectionLED();
+//	onLED();
   CS5463_Init();
-  CS5463_reset();
-  setCS5463RegisterValue(CycleCount,0x00, 0x0F, 0xA0);
+    CS5463_reset();
+  
+	
+	setCS5463RegisterValue(CycleCount,0x00, 0x0F, 0xA0);
+  
   setCS5463RegisterValue(Config,0x01, 0x00, 0x01);
   setCS5463RegisterValue(Mode,0x00, 0x00, 0x60);
   CS5463_startConversion();
   
   while(1){
 	  reg00 = getCS5463RegisterValue(Config);
-	  reg01 = getCS5463RegisterValue(CurrentDCOffset);
+	
 	  reg02 = getCS5463RegisterValue(CurrentGain);
 	  reg03 = getCS5463RegisterValue(VoltageDcOffset);
 	  reg04 = getCS5463RegisterValue(VoltageGain);
@@ -144,33 +169,33 @@ int main() {
 
 static void identifyLED(void) {
 	identifyInit(1);
-	for(uint8 i=0; i < 20; i++){
-		P1_5 = 1;
-		for(uint16 y=0; y < 10000; y++);
-		P1_5=0;
-		for(uint16 y=0; y < 10000; y++);
+	for(uint8 i=0; i <25; i++){
+		P1_1= 1;
+		for(uint16 y=0; y < 40000; y++);
+		P1_1=0;
+		for(uint16 y=0; y < 40000; y++);
 	}
 }
 
 static void connectionLED(void) {
-	DIR1_4 = 1;
- 	P1SEL_4 = 0;
-	for(uint8 i=0; i < 20; i++){
-		P1_4 = 1;
-		for(uint16 y=0; y < 10000; y++);
-		P1_4=0;
-		for(uint16 y=0; y < 10000; y++);
+	DIR1_0 = 1;
+ 	P1SEL_0 = 0;
+	for(uint8 i=0; i < 10; i++){
+		P1_0 = 1;
+		for(uint16 y=0; y < 40000; y++);
+		P1_0=0;
+		for(uint16 y=0; y < 40000; y++);
 	}
 }
 
 static void onLED(void) {
-	DIR1_3 = 1;
- 	P1SEL_3 = 0;
-	for(uint8 i=0; i < 20; i++){
-		P1_4 = 1;
-		for(uint16 y=0; y < 10000; y++);
-		P1_4=0;
-		for(uint16 y=0; y < 10000; y++);
+	DIR0_7 = 1;
+ 	P0SEL_7 = 0;
+	for(uint8 i=0; i < 10; i++){
+		P0_7 = 1;
+		for(uint16 y=0; y < 40000; y++);
+		P0_7=0;
+		for(uint16 y=0; y < 40000; y++);
 	}
 }
 

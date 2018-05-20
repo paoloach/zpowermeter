@@ -1,3 +1,4 @@
+firmware/CC2530DB/EndDeviceEB/*
 gEDA/*.sch~
 # Object files
 *.o

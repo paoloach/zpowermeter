@@ -15,7 +15,7 @@
 
 enum CS5463Register {
 	Config=0,
-	CurrentDCOffset=1,
+	CurrentDcOffset=1,
 	CurrentGain=2,
 	VoltageDcOffset=3,
 	VoltageGain=4,
@@ -30,7 +30,7 @@ enum CS5463Register {
 	Epsilon=13,
 	PowerOffsetRegister=14,
 	status = 15,
-	CurrentAcOffsset=16,
+	CurrentAcOffset=16,
 	VoltageAcOffset=17,
 	Mode=18,
 	Temperature=19,
@@ -47,16 +47,33 @@ enum CS5463Register {
 	FundamentalActivePower=30,
 	FundamentalReactivePower=31,
 	PageRegister=31
+};
 
-	
+
+enum Calibration {
+	I_DC_OFFSET=0,
+	I_DC_GAIN,
+	I_AC_OFFSET,
+	I_AC_GAIN,
+	V_DC_OFFSET,
+	V_DC_GAIN,
+	V_AC_OFFSET,
+	V_AC_GAIN,
+	V_I_DC_OFFSET,
+	V_I_DC_GAIN,
+	V_I_AC_OFFSET,
+	V_I_AC_GAIN
 };
 
 extern void CS5463_Init(void);
 
 extern void CS5463_startConversion(void);
+extern void CS5463_startSingleConversion(void);
+extern void CS5463_startCalibration(enum Calibration calibration);
 extern void CS5463_reset(void);
 
 extern int32 getCS5463RegisterValue(enum CS5463Register regIndex);
+extern void setCS5463RegisterValue32(enum CS5463Register regIndex,uint32 value);
 extern void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char byte1,unsigned char  byte2,unsigned char  byte3);
 
 
